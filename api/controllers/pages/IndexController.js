@@ -6,7 +6,9 @@
  */
 
 module.exports = {
-  index: function(req, res) {
+  index: async function(req, res) {
+    console.log(await Incident.find());
+
     return res.view('pages/index');
   },
 };
