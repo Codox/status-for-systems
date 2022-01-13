@@ -17,10 +17,12 @@
     "sails-mysql": "^2.0.0"
   },
   "devDependencies": {
-    "eslint": "5.16.0"
+    "eslint": "5.16.0",
+    "nodemon": "^2.0.15"
   },
   "scripts": {
     "start": "NODE_ENV=production node app.js",
+    "start:debug": "NODE_ENV=development ./node_modules/.bin/nodemon app.js",
     "test": "npm run lint && npm run custom-tests && echo 'Done.'",
     "lint": "./node_modules/eslint/bin/eslint.js . --max-warnings=0 --report-unused-disable-directives && echo '✔  Your .js files look good.'",
     "custom-tests": "echo \"(No other custom tests yet.)\" && echo"
