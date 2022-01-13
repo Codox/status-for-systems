@@ -9,5 +9,5 @@
  */
 
 module.exports.routes = {
-  '/': 'HomeController.index',
+  'GET /': 'pages/IndexController.index',
 };
