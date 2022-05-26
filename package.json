@@ -9,7 +9,7 @@
     "@sailshq/lodash": "^3.10.3",
     "@sailshq/socket.io-redis": "^5.2.0",
     "dotenv": "^11.0.0",
-    "grunt": "1.0.4",
+    "grunt": "1.5.3",
     "sails": "^1.5.1",
     "sails-hook-grunt": "^5.0.0",
     "sails-hook-orm": "^4.0.0",
