@@ -2,6 +2,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/intellij+all,node,angular
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij+all,node,angular
 
+.DS_STORE
+
 ### Angular ###
 ## Angular ##
 # compiled output
