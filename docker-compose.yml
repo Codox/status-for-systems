@@ -12,18 +12,16 @@ services:
       - "3308:3306"
     volumes:
       - mysql:/var/lib/mysql
-  status-for-systems-app:
+  api:
     env_file:
       - docker/environments/local.env
     ports:
-      - "1337:1337"
+      - 8080:8080
     build:
-      context: .
-      dockerfile: docker/Dockerfile.dev
+      context: api
+      dockerfile: ../docker/go.Dockerfile.dev
     volumes:
-      - /app/node_modules
-      - .:/app
-    command: "npm run start:debug"
+      - ./api:/app
 
 volumes:
   mysql: {}
