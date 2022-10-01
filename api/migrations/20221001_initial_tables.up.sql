@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `status_for_systems`.`system_groups` (
+CREATE TABLE IF NOT EXISTS `system_groups` (
                                                                   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
                                                                   `name` VARCHAR(64) NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `status_for_systems`.`system_groups` (
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
   ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `status_for_systems`.`systems` (
+CREATE TABLE IF NOT EXISTS `systems` (
                                                             `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
                                                             `name` VARCHAR(64) NOT NULL,
   `group_id` INT UNSIGNED NOT NULL,
