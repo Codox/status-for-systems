@@ -34,9 +34,15 @@ func main() {
   migrations, migrationsErr := migrate.NewWithSourceInstance(
     "iofs", migrationsDirectory, dbConnectionString)
 
+
+
+
   if migrationsErr != nil {
     panic(migrationsErr)
   }
 
+
   migrationsErr = migrations.Up()
+
+  fmt.Println(migrationsErr)
 }
