@@ -3,9 +3,12 @@ package main
 import (
   "embed"
   "fmt"
+  "github.com/gin-gonic/gin"
   "github.com/golang-migrate/migrate/v4"
   _ "github.com/golang-migrate/migrate/v4/database/mysql"
   "github.com/golang-migrate/migrate/v4/source/iofs"
+  "gorm.io/driver/mysql"
+  "gorm.io/gorm"
   "os"
 )
 
@@ -34,15 +37,28 @@ func main() {
   migrations, migrationsErr := migrate.NewWithSourceInstance(
     "iofs", migrationsDirectory, dbConnectionString)
 
+  if migrationsErr != nil {
+    panic(migrationsErr)
+  }
 
-
+  migrationsErr = migrations.Up()
 
   if migrationsErr != nil {
     panic(migrationsErr)
   }
 
+  db, dbErr := gorm.Open(mysql.Open(dbConnectionString), &gorm.Config{})
 
-  migrationsErr = migrations.Up()
+  if dbErr != nil {
+    panic(dbErr)
+  }
 
-  fmt.Println(migrationsErr)
+  // Setup router
+  router := gin.Default()
+
+  // Setup database context
+  router.Use(func(context *gin.Context) {
+    context.Set("db", db)
+    context.Next()
+  })
 }
