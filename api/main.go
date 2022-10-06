@@ -26,7 +26,7 @@ func main() {
     Setup database connection
    */
   dbConnectionString := fmt.Sprintf(
-    "mysql://%s:%s@tcp(%s:%d)/%s",
+    "mysql://%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True",
     os.Getenv("DB_USER"),
     os.Getenv("DB_PASS"),
     os.Getenv("DB_HOST"),
