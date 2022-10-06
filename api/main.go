@@ -10,6 +10,7 @@ import (
   "gorm.io/driver/mysql"
   "gorm.io/gorm"
   "os"
+  "strings"
 )
 
 var (
@@ -31,6 +32,7 @@ func main() {
     3306,
     os.Getenv("DB_NAME"))
 
+
   // Run migrations for the database
   migrationsDirectory, _ := iofs.New(migrationsDirectory, "migrations")
 
@@ -44,10 +46,10 @@ func main() {
   migrationsErr = migrations.Up()
 
   if migrationsErr != nil {
-    panic(migrationsErr)
+    // panic(migrationsErr)
   }
 
-  db, dbErr := gorm.Open(mysql.Open(dbConnectionString), &gorm.Config{})
+  db, dbErr := gorm.Open(mysql.Open(strings.ReplaceAll(dbConnectionString, "mysql://", "")), &gorm.Config{})
 
   if dbErr != nil {
     panic(dbErr)
