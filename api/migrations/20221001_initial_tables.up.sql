@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS `status_for_systems`.`system_groups` (
                                                                   `name` VARCHAR(64) NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_at` TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC))
   ENGINE = InnoDB;
@@ -13,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `status_for_systems`.`systems` (
   `group_id` INT UNSIGNED NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_at` TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   INDEX `fk_systems_system_groups_id_idx` (`group_id` ASC),
