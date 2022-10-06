@@ -1,6 +1,7 @@
 package main
 
 import (
+  "api/controllers"
   "embed"
   "fmt"
   "github.com/gin-gonic/gin"
@@ -63,4 +64,8 @@ func main() {
     context.Set("db", db)
     context.Next()
   })
+
+  router.GET("/systems", controllers.GetSystems)
+
+  router.Run(":8080")
 }
