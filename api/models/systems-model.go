@@ -1,27 +1,22 @@
 package models
 
 import (
-	"gorm.io/gorm"
-	"time"
+  "time"
 )
 
 type System struct {
-	gorm.Model
-
-	ID          uint64      `gorm:"primaryKey; column:id"`
-	Name        string      `gorm:"column:name"`
-	GroupID     uint64      `gorm:"column:group_id"`
-	SystemGroup SystemGroup `gorm:"foreignKey:GroupID"`
-	CreatedAt   time.Time   `gorm:"column:created_at"`
-	UpdatedAt   time.Time   `gorm:"column:updated_at"`
+	ID          uint64      `gorm:"primaryKey; column:id" json:"-"`
+	Name        string      `gorm:"column:name" json:"name"`
+	GroupID     uint64      `gorm:"column:group_id" json:"-"`
+	SystemGroup SystemGroup `gorm:"foreignKey:GroupID" json:"systemGroup"`
+	CreatedAt   time.Time   `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt   time.Time   `gorm:"column:updated_at" json:"updatedAt"`
 }
 
 type SystemGroup struct {
-	gorm.Model
-
-	ID        uint64    `gorm:"primaryKey"`
-	Name      string    `gorm:"column:name"`
-	Systems   []System  `gorm:"foreignKey:GroupID"`
-	CreatedAt time.Time `gorm:"column:created_at"`
-	UpdatedAt time.Time `gorm:"column:updated_at"`
+	ID        uint64    `gorm:"primaryKey; column:id" json:"-"`
+	Name      string    `gorm:"column:name" json:"name"`
+	Systems   []System  `gorm:"foreignKey:GroupID" json:"systems"`
+	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt time.Time `gorm:"column:updated_at" json:"updatedAt"`
 }
