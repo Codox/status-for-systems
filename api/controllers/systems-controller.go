@@ -46,7 +46,7 @@ func GetGroup(context *gin.Context) {
 	var systemGroup models.SystemGroup
 
 	db, _ := context.MustGet("db").(*gorm.DB)
-	db.First(&systemGroup, "uuid = ?", context.Param("uuid"))
+	db.Preload("Systems").First(&systemGroup, "uuid = ?", context.Param("uuid"))
 
 	if systemGroup.ID == 0 {
 		context.JSON(http.StatusNotFound, gin.H{"data": nil})
