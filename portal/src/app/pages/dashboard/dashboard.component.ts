@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {SystemService} from "../../services/system.service";
+import {SystemGroup} from "../../interfaces/system-group.interface";
 
 @Component({
   selector: 'app-dashboard',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent {
 
-  constructor() { }
+  systemGroups?: SystemGroup[];
 
-  ngOnInit(): void {
+  constructor(
+    private readonly systemService: SystemService
+  ) { }
+
+  async ngOnInit() {
+    console.log("CALLED");
+    this.systemGroups = await this.systemService.getSystemGroups();
   }
-
 }

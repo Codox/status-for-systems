@@ -9,6 +9,9 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import {MatIconModule} from "@angular/material/icon";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatDatepickerModule} from "@angular/material/datepicker";
+import { HttpClientModule} from "@angular/common/http";
+
+export const BASE_URL = 'http://localhost:8080'
 
 @NgModule({
   declarations: [
@@ -23,6 +26,7 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
     MatIconModule,
     MatFormFieldModule,
     MatDatepickerModule,
+    HttpClientModule
   ],
   providers: [],
   exports: [
