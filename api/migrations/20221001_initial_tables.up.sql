@@ -1,10 +1,12 @@
 CREATE TABLE IF NOT EXISTS `status_for_systems`.`system_groups` (
                                                                   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                                                                  `name` VARCHAR(64) NOT NULL,
+                                                                  `uuid` VARCHAR(36) NOT NULL,
+  `name` VARCHAR(64) NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
+  UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC) VISIBLE)
   ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `status_for_systems`.`systems` (
