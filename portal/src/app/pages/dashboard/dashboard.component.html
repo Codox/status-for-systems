@@ -2,7 +2,7 @@
 
 
   <mat-accordion *ngFor="let systemGroup of systemGroups" multi>
-    <mat-expansion-panel>
+    <mat-expansion-panel (afterExpand)="getSystem($event)">
       <!-- Header -->
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -10,15 +10,15 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
+      <mat-panel-description>
+
+      </mat-panel-description>
+
     </mat-expansion-panel>
 <!--
       <mat-expansion-panel-header>
 
-        <mat-panel-description>
-          Type your name and age
-          <mat-icon>account_circle</mat-icon>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
+
       -->
   </mat-accordion>
 </mat-grid-list>

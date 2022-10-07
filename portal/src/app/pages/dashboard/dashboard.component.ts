@@ -19,4 +19,8 @@ export class DashboardComponent {
     console.log("CALLED");
     this.systemGroups = await this.systemService.getSystemGroups();
   }
+
+  getSystem(event: any) {
+    console.log(event);
+  }
 }
