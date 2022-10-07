@@ -20,7 +20,7 @@ export class DashboardComponent {
     this.systemGroups = await this.systemService.getSystemGroups();
   }
 
-  getSystem(event: any) {
-    console.log(event);
+  getSystem(data: SystemGroup) {
+    console.log(data);
   }
 }

@@ -2,7 +2,7 @@
 
 
   <mat-accordion *ngFor="let systemGroup of systemGroups" multi>
-    <mat-expansion-panel (afterExpand)="getSystem($event)">
+    <mat-expansion-panel (afterExpand)="getSystem(systemGroup)" >
       <!-- Header -->
       <mat-expansion-panel-header>
         <mat-panel-title>
