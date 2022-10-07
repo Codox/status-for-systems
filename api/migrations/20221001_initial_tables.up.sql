@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `status_for_systems`.`system_groups` (
+CREATE TABLE IF NOT EXISTS `system_groups` (
                                                                   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
                                                                   `uuid` VARCHAR(36) NOT NULL,
   `name` VARCHAR(64) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `status_for_systems`.`system_groups` (
   UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC) VISIBLE)
   ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `status_for_systems`.`systems` (
+CREATE TABLE IF NOT EXISTS `systems` (
                                                             `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
                                                             `uuid` VARCHAR(36) NOT NULL,
   `name` VARCHAR(64) NOT NULL,
