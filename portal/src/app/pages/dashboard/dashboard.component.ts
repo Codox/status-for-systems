@@ -10,6 +10,7 @@ import {SystemGroup} from "../../interfaces/system-group.interface";
 export class DashboardComponent {
 
   systemGroups?: SystemGroup[];
+  systems: any = {};
 
   constructor(
     private readonly systemService: SystemService
@@ -20,7 +21,9 @@ export class DashboardComponent {
     this.systemGroups = await this.systemService.getSystemGroups();
   }
 
-  getSystem(data: SystemGroup) {
-    console.log(data);
+  async getSystemDetails(data: SystemGroup) {
+    const systemGroup = await this.systemService.getSystemGroup(data.uuid);
+
+    this.systems[systemGroup.uuid] = systemGroup.systems;
   }
 }
