@@ -16,15 +16,15 @@ import (
 
 var (
   //go:embed migrations/*.sql
-  migrationsDirectory  embed.FS
+  migrationsDirectory embed.FS
 )
 
 func main() {
-	fmt.Println("Working123")
+  fmt.Println("Working123")
 
   /**
     Setup database connection
-   */
+  */
   dbConnectionString := fmt.Sprintf(
     "mysql://%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True",
     os.Getenv("DB_USER"),
@@ -32,7 +32,6 @@ func main() {
     os.Getenv("DB_HOST"),
     3306,
     os.Getenv("DB_NAME"))
-
 
   // Run migrations for the database
   migrationsDirectory, _ := iofs.New(migrationsDirectory, "migrations")
@@ -47,7 +46,7 @@ func main() {
   migrationsErr = migrations.Up()
 
   if migrationsErr != nil {
-    // panic(migrationsErr)
+    fmt.Println(migrationsErr)
   }
 
   db, dbErr := gorm.Open(mysql.Open(strings.ReplaceAll(dbConnectionString, "mysql://", "")), &gorm.Config{})
