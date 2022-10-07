@@ -70,8 +70,8 @@ func main() {
 	router.GET("/systems", controllers.GetSystems)
 	router.GET("/systems/:uuid", controllers.GetSystem)
 
-	router.GET("/groups", controllers.GetGroups)
-	router.GET("/groups/:uuid", controllers.GetGroup)
+	router.GET("/system-groups", controllers.GetSystemGroups)
+	router.GET("/system-groups/:uuid", controllers.GetSystemGroup)
 
 	router.Run(":8080")
 }

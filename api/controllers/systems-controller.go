@@ -33,7 +33,7 @@ func GetSystem(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"data": system})
 }
 
-func GetGroups(context *gin.Context) {
+func GetSystemGroups(context *gin.Context) {
 	var systemGroups []models.SystemGroup
 
 	db, _ := context.MustGet("db").(*gorm.DB)
@@ -42,7 +42,7 @@ func GetGroups(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"data": systemGroups})
 }
 
-func GetGroup(context *gin.Context) {
+func GetSystemGroup(context *gin.Context) {
 	var systemGroup models.SystemGroup
 
 	db, _ := context.MustGet("db").(*gorm.DB)
