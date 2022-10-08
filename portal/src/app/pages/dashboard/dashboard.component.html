@@ -1,5 +1,7 @@
 <mat-grid-list cols="1">
 
+  <img src="assets/High_Resolution_Image_3.jpg" style="width: 40%; display: block; margin: auto;">
+
 
   <mat-accordion *ngFor="let systemGroup of systemGroups" multi>
     <mat-expansion-panel (afterExpand)="getSystemDetails(systemGroup)" >
@@ -13,7 +15,10 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
 
-
+      <mat-grid-list *ngFor="let system of systems[systemGroup.uuid]" cols="2" rowHeight="4:1">
+        <mat-grid-tile>{{system.name}}</mat-grid-tile>
+        <mat-grid-tile>Service Degraded</mat-grid-tile>
+      </mat-grid-list>
 
     </mat-expansion-panel>
 <!--
