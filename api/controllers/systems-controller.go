@@ -12,7 +12,7 @@ func GetSystems(context *gin.Context) {
 	var systems []models.System
 
 	db, _ := context.MustGet("db").(*gorm.DB)
-	db.Preload("SystemGroup").Find(&systems)
+	db.Find(&systems)
 
 	context.JSON(http.StatusOK, gin.H{"data": systems})
 }
