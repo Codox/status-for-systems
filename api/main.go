@@ -46,6 +46,7 @@ func main() {
 
 	migrationsErr = migrations.Up()
 
+
 	if migrationsErr != nil {
 		fmt.Println(migrationsErr)
 	}
