@@ -51,3 +51,19 @@ CREATE TABLE IF NOT EXISTS `incident_updates` (
   ENGINE = InnoDB;
 
 -- Create incident systems table
+CREATE TABLE IF NOT EXISTS `incident_systems` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uuid` VARCHAR(36) NOT NULL,
+  `incident_id` INT UNSIGNED NOT NULL,
+  `system_id` INT UNSIGNED NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC) VISIBLE)
+  CONSTRAINT `fk_incident_systems_incident_id`
+  FOREIGN KEY (`incident_id`)
+  REFERENCES `incidents` (`id`)
+  CONSTRAINT `fk_incident_systems_system_id`
+  FOREIGN KEY (`system_id`)
+  REFERENCES `systems` (`id`)
+  ENGINE = InnoDB;
