@@ -1,5 +1,5 @@
 -- Create lookup table for incident statuses
-CREATE TABLE IF NOT EXISTS `incident_status` (
+CREATE TABLE IF NOT EXISTS `incident_statuses` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `uuid` VARCHAR(36) NOT NULL,
   `name` VARCHAR(255) NOT NULL,
@@ -11,10 +11,10 @@ CREATE TABLE IF NOT EXISTS `incident_status` (
   ENGINE = InnoDB;
 
 -- Insert static data
-INSERT INTO `incident_status` (`uuid`, `name`) VALUES (UUID(), 'Investigating');
-INSERT INTO `incident_status` (`uuid`, `name`) VALUES (UUID(), 'Identified');
-INSERT INTO `incident_status` (`uuid`, `name`) VALUES (UUID(), 'Monitoring');
-INSERT INTO `incident_status` (`uuid`, `name`) VALUES (UUID(), 'Resolved');
+INSERT INTO `incident_statuses` (`uuid`, `name`) VALUES (UUID(), 'Investigating');
+INSERT INTO `incident_statuses` (`uuid`, `name`) VALUES (UUID(), 'Identified');
+INSERT INTO `incident_statuses` (`uuid`, `name`) VALUES (UUID(), 'Monitoring');
+INSERT INTO `incident_statuses` (`uuid`, `name`) VALUES (UUID(), 'Resolved');
 
 -- Create incidents table
 CREATE TABLE IF NOT EXISTS `incidents` (
@@ -26,8 +26,28 @@ CREATE TABLE IF NOT EXISTS `incidents` (
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC) VISIBLE)
-  CONSTRAINT `fk_systems_system_groups_id`
-  FOREIGN KEY (`group_id`)
-  REFERENCES `status_for_systems`.`system_groups` (`id`)
+  CONSTRAINT `fk_incidents_incident_status_id`
+  FOREIGN KEY (`incident_status_id`)
+  REFERENCES `incident_statuses` (`id`)
   ENGINE = InnoDB;
 
+-- Create incident updates table
+CREATE TABLE IF NOT EXISTS `incident_updates` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uuid` VARCHAR(36) NOT NULL,
+  `incident_id` INT UNSIGNED NOT NULL,
+  `incident_status_id` INT UNSIGNED NOT NULL,
+  `body` TEXT NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC) VISIBLE)
+  CONSTRAINT `fk_incident_updates_incident_id`
+  FOREIGN KEY (`incident_id`)
+  REFERENCES `incidents` (`id`)
+  CONSTRAINT `fk_incident_updates_incident_status_id`
+  FOREIGN KEY (`incident_status_id`)
+  REFERENCES `incident_statuses` (`id`)
+  ENGINE = InnoDB;
+
+-- Create incident systems table

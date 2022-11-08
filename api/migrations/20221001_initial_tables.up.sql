@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `systems` (
   UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC) VISIBLE,
   CONSTRAINT `fk_systems_system_groups_id`
   FOREIGN KEY (`group_id`)
-  REFERENCES `status_for_systems`.`system_groups` (`id`)
+  REFERENCES `system_groups` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION)
   ENGINE = InnoDB;
