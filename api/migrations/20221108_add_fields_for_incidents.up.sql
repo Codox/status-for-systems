@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `system_groups` (
                                                                   `uuid` VARCHAR(36) NOT NULL,
   `name` VARCHAR(64) NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
   UNIQUE INDEX `uuid_UNIQUE` (`uuid` ASC) VISIBLE)
