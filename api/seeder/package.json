@@ -2,7 +2,7 @@
   "name": "seeder",
   "version": "1.0.0",
   "description": "Seeder for Status For Systems project",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start:dev": "tsc --watch",
@@ -13,10 +13,12 @@
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
     "@types/node": "^18.11.9",
+    "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "@types/nodemon": "^1.19.2",
     "mysql": "^2.18.1",
     "typeorm": "^0.3.10"
   }
