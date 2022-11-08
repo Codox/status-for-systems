@@ -5,12 +5,13 @@ import (
 )
 
 type System struct {
-	ID        uint64    `gorm:"primaryKey; column:id" json:"-"`
-	UUID      string    `gorm:"column:uuid" json:"uuid"`
-	Name      string    `gorm:"column:name" json:"name"`
-	GroupID   uint64    `gorm:"column:group_id" json:"-"`
-	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt time.Time `gorm:"column:updated_at" json:"updatedAt"`
+	ID        uint64       `gorm:"primaryKey; column:id" json:"-"`
+	UUID      string       `gorm:"column:uuid" json:"uuid"`
+	Name      string       `gorm:"column:name" json:"name"`
+	Status    SystemStatus `gorm:"foreignKey:StatusID;references:ID" json:"status"`
+	GroupID   uint64       `gorm:"column:group_id" json:"-"`
+	CreatedAt time.Time    `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt time.Time    `gorm:"column:updated_at" json:"updatedAt"`
 }
 
 type SystemGroup struct {
@@ -23,9 +24,9 @@ type SystemGroup struct {
 }
 
 type SystemStatus struct {
-  ID        uint64    `gorm:"primaryKey; column:id" json:"-"`
-  UUID      string    `gorm:"column:uuid" json:"uuid"`
-  Name      string    `gorm:"column:name" json:"name"`
-  CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
-  UpdatedAt time.Time `gorm:"column:updated_at" json:"updatedAt"`
+	ID        uint64    `gorm:"primaryKey; column:id" json:"-"`
+	UUID      string    `gorm:"column:uuid" json:"uuid"`
+	Name      string    `gorm:"column:name" json:"name"`
+	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt time.Time `gorm:"column:updated_at" json:"updatedAt"`
 }

@@ -32,7 +32,6 @@ type IncidentSystem struct {
 	ID         uint64    `gorm:"primaryKey; column:id" json:"-"`
 	UUID       string    `gorm:"column:uuid" json:"uuid"`
 	SystemID   uint64    `gorm:"column:system_id" json:"-"`
-  SystemStatusID uint64 `gorm:"column:system_status_id" json:"-"`
 	IncidentID uint64    `gorm:"column:incident_id" json:"-"`
 	CreatedAt  time.Time `gorm:"column:created_at" json:"createdAt"`
 	UpdatedAt  time.Time `gorm:"column:updated_at" json:"updatedAt"`

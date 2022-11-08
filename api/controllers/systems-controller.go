@@ -20,7 +20,10 @@ func GetSystem(context *gin.Context) {
 	var system models.System
 
 	db, _ := context.MustGet("db").(*gorm.DB)
-	db.Preload("SystemGroup").First(&system, "uuid = ?", context.Param("uuid"))
+	if db.Preload("SystemGroup").First(&system, "uuid = ?", context.Param("uuid")).Error != nil {
+    context.JSON(http.StatusInternalServerError, gin.H{"message": "Something went wrong. Please try again later"})
+    return
+  }
 
 	if system.ID == 0 {
 		context.JSON(http.StatusNotFound, gin.H{"data": nil})
