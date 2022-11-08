@@ -1,0 +1,11 @@
+{
+  "name": "seeder",
+  "version": "1.0.0",
+  "description": "Seeder for Status For Systems project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "rexchoppers",
+  "license": "ISC"
+}
