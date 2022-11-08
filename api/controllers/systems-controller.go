@@ -1,11 +1,10 @@
 package controllers
 
 import (
-	"api/models"
-	"fmt"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-	"net/http"
+  "api/models"
+  "github.com/gin-gonic/gin"
+  "gorm.io/gorm"
+  "net/http"
 )
 
 func GetSystems(context *gin.Context) {
@@ -22,8 +21,6 @@ func GetSystem(context *gin.Context) {
 
 	db, _ := context.MustGet("db").(*gorm.DB)
 	db.Preload("SystemGroup").First(&system, "uuid = ?", context.Param("uuid"))
-
-	fmt.Println(system)
 
 	if system.ID == 0 {
 		context.JSON(http.StatusNotFound, gin.H{"data": nil})
