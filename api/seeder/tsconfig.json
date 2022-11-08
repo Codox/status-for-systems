@@ -14,7 +14,7 @@
     "module": "commonjs",
     "moduleResolution": "Node",
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "inlineSourceMap": true,
