@@ -20,12 +20,14 @@ type IncidentUpdate struct {
 }
 
 type Incident struct {
-	ID          uint64    `gorm:"primaryKey; column:id" json:"-"`
-	UUID        string    `gorm:"column:uuid" json:"uuid"`
-	Title       string    `gorm:"column:title" json:"title"`
-	Description string    `gorm:"column:description;type:text" json:"description"`
-	CreatedAt   time.Time `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt   time.Time `gorm:"column:updated_at" json:"updatedAt"`
+	ID               uint64         `gorm:"primaryKey; column:id" json:"-"`
+	UUID             string         `gorm:"column:uuid" json:"uuid"`
+	Title            string         `gorm:"column:title" json:"title"`
+	IncidentStatusID uint64         `gorm:"column:incident_status_id" json:"-"`
+	IncidentStatus   IncidentStatus `gorm:"foreignKey:IncidentStatusID;references:ID" json:"status"`
+	Description      string         `gorm:"column:description;type:text" json:"description"`
+	CreatedAt        time.Time      `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt        time.Time      `gorm:"column:updated_at" json:"updatedAt"`
 }
 
 type IncidentSystem struct {
