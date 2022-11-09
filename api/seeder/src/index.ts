@@ -2,6 +2,7 @@ import {DataSource} from "typeorm";
 import {SystemStatus} from "./entities/system-status.entity";
 import _ from "lodash";
 import {IncidentStatus} from "./entities/incident-status.entity";
+import {SystemGroup} from "./entities/system-group.entity";
 
 export const dataSource = new DataSource({
   type: "mysql",
@@ -14,6 +15,7 @@ export const dataSource = new DataSource({
   entities: [
     SystemStatus,
     IncidentStatus,
+    SystemGroup,
   ],
 });
 
@@ -41,7 +43,6 @@ async function addStatuses() {
     await systemStatusRepository.save(status);
   }
 
-
   // Incident statuses
   const incidentStatusRepository = dataSource.getRepository(IncidentStatus);
   const incidentStatuses = await incidentStatusRepository.find();
@@ -56,8 +57,12 @@ export async function run() {
   await dataSource.initialize();
   console.log('Connected to database');
 
+  console.log('Adding statuses');
   await addStatuses();
 
+
+
+  console.log('Done');
 }
 
 run();
