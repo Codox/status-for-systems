@@ -1,6 +1,7 @@
 import {DataSource} from "typeorm";
-import {SystemStatus} from "./entities/SystemStatus";
+import {SystemStatus} from "./entities/system-status.entity";
 import _ from "lodash";
+import {IncidentStatus} from "./entities/incident-status.entity";
 
 export const dataSource = new DataSource({
   type: "mysql",
@@ -11,12 +12,19 @@ export const dataSource = new DataSource({
   database: "status_for_systems",
   synchronize: false,
   entities: [
-    SystemStatus
+    SystemStatus,
+    IncidentStatus,
   ],
 });
 
-
 const systemStatusNames = [
+  'Operational',
+  'Degraded performance',
+  'Partial outage',
+  'Major outage',
+];
+
+const incidentStatusNames = [
   'Investigating',
   'Identified',
   'Monitoring',
@@ -31,6 +39,16 @@ async function addStatuses() {
   for (const name of systemStatusNames.filter((name) => !_.map(systemStatuses, 'name').includes(name))) {
     const status = new SystemStatus({name});
     await systemStatusRepository.save(status);
+  }
+
+
+  // Incident statuses
+  const incidentStatusRepository = dataSource.getRepository(IncidentStatus);
+  const incidentStatuses = await incidentStatusRepository.find();
+
+  for (const name of incidentStatusNames.filter((name) => !_.map(incidentStatuses, 'name').includes(name))) {
+    const status = new IncidentStatus({name});
+    await incidentStatusRepository.save(status);
   }
 }
 
