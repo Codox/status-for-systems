@@ -3,6 +3,7 @@ import {SystemStatus} from "./entities/system-status.entity";
 import _ from "lodash";
 import {IncidentStatus} from "./entities/incident-status.entity";
 import {SystemGroup} from "./entities/system-group.entity";
+import { faker } from '@faker-js/faker';
 
 export const dataSource = new DataSource({
   type: "mysql",
@@ -51,6 +52,13 @@ async function addStatuses() {
     const status = new IncidentStatus({name});
     await incidentStatusRepository.save(status);
   }
+
+  // Create system group
+  const systemGroupRepository = dataSource.getRepository(SystemGroup);
+  let systemGroupApi = new SystemGroup({name: faker.company.name()});
+  systemGroupApi = await systemGroupRepository.save(systemGroupApi, {reload: true});
+
+  console.log(systemGroupApi);
 }
 
 export async function run() {
