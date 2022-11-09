@@ -18,6 +18,7 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSourceMap": true,
+    "esModuleInterop": true,
     "inlineSources": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true

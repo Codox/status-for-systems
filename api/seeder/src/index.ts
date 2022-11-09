@@ -1,5 +1,6 @@
 import {DataSource} from "typeorm";
 import {SystemStatus} from "./entities/SystemStatus";
+import _ from "lodash";
 
 export const dataSource = new DataSource({
   type: "mysql",
@@ -22,14 +23,12 @@ const systemStatusNames = [
   'Resolved',
 ];
 
-const systemStatuses = [
-
-];
-
 async function addStatuses() {
   // System statuses
   const systemStatusRepository = dataSource.getRepository(SystemStatus);
-  for (const name of systemStatusNames) {
+  const systemStatuses = await systemStatusRepository.find();
+
+  for (const name of systemStatusNames.filter((name) => !_.map(systemStatuses, 'name').includes(name))) {
     const status = new SystemStatus({name});
     await systemStatusRepository.save(status);
   }
@@ -41,7 +40,6 @@ export async function run() {
 
   await addStatuses();
 
-  console.log(systemStatuses);
 }
 
 run();
