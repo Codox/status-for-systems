@@ -17,7 +17,6 @@ export class DashboardComponent {
   ) { }
 
   async ngOnInit() {
-    console.log("CALLED");
     this.systemGroups = await this.systemService.getSystemGroups();
   }
 
