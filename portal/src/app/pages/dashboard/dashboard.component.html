@@ -17,7 +17,7 @@
 
       <mat-grid-list *ngFor="let system of systems[systemGroup.uuid]" cols="2" rowHeight="4:1">
         <mat-grid-tile>{{system.name}}</mat-grid-tile>
-        <mat-grid-tile>Service Degraded</mat-grid-tile>
+        <mat-grid-tile>{{system.status.name}}</mat-grid-tile>
       </mat-grid-list>
 
     </mat-expansion-panel>
