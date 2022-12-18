@@ -2,7 +2,6 @@ package controllers
 
 import (
   "api/models"
-  "fmt"
   "github.com/gin-gonic/gin"
   "gorm.io/gorm"
   "net/http"
@@ -40,14 +39,6 @@ func GetSystemGroups(context *gin.Context) {
   db, _ := context.MustGet("db").(*gorm.DB)
   db.Find(&systemGroups)
 
-  for i := range systemGroups {
-    systems := systemGroups[i].Systems
-
-    fmt.Println(systemGroups[i].Systems)
-  }
-
-  fmt.Println(systemGroups)
-
   context.JSON(http.StatusOK, gin.H{"data": systemGroups})
 }
 
@@ -55,7 +46,7 @@ func GetSystemGroup(context *gin.Context) {
   var systemGroup models.SystemGroup
 
   db, _ := context.MustGet("db").(*gorm.DB)
-  db.Preload("Systems").First(&systemGroup, "uuid = ?", context.Param("uuid"))
+  db.Preload("Systems").Preload("Systems.Status").First(&systemGroup, "uuid = ?", context.Param("uuid"))
 
   if systemGroup.ID == 0 {
     context.JSON(http.StatusNotFound, gin.H{"data": nil})
