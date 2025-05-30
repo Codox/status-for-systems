@@ -1,10 +1,6 @@
 import { Schema, model, models } from 'mongoose';
 
 const componentSchema = new Schema({
-  id: {
-    type: String,
-    required: true,
-  },
   name: {
     type: String,
     required: true,

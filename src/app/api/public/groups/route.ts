@@ -7,8 +7,8 @@ export async function GET() {
     await getDatabaseConnection();
     
     const groups = await Group.find({})
-      .populate('components', 'id name status description lastChecked')
-      .select('id name description components')
+      // .populate('id name status description lastChecked')
+      .select('name description components')
       .lean();
 
     return NextResponse.json(groups);

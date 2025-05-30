@@ -1,11 +1,6 @@
 import { Schema, model, models } from 'mongoose';
 
 const groupSchema = new Schema({
-  id: {
-    type: String,
-    required: true,
-    unique: true
-  },
   name: {
     type: String,
     required: true
@@ -25,7 +20,6 @@ const groupSchema = new Schema({
   }
 });
 
-// Update the updatedAt timestamp before saving
 groupSchema.pre('save', function(next) {
   this.updatedAt = new Date();
   next();
