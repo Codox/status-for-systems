@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getDatabaseConnection } from '@/lib/mongodb';
-import { Group } from '../../models/Group';
+import { Group } from '../../models';
 
 export async function GET() {
   try {
     await getDatabaseConnection();
     
     const groups = await Group.find({})
-      // .populate('id name status description lastChecked')
+      .populate('components')
       .select('name description components')
       .lean();
 
