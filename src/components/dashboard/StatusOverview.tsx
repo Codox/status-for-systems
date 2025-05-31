@@ -1,4 +1,4 @@
-import { CheckCircleIcon, ExclamationTriangleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, ExclamationTriangleIcon, XCircleIcon, WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
 import { ComponentStatus } from '@/types/status';
 
 interface Component {
@@ -37,6 +37,8 @@ function StatusIcon({ status }: { status: ComponentStatus }) {
       return <ExclamationTriangleIcon className="h-6 w-6 text-yellow-500" />;
     case 'outage':
       return <XCircleIcon className="h-6 w-6 text-red-500" />;
+    case 'maintenance':
+      return <WrenchScrewdriverIcon className="h-6 w-6 text-blue-500" />;
   }
 }
 
@@ -48,6 +50,8 @@ function getStatusColor(status: ComponentStatus) {
       return 'bg-yellow-50 border-yellow-200';
     case 'outage':
       return 'bg-red-50 border-red-200';
+    case 'maintenance':
+      return 'bg-blue-50 border-blue-200';
   }
 }
 
