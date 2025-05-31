@@ -1,6 +1,6 @@
-import { Schema, model, models } from 'mongoose';
+import mongoose from 'mongoose';
 
-const groupSchema = new Schema({
+const groupSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -8,12 +8,11 @@ const groupSchema = new Schema({
   description: String,
   status: {
     type: String,
-    enum: ['operational', 'degraded', 'outage'],
-    required: true,
+    enum: ['operational', 'degraded', 'outage', 'maintenance'],
     default: 'operational'
   },
   components: [{
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Component'
   }],
   createdAt: {
@@ -31,23 +30,21 @@ groupSchema.pre('save', function(next) {
   next();
 });
 
-groupSchema.methods.calculateStatus = async function() {
-  await this.populate('components');
+groupSchema.methods.calculateStatus = function(components: { status: string }[]) {
+  if (!components || components.length === 0) return 'operational';
   
-  if (!this.components || this.components.length === 0) {
-    this.status = 'operational';
-    return;
-  }
+  const statusCounts = components.reduce((acc, component) => {
+    acc[component.status] = (acc[component.status] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
-  const statuses = this.components.map((c: { status: string }) => c.status);
+  if (statusCounts['maintenance']) return 'maintenance';
   
-  if (statuses.includes('outage')) {
-    this.status = 'outage';
-  } else if (statuses.includes('degraded')) {
-    this.status = 'degraded';
-  } else {
-    this.status = 'operational';
-  }
+  if (statusCounts['outage']) return 'outage';
+  
+  if (statusCounts['degraded']) return 'degraded';
+  
+  return 'operational';
 };
 
-export const Group = models.Group || model('Group', groupSchema); 
+export const Group = mongoose.models.Group || mongoose.model('Group', groupSchema); 

@@ -1,21 +1,48 @@
-import { Schema, model, models } from 'mongoose';
+import mongoose from 'mongoose';
 
-const componentSchema = new Schema({
+const componentSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
   },
+  description: String,
   status: {
     type: String,
-    enum: ['operational', 'degraded', 'outage'],
-    required: true,
-    default: 'operational'
+    enum: ['operational', 'degraded', 'outage', 'maintenance'],
+    default: 'operational',
   },
-  description: String,
-  lastChecked: {
+  checkUrl: {
+    type: String,
+    required: true,
+  },
+  checkMethod: {
+    type: String,
+    enum: ['GET', 'POST', 'HEAD'],
+    default: 'GET',
+  },
+  expectedStatus: {
+    type: Number,
+    default: 200,
+  },
+  timeout: {
+    type: Number,
+    default: 5000, // 5 seconds
+  },
+  lastChecked: Date,
+  createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
   }
 });
 
-export const Component = models.Component || model('Component', componentSchema); 
+// Update the updatedAt timestamp before saving
+componentSchema.pre('save', function(next) {
+  this.updatedAt = new Date();
+  next();
+});
+
+export const Component = mongoose.models.Component || mongoose.model('Component', componentSchema); 
