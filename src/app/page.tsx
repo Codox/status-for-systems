@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import IncidentList from '@/components/incidents/IncidentList';
 import StatusOverview from '@/components/dashboard/StatusOverview';
+import { dashboardConfig } from '@/config/dashboard';
 
 export default function Dashboard() {
   return (
@@ -9,10 +10,10 @@ export default function Dashboard() {
         {/* Header */}
         <div className="px-4 py-6 sm:px-0">
           <h1 className="text-3xl font-bold text-gray-900">
-            System Status Dashboard
+            {dashboardConfig.title}
           </h1>
           <p className="mt-2 text-sm text-gray-600">
-            Real-time status of all systems and services
+            {dashboardConfig.description}
           </p>
         </div>
 
