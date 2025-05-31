@@ -8,8 +8,10 @@ export async function GET() {
     
     const groups = await Group.find({})
       .populate('components')
-      .select('name description components')
+      .select('name description status components')
       .lean();
+
+    console.log(groups);
 
     return NextResponse.json(groups);
   } catch (error) {
