@@ -15,23 +15,6 @@ const componentSchema = new Schema({
   lastChecked: {
     type: Date,
     default: Date.now
-  },
-  checkUrl: {
-    type: String,
-    required: true
-  },
-  checkMethod: {
-    type: String,
-    enum: ['GET', 'POST', 'HEAD'],
-    default: 'GET'
-  },
-  expectedStatus: {
-    type: Number,
-    default: 200
-  },
-  timeout: {
-    type: Number,
-    default: 5000 // 5 seconds
   }
 });
 
