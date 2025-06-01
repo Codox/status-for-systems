@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 
+export const COMPONENT_STATUS = ['operational', 'degraded', 'outage', 'maintenance'] as const;
+export type ComponentStatus = typeof COMPONENT_STATUS[number];
+
 const componentSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -8,25 +11,8 @@ const componentSchema = new mongoose.Schema({
   description: String,
   status: {
     type: String,
-    enum: ['operational', 'degraded', 'outage', 'maintenance'],
+    enum: COMPONENT_STATUS,
     default: 'operational',
-  },
-  checkUrl: {
-    type: String,
-    required: true,
-  },
-  checkMethod: {
-    type: String,
-    enum: ['GET', 'POST', 'HEAD'],
-    default: 'GET',
-  },
-  expectedStatus: {
-    type: Number,
-    default: 200,
-  },
-  timeout: {
-    type: Number,
-    default: 5000, // 5 seconds
   },
   lastChecked: Date,
   createdAt: {
