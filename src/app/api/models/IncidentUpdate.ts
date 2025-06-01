@@ -12,13 +12,21 @@ export interface IIncidentUpdate extends Document {
   updatedAt: Date;
 }
 
+/**
+ * Component
+ */
 const IncidentUpdateComponentsUpdatedStatusSchema = new Schema({
   from: { type: String, enum: COMPONENT_STATUS, required: true },
   to: { type: String, enum: COMPONENT_STATUS, required: true },
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  }
 });
-
 
 const IncidentUpdateComponentsUpdatedSchema = new Schema({
   component: {
@@ -28,8 +36,52 @@ const IncidentUpdateComponentsUpdatedSchema = new Schema({
   status: {
     type: IncidentUpdateComponentsUpdatedStatusSchema,
     required: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
   }
 });
+
+/**
+ * Group
+ */
+const IncidentUpdatGroupsUpdatedStatusSchema = new Schema({
+  from: { type: String, enum: COMPONENT_STATUS, required: true },
+  to: { type: String, enum: COMPONENT_STATUS, required: true },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  }
+});
+
+const IncidentUpdateGroupsUpdatedSchema = new Schema({
+  group: {
+    id: { type: mongoose.Schema.Types.ObjectId, required: true },
+    name: { type: String, required: true },
+  },
+  status: {
+    type: IncidentUpdatGroupsUpdatedStatusSchema,
+    required: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  }
+});
+
 
 
 const IncidentUpdateSchema: Schema = new Schema({

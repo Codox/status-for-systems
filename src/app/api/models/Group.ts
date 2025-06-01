@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 
+export const GROUP_STATUS = ['operational', 'degraded', 'outage', 'maintenance'] as const;
+export type GroupStatus = typeof GROUP_STATUS[number];
+
 const groupSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -8,8 +11,8 @@ const groupSchema = new mongoose.Schema({
   description: String,
   status: {
     type: String,
-    enum: ['operational', 'degraded', 'outage', 'maintenance'],
-    default: 'operational'
+    enum: GROUP_STATUS,
+    default: 'operational',
   },
   components: [{
     type: mongoose.Schema.Types.ObjectId,
