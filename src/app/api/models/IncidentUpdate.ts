@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { ComponentStatus } from './Component';
+import { COMPONENT_STATUS, ComponentStatus } from './Component';
 
 export interface IIncidentUpdate extends Document {
   updatedComponentStatuses: Array<{
@@ -12,11 +12,25 @@ export interface IIncidentUpdate extends Document {
   updatedAt: Date;
 }
 
+const IncidentUpdateComponentsUpdatedStatusSchema = new Schema({
+  from: { type: String, enum: COMPONENT_STATUS, required: true },
+  to: { type: String, enum: COMPONENT_STATUS, required: true },
+  createdAt: Date,
+  updatedAt: Date,
+});
+
+
 const IncidentUpdateComponentsUpdatedSchema = new Schema({
   component: {
     id: { type: mongoose.Schema.Types.ObjectId, required: true },
+    name: { type: String, required: true },
+  },
+  status: {
+    type: IncidentUpdateComponentsUpdatedStatusSchema,
+    required: false,
   }
 });
+
 
 const IncidentUpdateSchema: Schema = new Schema({
   title: {
