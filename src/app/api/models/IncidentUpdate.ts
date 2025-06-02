@@ -1,17 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { COMPONENT_STATUS, ComponentStatus } from './Component';
 
-export interface IIncidentUpdate extends Document {
-  updatedComponentStatuses: Array<{
-    componentId: string;
-    name: string;
-    from: ComponentStatus;
-    to: ComponentStatus;
-  }>;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 /**
  * Component
  */
@@ -50,7 +39,7 @@ const IncidentUpdateComponentsUpdatedSchema = new Schema({
 /**
  * Group
  */
-const IncidentUpdatGroupsUpdatedStatusSchema = new Schema({
+const IncidentUpdateGroupsUpdatedStatusSchema = new Schema({
   from: { type: String, enum: COMPONENT_STATUS, required: true },
   to: { type: String, enum: COMPONENT_STATUS, required: true },
   createdAt: {
@@ -94,6 +83,14 @@ const IncidentUpdateSchema: Schema = new Schema({
     type: String,
     required: [true, 'Description is required'],
   },
+
+  // Updates
+  componentsUpdates: {
+    type: [IncidentUpdateComponentsUpdatedSchema],
+    default: [],
+    required: false,
+  },
+
   status: {
     type: String,
     enum: ['investigating', 'identified', 'monitoring', 'resolved'],
@@ -120,4 +117,4 @@ const IncidentUpdateSchema: Schema = new Schema({
 });
 
 // Prevent mongoose from creating a new model if it already exists
-export default mongoose.models.Incident || mongoose.model<IIncident>('Incident', IncidentSchema); 
+export default mongoose.models.Incident || mongoose.model('Incident', IncidentUpdateSchema); 
