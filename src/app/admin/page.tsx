@@ -1,4 +1,25 @@
-export default function AdminDashboard() {
+import { headers } from 'next/headers';
+
+export default async function AdminDashboard() {
+  // Get the authorization header from the incoming request
+  const headersList = await headers();
+  const authHeader = headersList.get('authorization') || '';
+  
+  // Fetch dashboard data
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/dashboard`, {
+    headers: {
+      'Authorization': authHeader
+    },
+    cache: 'no-store'
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch dashboard data');
+  }
+
+  const data = await response.json();
+  const { systemHealth } = data;
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -22,7 +43,7 @@ export default function AdminDashboard() {
                       <div className="ml-5 w-0 flex-1">
                         <dl>
                           <dt className="text-sm font-medium text-gray-500 truncate">Operational Components</dt>
-                          <dd className="text-lg font-medium text-gray-900">12</dd>
+                          <dd className="text-lg font-medium text-gray-900">{systemHealth.components.operational}</dd>
                         </dl>
                       </div>
                     </div>
@@ -40,7 +61,7 @@ export default function AdminDashboard() {
                       <div className="ml-5 w-0 flex-1">
                         <dl>
                           <dt className="text-sm font-medium text-gray-500 truncate">Active Incidents</dt>
-                          <dd className="text-lg font-medium text-gray-900">2</dd>
+                          <dd className="text-lg font-medium text-gray-900">{systemHealth.incidents.active}</dd>
                         </dl>
                       </div>
                     </div>
@@ -58,7 +79,7 @@ export default function AdminDashboard() {
                       <div className="ml-5 w-0 flex-1">
                         <dl>
                           <dt className="text-sm font-medium text-gray-500 truncate">Total Groups</dt>
-                          <dd className="text-lg font-medium text-gray-900">5</dd>
+                          <dd className="text-lg font-medium text-gray-900">{systemHealth.groups.total}</dd>
                         </dl>
                       </div>
                     </div>
@@ -76,7 +97,7 @@ export default function AdminDashboard() {
                       <div className="ml-5 w-0 flex-1">
                         <dl>
                           <dt className="text-sm font-medium text-gray-500 truncate">Total Components</dt>
-                          <dd className="text-lg font-medium text-gray-900">24</dd>
+                          <dd className="text-lg font-medium text-gray-900">{systemHealth.components.total}</dd>
                         </dl>
                       </div>
                     </div>
@@ -89,58 +110,38 @@ export default function AdminDashboard() {
                 <h2 className="text-lg font-medium text-gray-900">Recent Activity</h2>
                 <div className="mt-4 bg-white shadow overflow-hidden sm:rounded-md">
                   <ul role="list" className="divide-y divide-gray-200">
-                    <li>
-                      <div className="px-4 py-4 sm:px-6">
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-indigo-600 truncate">
-                            Database Service Degraded
-                          </p>
-                          <div className="ml-2 flex-shrink-0 flex">
-                            <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                              Degraded
+                    {data.recentActivity.incidents.map((incident: any) => (
+                      <li key={incident._id}>
+                        <div className="px-4 py-4 sm:px-6">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-medium text-indigo-600 truncate">
+                              {incident.title}
                             </p>
+                            <div className="ml-2 flex-shrink-0 flex">
+                              <p className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                incident.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                                incident.status === 'investigating' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-blue-100 text-blue-800'
+                              }`}>
+                                {incident.status}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="mt-2 sm:flex sm:justify-between">
+                            <div className="sm:flex">
+                              <p className="flex items-center text-sm text-gray-500">
+                                {incident.affectedSystems?.join(', ')}
+                              </p>
+                            </div>
+                            <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                              <p>
+                                {new Date(incident.createdAt).toLocaleString()}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                        <div className="mt-2 sm:flex sm:justify-between">
-                          <div className="sm:flex">
-                            <p className="flex items-center text-sm text-gray-500">
-                              High latency detected in database queries
-                            </p>
-                          </div>
-                          <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                            <p>
-                              2 hours ago
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="px-4 py-4 sm:px-6">
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-indigo-600 truncate">
-                            API Service Maintenance
-                          </p>
-                          <div className="ml-2 flex-shrink-0 flex">
-                            <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                              Maintenance
-                            </p>
-                          </div>
-                        </div>
-                        <div className="mt-2 sm:flex sm:justify-between">
-                          <div className="sm:flex">
-                            <p className="flex items-center text-sm text-gray-500">
-                              Scheduled maintenance window
-                            </p>
-                          </div>
-                          <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                            <p>
-                              5 hours ago
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
