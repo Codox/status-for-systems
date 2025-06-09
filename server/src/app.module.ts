@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { GroupsModule } from './groups/groups.module';
+import { PublicController } from './controllers/public.controller';
+import { AdminController } from './controllers/admin.controller';
 
 @Module({
   imports: [
@@ -22,8 +25,9 @@ import { MongooseModule } from '@nestjs/mongoose';
       },
       inject: [ConfigService],
     }),
+    GroupsModule,
   ],
-  controllers: [],
+  controllers: [PublicController, AdminController],
   providers: [],
 })
 export class AppModule {}
