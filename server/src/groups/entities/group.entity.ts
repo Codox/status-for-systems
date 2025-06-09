@@ -2,7 +2,21 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Component } from '../../components/entities/component.entity';
 
-@Schema({ timestamps: true })
+@Schema({ 
+  timestamps: true,
+  toJSON: {
+    transform: (_, ret) => {
+      delete ret.__v;
+      return ret;
+    },
+  },
+  toObject: {
+    transform: (_, ret) => {
+      delete ret.__v;
+      return ret;
+    },
+  },
+})
 export class Group extends Document {
   @Prop({ required: true })
   name: string;

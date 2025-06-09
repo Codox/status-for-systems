@@ -9,7 +9,21 @@ export enum ComponentStatus {
   UNDER_MAINTENANCE = 'under_maintenance',
 }
 
-@Schema({ timestamps: true })
+@Schema({ 
+  timestamps: true,
+  toJSON: {
+    transform: (_, ret) => {
+      delete ret.__v;
+      return ret;
+    },
+  },
+  toObject: {
+    transform: (_, ret) => {
+      delete ret.__v;
+      return ret;
+    },
+  },
+})
 export class Component extends Document {
   @Prop({ required: true })
   name: string;
