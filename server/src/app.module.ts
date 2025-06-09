@@ -7,15 +7,22 @@ import databaseConfig from './config/database.config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig],
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('database.uri'),
-        user: configService.get<string>('database.user'),
-        pass: configService.get<string>('database.password'),
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const uri = configService.get<string>('MONGODB_URI');
+        const user = configService.get<string>('MONGODB_USER');
+        const pass = configService.get<string>('MONGODB_PASSWORD');
+      
+        console.log({ uri, user, pass });
+      
+        return {
+          uri,
+          user,
+          pass,
+        };
+      },
       inject: [ConfigService],
     }),
   ],
