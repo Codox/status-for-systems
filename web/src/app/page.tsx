@@ -15,7 +15,7 @@ const systemStatus = {
         {
           name: "Database",
           description: "Primary data storage and retrieval system",
-          status: "partial",
+          status: "operational",
         },
       ],
     },
@@ -26,7 +26,7 @@ const systemStatus = {
         {
           name: "Authentication Service",
           description: "Handles user login, registration, and session management",
-          status: "under_maintenance",
+          status: "operational",
         },
         {
           name: "Security Gateway",
@@ -42,12 +42,12 @@ const systemStatus = {
         {
           name: "File Storage",
           description: "Stores and serves user-uploaded files and media",
-          status: "major",
+          status: "degraded",
         },
         {
           name: "CDN",
           description: "Distributes content globally for faster access",
-          status: "degraded",
+          status: "operational",
         },
       ],
     },
@@ -68,47 +68,6 @@ const systemStatus = {
       duration: "ongoing",
     },
   ],
-};
-
-const getStatusStyles = (status: string) => {
-  switch (status) {
-    case "operational":
-      return {
-        bg: "bg-green-100",
-        text: "text-green-800",
-        icon: "✓",
-      };
-    case "degraded":
-      return {
-        bg: "bg-yellow-100",
-        text: "text-yellow-800",
-        icon: "!",
-      };
-    case "partial":
-      return {
-        bg: "bg-orange-100",
-        text: "text-orange-800",
-        icon: "!",
-      };
-    case "major":
-      return {
-        bg: "bg-red-100",
-        text: "text-red-800",
-        icon: "×",
-      };
-    case "under_maintenance":
-      return {
-        bg: "bg-blue-100",
-        text: "text-blue-800",
-        icon: "⚡",
-      };
-    default:
-      return {
-        bg: "bg-gray-100",
-        text: "text-gray-800",
-        icon: "?",
-      };
-  }
 };
 
 export default function Home() {
@@ -153,73 +112,80 @@ export default function Home() {
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {group.services.map((service) => {
-                  const statusStyles = getStatusStyles(service.status);
-                  return (
-                    <div
-                      key={service.name}
-                      className="bg-gray-50 rounded-lg p-4"
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-lg font-medium text-gray-900">
-                          {service.name}
-                        </h3>
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles.bg} ${statusStyles.text}`}
-                        >
-                          {statusStyles.icon} {service.status.replace('_', ' ')}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        {service.description}
-                      </p>
+                {group.services.map((service) => (
+                  <div
+                    key={service.name}
+                    className="bg-gray-50 rounded-lg p-4"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-lg font-medium text-gray-900">
+                        {service.name}
+                      </h3>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          service.status === "operational"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {service.status === "operational" ? "✓" : "!"} {service.status}
+                      </span>
                     </div>
-                  );
-                })}
+                    <p className="text-sm text-gray-600">
+                      {service.description}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
         </div>
 
-        {/* Recent Incidents */}
+        {/* Recent Incidents - Temporarily disabled
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             Recent Incidents
           </h2>
           <div className="space-y-4">
-            {systemStatus.recentIncidents.map((incident) => {
-              const statusStyles = getStatusStyles(incident.status);
-              return (
-                <div
-                  key={incident.id}
-                  className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg"
-                >
-                  <div className="flex-shrink-0">
-                    <span
-                      className={`inline-flex items-center justify-center h-5 w-5 rounded-full ${statusStyles.bg} ${statusStyles.text}`}
-                    >
-                      {statusStyles.icon}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-sm font-medium text-gray-900">
-                      {incident.title}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {new Date(incident.date).toLocaleString()} •{" "}
-                      {incident.duration}
-                    </p>
-                  </div>
+            {systemStatus.recentIncidents.map((incident) => (
+              <div
+                key={incident.id}
+                className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg"
+              >
+                <div className="flex-shrink-0">
                   <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles.bg} ${statusStyles.text}`}
+                    className={`inline-flex items-center justify-center h-5 w-5 rounded-full ${
+                      incident.status === "resolved"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
                   >
-                    {incident.status}
+                    {incident.status === "resolved" ? "✓" : "!"}
                   </span>
                 </div>
-              );
-            })}
+                <div className="flex-1">
+                  <h3 className="text-sm font-medium text-gray-900">
+                    {incident.title}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {new Date(incident.date).toLocaleString()} •{" "}
+                    {incident.duration}
+                  </p>
+                </div>
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    incident.status === "resolved"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-yellow-100 text-yellow-800"
+                  }`}
+                >
+                  {incident.status}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
+        */}
       </div>
     </main>
   );
