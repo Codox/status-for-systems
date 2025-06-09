@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { Component } from '../components/entities/component.entity';
+import { Group } from '../groups/entities/group.entity';
 import { CreateComponentRequest } from '../components/requests/create-component.request';
+import { CreateGroupRequest } from '../groups/requests/create-group.request';
 
 @Controller('admin')
 export class AdminController {
@@ -33,6 +35,38 @@ export class AdminController {
 
   @Delete('components/:id')
   async removeComponent(@Param('id') id: string): Promise<void> {
+    // TODO: Implement remove
+  }
+
+  @Get('groups')
+  async findAllGroups(): Promise<Group[]> {
+    // TODO: Implement findAll
+    return [];
+  }
+
+  @Get('groups/:id')
+  async findOneGroup(@Param('id') id: string): Promise<Group> {
+    // TODO: Implement findOne
+    return null;
+  }
+
+  @Post('groups')
+  async createGroup(@Body() createGroupRequest: CreateGroupRequest): Promise<Group> {
+    // TODO: Implement create
+    return null;
+  }
+
+  @Put('groups/:id')
+  async updateGroup(
+    @Param('id') id: string,
+    @Body() updateGroupRequest: CreateGroupRequest,
+  ): Promise<Group> {
+    // TODO: Implement update
+    return null;
+  }
+
+  @Delete('groups/:id')
+  async removeGroup(@Param('id') id: string): Promise<void> {
     // TODO: Implement remove
   }
 } 
