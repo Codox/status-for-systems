@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GroupsModule } from './groups/groups.module';
+import { SeedersModule } from './seeders/seeders.module';
 import { PublicController } from './controllers/public.controller';
 import { AdminController } from './controllers/admin.controller';
 
@@ -26,6 +27,7 @@ import { AdminController } from './controllers/admin.controller';
       inject: [ConfigService],
     }),
     GroupsModule,
+    SeedersModule,
   ],
   controllers: [PublicController, AdminController],
   providers: [],
