@@ -1,192 +1,243 @@
-// Dummy data for the status dashboard
-const systemStatus = {
-  overall: "operational",
-  lastUpdated: "2024-03-20T10:00:00Z",
-  groups: [
-    {
-      name: "Core Infrastructure",
-      description: "Essential services that power the entire platform",
-      services: [
-        {
-          name: "API Gateway",
-          description: "Manages and routes all API requests",
-          status: "operational",
-        },
-        {
-          name: "Database",
-          description: "Primary data storage and retrieval system",
-          status: "operational",
-        },
-      ],
-    },
-    {
-      name: "Authentication & Security",
-      description: "Services responsible for user authentication and platform security",
-      services: [
-        {
-          name: "Authentication Service",
-          description: "Handles user login, registration, and session management",
-          status: "operational",
-        },
-        {
-          name: "Security Gateway",
-          description: "Protects against threats and manages access control",
-          status: "operational",
-        },
-      ],
-    },
-    {
-      name: "Storage & CDN",
-      description: "Content delivery and file storage infrastructure",
-      services: [
-        {
-          name: "File Storage",
-          description: "Stores and serves user-uploaded files and media",
-          status: "degraded",
-        },
-        {
-          name: "CDN",
-          description: "Distributes content globally for faster access",
-          status: "operational",
-        },
-      ],
-    },
-  ],
-  recentIncidents: [
-    {
-      id: 1,
-      title: "Database Connection Issues",
-      status: "resolved",
-      date: "2024-03-19T15:30:00Z",
-      duration: "45 minutes",
-    },
-    {
-      id: 2,
-      title: "API Gateway Latency",
-      status: "investigating",
-      date: "2024-03-20T09:15:00Z",
-      duration: "ongoing",
-    },
-  ],
+import { Suspense } from "react";
+
+// Types
+interface Component {
+  _id: string;
+  name: string;
+  description: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Group {
+  _id: string;
+  name: string;
+  description: string;
+  components: Component[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+const getStatusStyles = (status: string) => {
+  switch (status) {
+    case "operational":
+      return {
+        bg: "bg-green-100",
+        text: "text-green-800",
+        icon: "✓",
+      };
+    case "degraded":
+      return {
+        bg: "bg-yellow-100",
+        text: "text-yellow-800",
+        icon: "!",
+      };
+    case "partial":
+      return {
+        bg: "bg-orange-100",
+        text: "text-orange-800",
+        icon: "!",
+      };
+    case "major":
+      return {
+        bg: "bg-red-100",
+        text: "text-red-800",
+        icon: "×",
+      };
+    case "under_maintenance":
+      return {
+        bg: "bg-blue-100",
+        text: "text-blue-800",
+        icon: "⚡",
+      };
+    default:
+      return {
+        bg: "bg-gray-100",
+        text: "text-gray-800",
+        icon: "?",
+      };
+  }
 };
 
-export default function Home() {
-  return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">System Status</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Last updated: {new Date(systemStatus.lastUpdated).toLocaleString()}
-          </p>
-        </div>
+async function getGroups(): Promise<Group[]> {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiUrl) {
+      throw new Error('API URL is not configured');
+    }
 
-        {/* Overall Status */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="flex items-center">
-            <span className="h-8 w-8 flex items-center justify-center rounded-full bg-green-100 text-green-800 font-bold">
-              ✓
-            </span>
-            <div className="ml-3">
-              <h2 className="text-xl font-semibold text-gray-900">
-                All Systems Operational
-              </h2>
-              <p className="text-sm text-gray-600">
-                All core services are functioning normally
-              </p>
+    const response = await fetch(`${apiUrl}/public/groups`, {
+      next: { revalidate: 30 }, // Revalidate every 30 seconds
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch groups: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching groups:', error);
+    throw error;
+  }
+}
+
+function ErrorState({ message }: { message: string }) {
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+      <div className="max-w-md mx-auto">
+        <h3 className="text-lg font-medium text-gray-900 mb-2">
+          Unable to Load System Status
+        </h3>
+        <p className="text-sm text-gray-600 mb-4">
+          {message}
+        </p>
+        <p className="text-sm text-gray-500">
+          Please try refreshing the page or contact support if the issue persists.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function LoadingState() {
+  return (
+    <div className="animate-pulse">
+      <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+      <div className="space-y-8">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-white rounded-lg shadow-sm p-6">
+            <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2].map((j) => (
+                <div key={j} className="bg-gray-50 rounded-lg p-4">
+                  <div className="h-5 bg-gray-200 rounded w-1/2 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
-        {/* Service Groups */}
-        <div className="space-y-8 mb-8">
-          {systemStatus.groups.map((group) => (
-            <div key={group.name} className="bg-white rounded-lg shadow-sm p-6">
-              <div className="mb-4">
+function EmptyState() {
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+      <div className="max-w-md mx-auto">
+        <h3 className="text-lg font-medium text-gray-900 mb-2">
+          No Service Groups Available
+        </h3>
+        <p className="text-sm text-gray-600">
+          There are currently no service groups to display. This could be because:
+        </p>
+        <ul className="mt-4 text-sm text-gray-600 space-y-2">
+          <li>• The system is being initialized</li>
+          <li>• Services are being configured</li>
+          <li>• There might be a temporary issue</li>
+        </ul>
+        <p className="mt-4 text-sm text-gray-500">
+          Please check back later or contact support if this persists.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default async function Home() {
+  try {
+    const groups = await getGroups();
+
+    return (
+      <main className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">System Status</h1>
+            <p className="mt-2 text-sm text-gray-600">
+              Last updated: {new Date().toLocaleString()}
+            </p>
+          </div>
+
+          {/* Overall Status */}
+          <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div className="flex items-center">
+              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-green-100 text-green-800 font-bold">
+                ✓
+              </span>
+              <div className="ml-3">
                 <h2 className="text-xl font-semibold text-gray-900">
-                  {group.name}
+                  All Systems Operational
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">
-                  {group.description}
+                <p className="text-sm text-gray-600">
+                  All core services are functioning normally
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {group.services.map((service) => (
-                  <div
-                    key={service.name}
-                    className="bg-gray-50 rounded-lg p-4"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-lg font-medium text-gray-900">
-                        {service.name}
-                      </h3>
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          service.status === "operational"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {service.status === "operational" ? "✓" : "!"} {service.status}
-                      </span>
+            </div>
+          </div>
+
+          {/* Service Groups */}
+          <Suspense fallback={<LoadingState />}>
+            {groups && groups.length > 0 ? (
+              <div className="space-y-8 mb-8">
+                {groups.map((group) => (
+                  <div key={group._id} className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="mb-4">
+                      <h2 className="text-xl font-semibold text-gray-900">
+                        {group.name}
+                      </h2>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {group.description}
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-600">
-                      {service.description}
-                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {group.components.map((component) => {
+                        const statusStyles = getStatusStyles(component.status);
+                        return (
+                          <div
+                            key={component._id}
+                            className="bg-gray-50 rounded-lg p-4"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="text-lg font-medium text-gray-900">
+                                {component.name}
+                              </h3>
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles.bg} ${statusStyles.text}`}
+                              >
+                                {statusStyles.icon} {component.status.replace('_', ' ')}
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600">
+                              {component.description}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
-          ))}
+            ) : (
+              <EmptyState />
+            )}
+          </Suspense>
         </div>
-
-        {/* Recent Incidents - Temporarily disabled
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Recent Incidents
-          </h2>
-          <div className="space-y-4">
-            {systemStatus.recentIncidents.map((incident) => (
-              <div
-                key={incident.id}
-                className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg"
-              >
-                <div className="flex-shrink-0">
-                  <span
-                    className={`inline-flex items-center justify-center h-5 w-5 rounded-full ${
-                      incident.status === "resolved"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}
-                  >
-                    {incident.status === "resolved" ? "✓" : "!"}
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-medium text-gray-900">
-                    {incident.title}
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    {new Date(incident.date).toLocaleString()} •{" "}
-                    {incident.duration}
-                  </p>
-                </div>
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    incident.status === "resolved"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  {incident.status}
-                </span>
-              </div>
-            ))}
-          </div>
+      </main>
+    );
+  } catch (error) {
+    return (
+      <main className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <ErrorState message={error instanceof Error ? error.message : 'An unexpected error occurred'} />
         </div>
-        */}
-      </div>
-    </main>
-  );
+      </main>
+    );
+  }
 }
