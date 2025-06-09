@@ -13,9 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
         const uri = configService.get<string>('MONGODB_URI');
         const user = configService.get<string>('MONGODB_USER');
         const pass = configService.get<string>('MONGODB_PASSWORD');
-      
-        console.log({ uri, user, pass });
-      
+            
         return {
           uri,
           user,
