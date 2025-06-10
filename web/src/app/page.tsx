@@ -26,38 +26,57 @@ const getStatusStyles = (status: string) => {
         bg: "bg-green-100",
         text: "text-green-800",
         icon: "✓",
+        severity: 0,
+        displayText: "Operational"
       };
     case "degraded":
       return {
         bg: "bg-yellow-100",
         text: "text-yellow-800",
         icon: "!",
+        severity: 1,
+        displayText: "Degraded"
       };
     case "partial":
       return {
         bg: "bg-orange-100",
         text: "text-orange-800",
         icon: "!",
+        severity: 2,
+        displayText: "Partial Outage"
       };
     case "major":
       return {
         bg: "bg-red-100",
         text: "text-red-800",
         icon: "×",
+        severity: 3,
+        displayText: "Major Outage"
       };
     case "under_maintenance":
       return {
         bg: "bg-blue-100",
         text: "text-blue-800",
         icon: "⚡",
+        severity: 0,
+        displayText: "Under Maintenance"
       };
     default:
       return {
         bg: "bg-gray-100",
         text: "text-gray-800",
         icon: "?",
+        severity: 0,
+        displayText: "Unknown"
       };
   }
+};
+
+const getHighestSeverityStatus = (components: Component[]) => {
+  return components.reduce((highest, component) => {
+    const currentStatus = getStatusStyles(component.status);
+    return currentStatus.severity > highest.severity ? currentStatus : highest;
+  }, getStatusStyles("operational"));
 };
 
 async function getGroups(): Promise<Group[]> {
@@ -186,43 +205,51 @@ export default async function Home() {
           <Suspense fallback={<LoadingState />}>
             {groups && groups.length > 0 ? (
               <div className="space-y-8 mb-8">
-                {groups.map((group) => (
-                  <div key={group._id} className="bg-white rounded-lg shadow-sm p-6">
-                    <div className="mb-4">
-                      <h2 className="text-xl font-semibold text-gray-900">
-                        {group.name}
-                      </h2>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {group.description}
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {group.components.map((component) => {
-                        const statusStyles = getStatusStyles(component.status);
-                        return (
-                          <div
-                            key={component._id}
-                            className="bg-gray-50 rounded-lg p-4"
-                          >
-                            <div className="flex items-center justify-between mb-2">
-                              <h3 className="text-lg font-medium text-gray-900">
-                                {component.name}
-                              </h3>
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles.bg} ${statusStyles.text}`}
-                              >
-                                {statusStyles.icon} {component.status.replace('_', ' ')}
-                              </span>
+                {groups.map((group) => {
+                  const groupStatus = getHighestSeverityStatus(group.components);
+                  return (
+                    <div key={group._id} className="bg-white rounded-lg shadow-sm p-6">
+                      <div className={`mb-4 p-4 rounded-lg ${groupStatus.bg}`}>
+                        <div className="flex items-center justify-between">
+                          <h2 className="text-xl font-semibold text-gray-900">
+                            {group.name}
+                          </h2>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${groupStatus.text}`}>
+                            {groupStatus.icon} {group.components.every(c => c.status === "operational") ? "All Operational" : groupStatus.displayText}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {group.description}
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {group.components.map((component) => {
+                          const statusStyles = getStatusStyles(component.status);
+                          return (
+                            <div
+                              key={component._id}
+                              className="bg-gray-50 rounded-lg p-4"
+                            >
+                              <div className="flex items-center justify-between mb-2">
+                                <h3 className="text-lg font-medium text-gray-900">
+                                  {component.name}
+                                </h3>
+                                <span
+                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles.bg} ${statusStyles.text}`}
+                                >
+                                  {statusStyles.icon} {component.status.replace('_', ' ')}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-600">
+                                {component.description}
+                              </p>
                             </div>
-                            <p className="text-sm text-gray-600">
-                              {component.description}
-                            </p>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <EmptyState />
