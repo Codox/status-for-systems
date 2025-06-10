@@ -1,40 +1,26 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private configService: ConfigService) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    try {
-      const user = await this.usersService.findByEmail(email);
-      const isPasswordValid = await this.usersService.validatePassword(user, password);
-      
-      if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid credentials');
-      }
-
-      const { password: _, ...result } = user.toObject();
-      return result;
-    } catch (error) {
-      throw new UnauthorizedException('Invalid credentials');
+  validateBasicAuth(authHeader: string): boolean {
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      throw new UnauthorizedException('Invalid authorization header');
     }
-  }
 
-  async login(user: any) {
-    const payload = { email: user.email, sub: user._id };
-    return {
-      access_token: this.jwtService.sign(payload),
-      user: {
-        id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
-    };
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [username, password] = credentials.split(':');
+
+    const validUsername = this.configService.get<string>('BASIC_AUTH_USERNAME');
+    const validPassword = this.configService.get<string>('BASIC_AUTH_PASSWORD');
+
+    if (!validUsername || !validPassword) {
+      throw new UnauthorizedException('Basic auth credentials not configured');
+    }
+
+    return username === validUsername && password === validPassword;
   }
 } 

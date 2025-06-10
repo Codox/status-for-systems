@@ -5,7 +5,6 @@ import { GroupsModule } from './groups/groups.module';
 import { SeedersModule } from './seeders/seeders.module';
 import { PublicController } from './controllers/public.controller';
 import { AdminController } from './controllers/admin.controller';
-import { MiddlewareModule } from './middleware/middleware.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -31,7 +30,6 @@ import { AuthModule } from './auth/auth.module';
     GroupsModule,
     SeedersModule,
     AuthModule,
-    MiddlewareModule,
   ],
   controllers: [PublicController, AdminController],
   providers: [],
