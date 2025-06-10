@@ -1,8 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: '📊' },
@@ -17,41 +16,6 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('adminToken')
-      
-      if (!token && pathname !== '/admin/login') {
-        router.push('/admin/login')
-        return
-      }
-
-      if (token && pathname === '/admin/login') {
-        router.push('/admin')
-        return
-      }
-
-      setIsLoading(false)
-    }
-
-    checkAuth()
-  }, [pathname, router])
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
-      </div>
-    )
-  }
-
-  // Don't show the layout on the login page
-  if (pathname === '/admin/login') {
-    return <>{children}</>
-  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -86,16 +50,6 @@ export default function AdminLayout({
 
           {/* Footer */}
           <div className="p-4 border-t space-y-2">
-            <button
-              onClick={() => {
-                localStorage.removeItem('adminToken')
-                router.push('/admin/login')
-              }}
-              className="flex items-center w-full px-4 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-50 hover:text-gray-900"
-            >
-              <span className="mr-3">🚪</span>
-              Sign Out
-            </button>
             <Link
               href="/"
               className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 rounded-md hover:bg-gray-50 hover:text-gray-900"
