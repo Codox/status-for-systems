@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { Component } from '../components/entities/component.entity';
 import { Group } from '../groups/entities/group.entity';
 import { CreateComponentRequest } from '../components/requests/create-component.request';
 import { CreateGroupRequest } from '../groups/requests/create-group.request';
+import { BasicAuthGuard } from '../middleware/basic-auth.middleware';
 
 @Controller('admin')
+@UseGuards(BasicAuthGuard)
 export class AdminController {
   @Get('components')
   async findAllComponents(): Promise<Component[]> {
