@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Group } from '../groups/entities/group.entity';
 import { Component } from '../components/entities/component.entity';
-import { User } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -12,8 +11,7 @@ import * as bcrypt from 'bcrypt';
 export class SeedCommand extends CommandRunner {
   constructor(
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
-    @InjectModel(Component.name) private readonly componentModel: Model<Component>,
-    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(Component.name) private readonly componentModel: Model<Component>
   ) {
     super();
   }
@@ -23,18 +21,8 @@ export class SeedCommand extends CommandRunner {
       // Clear existing data
       await this.groupModel.deleteMany({});
       await this.componentModel.deleteMany({});
-      await this.userModel.deleteMany({});
       console.log('Cleared existing data');
 
-      // Create admin user
-      const hashedPassword = await bcrypt.hash('admin123', 10);
-      const adminUser = await this.userModel.create({
-        firstName: 'Admin',
-        lastName: 'User',
-        email: 'admin@example.com',
-        password: hashedPassword,
-      });
-      console.log('Created admin user');
 
       // Create test components
       const components = [

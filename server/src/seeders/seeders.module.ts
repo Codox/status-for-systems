@@ -4,15 +4,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { SeedCommand } from './seed.command';
 import { Group, GroupSchema } from '../groups/entities/group.entity';
 import { Component, ComponentSchema } from '../components/entities/component.entity';
-import { User, UserSchema } from '../users/entities/user.entity';
 
 @Module({
   imports: [
     // CommandModule,
     MongooseModule.forFeature([
       { name: Group.name, schema: GroupSchema },
-      { name: Component.name, schema: ComponentSchema },
-      { name: User.name, schema: UserSchema },
+      { name: Component.name, schema: ComponentSchema }
     ]),
   ],
   providers: [SeedCommand],

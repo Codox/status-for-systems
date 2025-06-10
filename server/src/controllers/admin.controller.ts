@@ -3,7 +3,7 @@ import { Component } from '../components/entities/component.entity';
 import { Group } from '../groups/entities/group.entity';
 import { CreateComponentRequest } from '../components/requests/create-component.request';
 import { CreateGroupRequest } from '../groups/requests/create-group.request';
-import { BasicAuthGuard } from '../middleware/basic-auth.middleware';
+import { BasicAuthGuard } from '../auth/basic-auth.guard';
 
 @Controller('admin')
 @UseGuards(BasicAuthGuard)
