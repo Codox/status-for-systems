@@ -6,6 +6,7 @@ import { SeedersModule } from './seeders/seeders.module';
 import { PublicController } from './controllers/public.controller';
 import { AdminController } from './controllers/admin.controller';
 import { MiddlewareModule } from './middleware/middleware.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { MiddlewareModule } from './middleware/middleware.module';
     }),
     GroupsModule,
     SeedersModule,
+    AuthModule,
     MiddlewareModule,
   ],
   controllers: [PublicController, AdminController],
