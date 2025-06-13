@@ -6,6 +6,7 @@ import { SeedersModule } from './seeders/seeders.module';
 import { PublicController } from './controllers/public.controller';
 import { AdminController } from './controllers/admin.controller';
 import { AuthModule } from './auth/auth.module';
+import { ComponentsModule } from './components/components.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AuthModule } from './auth/auth.module';
       inject: [ConfigService],
     }),
     GroupsModule,
+    ComponentsModule,
     SeedersModule,
     AuthModule,
   ],
