@@ -59,8 +59,7 @@ export class AdminController {
 
   @Post('groups')
   async createGroup(@Body() createGroupRequest: CreateGroupRequest): Promise<Group> {
-    // TODO: Implement create
-    return null;
+    return this.groupsService.create(createGroupRequest);
   }
 
   @Put('groups/:id')
