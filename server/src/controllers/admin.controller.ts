@@ -5,16 +5,19 @@ import { CreateComponentRequest } from '../components/requests/create-component.
 import { CreateGroupRequest } from '../groups/requests/create-group.request';
 import { BasicAuthGuard } from '../auth/basic-auth.guard';
 import { GroupsService } from 'src/groups/groups.service';
+import { ComponentsService } from '../components/components.service';
 
 @Controller('admin')
 @UseGuards(BasicAuthGuard)
 export class AdminController {
-  constructor(private readonly groupsService: GroupsService) {}
+  constructor(
+    private readonly groupsService: GroupsService,
+    private readonly componentsService: ComponentsService,
+  ) {}
 
   @Get('components')
   async findAllComponents(): Promise<Component[]> {
-    // TODO: Implement findAll
-    return [];
+    return this.componentsService.findAll();
   }
 
   @Get('components/:id')
