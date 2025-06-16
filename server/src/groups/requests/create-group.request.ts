@@ -1,4 +1,4 @@
-import { IsArray, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateGroupRequest {
@@ -6,7 +6,7 @@ export class CreateGroupRequest {
   @IsString()
   name: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 
