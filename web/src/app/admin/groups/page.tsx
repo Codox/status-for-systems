@@ -1,8 +1,25 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import NextLink from 'next/link'
 import { fetchWithAuth } from '@/lib/api'
+import {
+  Box,
+  Text,
+  Heading,
+  Flex,
+  Button,
+  Link,
+  Badge,
+  List,
+  ListItem,
+  Divider,
+  useColorModeValue,
+  Skeleton,
+  Center,
+  Alert,
+  AlertIcon
+} from '@chakra-ui/react'
 
 interface Component {
   _id: string;
@@ -44,85 +61,96 @@ export default function GroupsPage() {
     loadGroups()
   }, [])
 
+  // Color mode values
+  const textColor = useColorModeValue('gray.600', 'gray.400')
+  const cardBg = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const headerBg = useColorModeValue('gray.50', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
+
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-600">Loading groups...</div>
-      </div>
+      <Center minH="50vh">
+        <Skeleton>
+          <Text color={textColor}>Loading groups...</Text>
+        </Skeleton>
+      </Center>
     )
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 p-4 rounded-md">
-        <div className="text-sm text-red-700">{error}</div>
-      </div>
+      <Alert status="error" borderRadius="md" mt={4}>
+        <AlertIcon />
+        {error}
+      </Alert>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="sm:flex sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Groups</h1>
-          <p className="mt-1 text-sm text-gray-600">
+    <Box spacing={6}>
+      <Flex justify="space-between" align={{ base: "start", sm: "center" }} direction={{ base: "column", sm: "row" }} mb={6}>
+        <Box>
+          <Heading as="h1" size="lg" mb={1}>
+            Groups
+          </Heading>
+          <Text color={textColor}>
             Manage your service groups and their components
-          </p>
-        </div>
-        <div className="mt-4 sm:mt-0">
-          <Link
+          </Text>
+        </Box>
+        <Box mt={{ base: 4, sm: 0 }}>
+          <Button
+            as={NextLink}
             href="/admin/groups/new"
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            colorScheme="blue"
+            size="sm"
           >
             Add Group
-          </Link>
-        </div>
-      </div>
+          </Button>
+        </Box>
+      </Flex>
 
       {/* Groups List */}
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
+      <Box bg={cardBg} shadow="md" borderRadius="md" overflow="hidden">
+        <List divider={<Divider />}>
           {groups.length > 0 ? (
             groups.map((group: Group) => (
-              <li key={group._id}>
-                <div className="px-4 py-4 sm:px-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <p className="text-sm font-medium text-indigo-600 truncate">
+              <ListItem key={group._id}>
+                <Box px={4} py={4}>
+                  <Flex justify="space-between" align="center">
+                    <Flex align="center">
+                      <Text fontWeight="medium" color="blue.600" isTruncated>
                         {group.name}
-                      </p>
-                      <div className="ml-2 flex-shrink-0 flex">
-                        <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                          {group.components?.length || 0} components
-                        </p>
-                      </div>
-                    </div>
-                    <div className="ml-2 flex-shrink-0 flex">
-                      <Link
-                        href={`/admin/groups/${group._id}`}
-                        className="font-medium text-indigo-600 hover:text-indigo-500"
-                      >
-                        Edit
-                      </Link>
-                    </div>
-                  </div>
-                  <div className="mt-2 sm:flex sm:justify-between">
-                    <div className="sm:flex">
-                      <p className="flex items-center text-sm text-gray-500">
-                        {group.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </li>
+                      </Text>
+                      <Badge ml={2} colorScheme="green" borderRadius="full" px={2}>
+                        {group.components?.length || 0} components
+                      </Badge>
+                    </Flex>
+                    <Link
+                      as={NextLink}
+                      href={`/admin/groups/${group._id}`}
+                      color="blue.600"
+                      fontWeight="medium"
+                      _hover={{ color: "blue.500" }}
+                    >
+                      Edit
+                    </Link>
+                  </Flex>
+                  <Box mt={2}>
+                    <Text fontSize="sm" color={textColor}>
+                      {group.description}
+                    </Text>
+                  </Box>
+                </Box>
+              </ListItem>
             ))
           ) : (
-            <li className="px-4 py-4 sm:px-6 text-center text-gray-500">
+            <ListItem px={4} py={4} textAlign="center" color={textColor}>
               No groups found. Create your first group to get started.
-            </li>
+            </ListItem>
           )}
-        </ul>
-      </div>
-    </div>
+        </List>
+      </Box>
+    </Box>
   )
-} 
+}
