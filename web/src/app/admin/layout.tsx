@@ -12,14 +12,22 @@ import {
   List,
   ListItem,
   Divider,
-  useColorModeValue
+  useColorModeValue,
+  Icon
 } from '@chakra-ui/react'
+import {
+  InfoIcon,
+  SettingsIcon,
+  WarningIcon,
+  TimeIcon,
+  ArrowBackIcon
+} from '@chakra-ui/icons'
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin', icon: '📊' },
-  { name: 'Groups', href: '/admin/groups', icon: '👥' },
-  { name: 'Components', href: '/admin/components', icon: '⚙️' },
-  { name: 'Incidents', href: '/admin/incidents', icon: '🚨' },
+  { name: 'Dashboard', href: '/admin', icon: InfoIcon },
+  { name: 'Groups', href: '/admin/groups', icon: TimeIcon },
+  { name: 'Components', href: '/admin/components', icon: SettingsIcon },
+  { name: 'Incidents', href: '/admin/incidents', icon: WarningIcon },
 ]
 
 const DRAWER_WIDTH = "240px"
@@ -76,8 +84,8 @@ export default function AdminLayout({
                   _hover={{ bg: isActive ? activeBgColor : hoverBgColor }}
                 >
                   <Flex align="center">
-                    <Box fontSize="xl" minW="40px">
-                      {item.icon}
+                    <Box minW="40px">
+                      <Icon as={item.icon} boxSize="20px" />
                     </Box>
                     <Text fontWeight={isActive ? "medium" : "normal"}>
                       {item.name}
@@ -103,8 +111,8 @@ export default function AdminLayout({
             _hover={{ bg: hoverBgColor }}
           >
             <Flex align="center">
-              <Box fontSize="xl" minW="40px">
-                🏠
+              <Box minW="40px">
+                <Icon as={ArrowBackIcon} boxSize="20px" />
               </Box>
               <Text>Back to Status Page</Text>
             </Flex>

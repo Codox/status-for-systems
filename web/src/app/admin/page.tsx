@@ -53,7 +53,7 @@ import {
 } from '@chakra-ui/react'
 import {
   ChevronDownIcon,
-  PeopleIcon,
+  ChatIcon,
   SettingsIcon,
   WarningIcon,
   CheckIcon,
@@ -209,15 +209,15 @@ export default function AdminDashboard() {
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'incident':
-        return '🚨'
+        return WarningIcon
       case 'maintenance':
-        return '🔧'
+        return TimeIcon
       case 'status_change':
-        return '🔄'
+        return RepeatIcon
       case 'component_added':
-        return '➕'
+        return AddIcon
       default:
-        return '📝'
+        return InfoIcon
     }
   }
 
@@ -284,7 +284,7 @@ export default function AdminDashboard() {
                   </StatHelpText>
                 </Stat>
               </Box>
-              <Icon as={PeopleIcon} boxSize="3rem" color="blue.500" opacity={0.8} />
+              <Icon as={ChatIcon} boxSize="3rem" color="blue.500" opacity={0.8} />
             </Flex>
           </CardBody>
         </Card>
@@ -397,7 +397,7 @@ export default function AdminDashboard() {
                         <Tr key={activity.id} _hover={{ bg: hoverBg }}>
                           <Td>
                             <HStack spacing={2}>
-                              <Box fontSize="lg">{getActivityIcon(activity.type)}</Box>
+                              <Icon as={getActivityIcon(activity.type)} boxSize="1.5rem" />
                               <Box>
                                 <Text fontWeight="medium">{activity.title}</Text>
                                 <Text fontSize="xs" color={textColor}>{activity.description}</Text>
