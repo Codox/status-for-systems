@@ -80,18 +80,30 @@ export default function GroupsPage() {
     return (
       <Container maxW="container.xl" p={0}>
         {/* Header skeleton */}
-        <Flex justify="space-between" align="center" mb={6} mt={4}>
+        <Flex
+          direction={{ base: "column", sm: "row" }}
+          justify="space-between"
+          align={{ base: "flex-start", sm: "center" }}
+          mb={6}
+          mt={4}
+          gap={3}
+        >
           <Box>
             <Skeleton height="2rem" width="12rem" mb={2} />
             <Skeleton height="1rem" width="20rem" />
           </Box>
-          <Skeleton height="2rem" width="8rem" />
+          <Skeleton height="2rem" width="8rem" alignSelf={{ base: "flex-start", sm: "auto" }} />
         </Flex>
 
         {/* Card skeleton */}
         <Card shadow="md" borderRadius="lg" bg={cardBg} overflow="hidden" mb={6}>
           <CardHeader bg={headerBg} py={3} px={6}>
-            <Flex justify="space-between" align="center">
+            <Flex
+              direction={{ base: "column", sm: "row" }}
+              justify="space-between"
+              align={{ base: "flex-start", sm: "center" }}
+              gap={2}
+            >
               <Skeleton height="1.5rem" width="8rem" />
               <Skeleton height="1rem" width="5rem" />
             </Flex>
@@ -122,7 +134,7 @@ export default function GroupsPage() {
           align={{ base: "flex-start", sm: "center" }}
           mb={6}
           mt={4}
-          gap={4}
+          gap={3}
         >
           <Box>
             <Heading as="h1" size="lg" mb={1}>
@@ -167,7 +179,7 @@ export default function GroupsPage() {
         align={{ base: "flex-start", sm: "center" }}
         mb={6}
         mt={4}
-        gap={4}
+        gap={3}
       >
         <Box>
           <Heading as="h1" size="lg" mb={1}>
@@ -191,12 +203,12 @@ export default function GroupsPage() {
 
       {/* Groups List */}
       <Card shadow="md" borderRadius="lg" bg={cardBg} overflow="hidden" mb={6}>
-        <CardHeader bg={headerBg} py={3} px={{ base: 4, md: 6 }}>
+        <CardHeader bg={headerBg} py={3} px={6}>
           <Flex
             direction={{ base: "column", sm: "row" }}
             justify="space-between"
             align={{ base: "flex-start", sm: "center" }}
-            gap={{ base: 2, sm: 0 }}
+            gap={2}
           >
             <HStack spacing={2}>
               <Icon as={LinkIcon} color="blue.500" />
@@ -214,12 +226,12 @@ export default function GroupsPage() {
             <List>
               {groups.map((group: Group) => (
                 <ListItem key={group._id} borderBottomWidth={1} borderColor={borderColor} _last={{ borderBottomWidth: 0 }}>
-                  <Box px={{ base: 4, md: 6 }} py={4} _hover={{ bg: hoverBg }} transition="background 0.2s">
+                  <Box px={6} py={4} _hover={{ bg: hoverBg }} transition="background 0.2s">
                     <Flex
-                      direction={{ base: "column", md: "row" }}
+                      direction={{ base: "column", sm: "row" }}
                       justify="space-between"
                       align="flex-start"
-                      gap={{ base: 3, md: 0 }}
+                      gap={{ base: 3, sm: 0 }}
                     >
                       <HStack spacing={3} align="flex-start">
                         <Icon as={LinkIcon} mt={1} color="blue.500" />
@@ -242,8 +254,8 @@ export default function GroupsPage() {
                         colorScheme="blue"
                         variant="ghost"
                         leftIcon={<EditIcon />}
-                        alignSelf={{ base: "flex-start", md: "center" }}
-                        mt={{ base: 0, md: 1 }}
+                        alignSelf={{ base: "flex-start", sm: "center" }}
+                        mt={{ base: 0, sm: 1 }}
                       >
                         Edit
                       </Button>
@@ -253,7 +265,7 @@ export default function GroupsPage() {
               ))}
             </List>
           ) : (
-            <Box px={{ base: 4, md: 6 }} py={{ base: 6, md: 8 }} textAlign="center">
+            <Box px={6} py={8} textAlign="center">
               <VStack spacing={3}>
                 <Icon as={LinkIcon} boxSize="3rem" color="gray.300" />
                 <Text fontWeight="medium">No groups found</Text>

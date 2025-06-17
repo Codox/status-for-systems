@@ -53,7 +53,7 @@ import {
 } from '@chakra-ui/react'
 import {
   ChevronDownIcon,
-  ChatIcon,
+  LinkIcon,
   SettingsIcon,
   WarningIcon,
   CheckIcon,
@@ -284,7 +284,7 @@ export default function AdminDashboard() {
                   </StatHelpText>
                 </Stat>
               </Box>
-              <Icon as={ChatIcon} boxSize="3rem" color="blue.500" opacity={0.8} />
+              <Icon as={LinkIcon} boxSize="3rem" color="blue.500" opacity={0.8} />
             </Flex>
           </CardBody>
         </Card>
