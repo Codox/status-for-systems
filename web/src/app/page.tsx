@@ -1,4 +1,22 @@
+'use client'
+
 import { Suspense } from "react";
+import {
+  Box,
+  Text,
+  Heading,
+  Container,
+  SimpleGrid,
+  Flex,
+  Badge,
+  Skeleton,
+  List,
+  ListItem,
+  Center,
+  VStack,
+  HStack,
+  useColorModeValue
+} from '@chakra-ui/react';
 
 // Types
 interface Component {
@@ -23,48 +41,48 @@ const getStatusStyles = (status: string) => {
   switch (status) {
     case "operational":
       return {
-        bg: "bg-green-100",
-        text: "text-green-800",
+        bgColor: 'success.light',
+        color: 'success.dark',
         icon: "✓",
         severity: 0,
         displayText: "Operational"
       };
     case "degraded":
       return {
-        bg: "bg-yellow-100",
-        text: "text-yellow-800",
+        bgColor: 'warning.light',
+        color: 'warning.dark',
         icon: "!",
         severity: 1,
         displayText: "Degraded"
       };
     case "partial":
       return {
-        bg: "bg-orange-100",
-        text: "text-orange-800",
+        bgColor: 'orange.light',
+        color: 'orange.dark',
         icon: "!",
         severity: 2,
         displayText: "Partial Outage"
       };
     case "major":
       return {
-        bg: "bg-red-100",
-        text: "text-red-800",
+        bgColor: 'error.light',
+        color: 'error.dark',
         icon: "×",
         severity: 3,
         displayText: "Major Outage"
       };
     case "under_maintenance":
       return {
-        bg: "bg-blue-100",
-        text: "text-blue-800",
+        bgColor: 'info.light',
+        color: 'info.dark',
         icon: "⚡",
         severity: 0,
         displayText: "Under Maintenance"
       };
     default:
       return {
-        bg: "bg-gray-100",
-        text: "text-gray-800",
+        bgColor: 'grey.200',
+        color: 'text.secondary',
         icon: "?",
         severity: 0,
         displayText: "Unknown"
@@ -106,165 +124,232 @@ async function getGroups(): Promise<Group[]> {
 }
 
 function ErrorState({ message }: { message: string }) {
+  const textColor = useColorModeValue('gray.600', 'gray.400');
+
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-      <div className="max-w-md mx-auto">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
+    <Box p={4} shadow="md" borderRadius="md" bg={useColorModeValue('white', 'gray.800')} textAlign="center">
+      <Box maxW="md" mx="auto">
+        <Heading as="h3" size="md" mb={1} fontWeight="medium">
           Unable to Load System Status
-        </h3>
-        <p className="text-sm text-gray-600 mb-4">
+        </Heading>
+        <Text fontSize="sm" color={textColor} mb={2}>
           {message}
-        </p>
-        <p className="text-sm text-gray-500">
+        </Text>
+        <Text fontSize="sm" color={textColor}>
           Please try refreshing the page or contact support if the issue persists.
-        </p>
-      </div>
-    </div>
+        </Text>
+      </Box>
+    </Box>
   );
 }
 
 function LoadingState() {
+  const bgColor = useColorModeValue('gray.50', 'gray.700');
+
   return (
-    <div className="animate-pulse">
-      <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-      <div className="space-y-8">
+    <Box>
+      <Skeleton height="40px" width="25%" mb={2} />
+      <VStack spacing={4}>
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-lg shadow-sm p-6">
-            <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Box key={i} p={3} shadow="md" borderRadius="md" bg={useColorModeValue('white', 'gray.800')} width="100%">
+            <Skeleton height="30px" width="33%" mb={2} />
+            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
               {[1, 2].map((j) => (
-                <div key={j} className="bg-gray-50 rounded-lg p-4">
-                  <div className="h-5 bg-gray-200 rounded w-1/2 mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                </div>
+                <Box key={j} p={2} bg={bgColor} borderRadius="md">
+                  <Skeleton height="24px" width="50%" mb={1} />
+                  <Skeleton height="20px" width="75%" />
+                </Box>
               ))}
-            </div>
-          </div>
+            </SimpleGrid>
+          </Box>
         ))}
-      </div>
-    </div>
+      </VStack>
+    </Box>
   );
 }
 
 function EmptyState() {
+  const textColor = useColorModeValue('gray.600', 'gray.400');
+
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-      <div className="max-w-md mx-auto">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
+    <Box p={4} shadow="md" borderRadius="md" bg={useColorModeValue('white', 'gray.800')} textAlign="center">
+      <Box maxW="md" mx="auto">
+        <Heading as="h3" size="md" mb={1} fontWeight="medium">
           No Service Groups Available
-        </h3>
-        <p className="text-sm text-gray-600">
+        </Heading>
+        <Text fontSize="sm" color={textColor}>
           There are currently no service groups to display. This could be because:
-        </p>
-        <ul className="mt-4 text-sm text-gray-600 space-y-2">
-          <li>• The system is being initialized</li>
-          <li>• Services are being configured</li>
-          <li>• There might be a temporary issue</li>
-        </ul>
-        <p className="mt-4 text-sm text-gray-500">
+        </Text>
+        <List spacing={1} mt={2} mb={2}>
+          <ListItem>
+            <Text fontSize="sm" color={textColor}>• The system is being initialized</Text>
+          </ListItem>
+          <ListItem>
+            <Text fontSize="sm" color={textColor}>• Services are being configured</Text>
+          </ListItem>
+          <ListItem>
+            <Text fontSize="sm" color={textColor}>• There might be a temporary issue</Text>
+          </ListItem>
+        </List>
+        <Text fontSize="sm" color={textColor}>
           Please check back later or contact support if this persists.
-        </p>
-      </div>
-    </div>
+        </Text>
+      </Box>
+    </Box>
   );
 }
 
-export default async function Home() {
+// Data fetching component
+async function HomeData() {
   try {
     const groups = await getGroups();
-
-    return (
-      <main className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">System Status</h1>
-            <p className="mt-2 text-sm text-gray-600">
-              Last updated: {new Date().toLocaleString()}
-            </p>
-          </div>
-
-          {/* Overall Status */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-            <div className="flex items-center">
-              <span className="h-8 w-8 flex items-center justify-center rounded-full bg-green-100 text-green-800 font-bold">
-                ✓
-              </span>
-              <div className="ml-3">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  All Systems Operational
-                </h2>
-                <p className="text-sm text-gray-600">
-                  All core services are functioning normally
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Service Groups */}
-          <Suspense fallback={<LoadingState />}>
-            {groups && groups.length > 0 ? (
-              <div className="space-y-8 mb-8">
-                {groups.map((group) => {
-                  const groupStatus = getHighestSeverityStatus(group.components);
-                  return (
-                    <div key={group._id} className="bg-white rounded-lg shadow-sm p-6">
-                      <div className={`mb-4 p-4 rounded-lg ${groupStatus.bg}`}>
-                        <div className="flex items-center justify-between">
-                          <h2 className="text-xl font-semibold text-gray-900">
-                            {group.name}
-                          </h2>
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${groupStatus.text}`}>
-                            {groupStatus.icon} {group.components.every(c => c.status === "operational") ? "All Operational" : groupStatus.displayText}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {group.description}
-                        </p>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {group.components.map((component) => {
-                          const statusStyles = getStatusStyles(component.status);
-                          return (
-                            <div
-                              key={component._id}
-                              className="bg-gray-50 rounded-lg p-4"
-                            >
-                              <div className="flex items-center justify-between mb-2">
-                                <h3 className="text-lg font-medium text-gray-900">
-                                  {component.name}
-                                </h3>
-                                <span
-                                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyles.bg} ${statusStyles.text}`}
-                                >
-                                  {statusStyles.icon} {component.status.replace('_', ' ')}
-                                </span>
-                              </div>
-                              <p className="text-sm text-gray-600">
-                                {component.description}
-                              </p>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <EmptyState />
-            )}
-          </Suspense>
-        </div>
-      </main>
-    );
+    return { groups, error: null };
   } catch (error) {
+    return { groups: null, error };
+  }
+}
+
+// Client component for rendering
+function HomeContent({ groups, error }: { groups: Group[] | null, error: any }) {
+  const bgColor = useColorModeValue('gray.50', 'gray.900');
+  const textColor = useColorModeValue('gray.600', 'gray.400');
+
+  // If there's an error, render the error state
+  if (error) {
     return (
-      <main className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Box as="main" minH="100vh" bg={bgColor}>
+        <Container maxW="container.lg" py={4}>
           <ErrorState message={error instanceof Error ? error.message : 'An unexpected error occurred'} />
-        </div>
-      </main>
+        </Container>
+      </Box>
     );
   }
+
+  // Otherwise render the normal UI
+  return (
+    <Box as="main" minH="100vh" bg={bgColor}>
+      <Container maxW="container.lg" py={4}>
+        {/* Header */}
+        <Box mb={4}>
+          <Heading as="h1" size="lg" fontWeight="bold">
+            System Status
+          </Heading>
+          <Text fontSize="sm" color={textColor} mt={1}>
+            Last updated: {new Date().toLocaleString()}
+          </Text>
+        </Box>
+
+        {/* Overall Status */}
+        <Box p={3} mb={4} shadow="md" borderRadius="md" bg={useColorModeValue('white', 'gray.800')}>
+          <Flex align="center">
+            <Center
+              h="32px"
+              w="32px"
+              borderRadius="full"
+              bg={useColorModeValue('green.100', 'green.800')}
+              color={useColorModeValue('green.700', 'green.200')}
+              fontWeight="bold"
+              mr={1.5}
+            >
+              ✓
+            </Center>
+            <Box>
+              <Heading as="h2" size="sm" fontWeight="medium">
+                All Systems Operational
+              </Heading>
+              <Text fontSize="sm" color={textColor}>
+                All core services are functioning normally
+              </Text>
+            </Box>
+          </Flex>
+        </Box>
+
+        {/* Service Groups */}
+        <Suspense fallback={<LoadingState />}>
+          {groups && groups.length > 0 ? (
+            <VStack spacing={4} mb={4} align="stretch">
+              {groups.map((group) => {
+                const groupStatus = getHighestSeverityStatus(group.components);
+                return (
+                  <Box key={group._id} p={3} shadow="md" borderRadius="md" bg={useColorModeValue('white', 'gray.800')}>
+                    <Box
+                      mb={2}
+                      p={2}
+                      borderRadius="md"
+                      bg={useColorModeValue(
+                        `${groupStatus.bgColor.replace('light', '50')}`,
+                        `${groupStatus.bgColor.replace('light', '900')}`
+                      )}
+                    >
+                      <Flex align="center" justify="space-between">
+                        <Heading as="h2" size="sm" fontWeight="medium">
+                          {group.name}
+                        </Heading>
+                        <Badge
+                          px={2}
+                          py={1}
+                          borderRadius="md"
+                          color={useColorModeValue(
+                            `${groupStatus.color.replace('dark', '700')}`,
+                            `${groupStatus.color.replace('dark', '300')}`
+                          )}
+                          fontWeight="medium"
+                        >
+                          {groupStatus.icon} {group.components.every(c => c.status === "operational") ? "All Operational" : groupStatus.displayText}
+                        </Badge>
+                      </Flex>
+                      <Text fontSize="sm" color={textColor} mt={0.5}>
+                        {group.description}
+                      </Text>
+                    </Box>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
+                      {group.components.map((component) => {
+                        const statusStyles = getStatusStyles(component.status);
+                        return (
+                          <Box key={component._id} p={2} bg={useColorModeValue('gray.50', 'gray.700')} borderRadius="md">
+                            <Flex align="center" justify="space-between" mb={1}>
+                              <Heading as="h3" size="xs" fontWeight="medium">
+                                {component.name}
+                              </Heading>
+                              <Badge
+                                px={2}
+                                py={1}
+                                borderRadius="md"
+                                bg={useColorModeValue(
+                                  `${statusStyles.bgColor.replace('light', '50')}`,
+                                  `${statusStyles.bgColor.replace('light', '900')}`
+                                )}
+                                color={useColorModeValue(
+                                  `${statusStyles.color.replace('dark', '700')}`,
+                                  `${statusStyles.color.replace('dark', '300')}`
+                                )}
+                                fontWeight="medium"
+                              >
+                                {statusStyles.icon} {component.status.replace('_', ' ')}
+                              </Badge>
+                            </Flex>
+                            <Text fontSize="sm" color={textColor}>
+                              {component.description}
+                            </Text>
+                          </Box>
+                        );
+                      })}
+                    </SimpleGrid>
+                  </Box>
+                );
+              })}
+            </VStack>
+          ) : (
+            <EmptyState />
+          )}
+        </Suspense>
+      </Container>
+    </Box>
+  );
+}
+
+// Main component that combines data fetching and rendering
+export default async function Home() {
+  const { groups, error } = await HomeData();
+  return <HomeContent groups={groups} error={error} />;
 }

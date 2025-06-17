@@ -1,5 +1,7 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+This project has Chakra UI integrated. See [CHAKRA_INTEGRATION.md](./CHAKRA_INTEGRATION.md) for details on how to use Chakra UI in this project.
+
 ## Getting Started
 
 First, run the development server:

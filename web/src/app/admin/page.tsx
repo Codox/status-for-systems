@@ -2,6 +2,19 @@
 
 import { useEffect, useState } from 'react'
 import { fetchWithAuth } from '@/lib/api'
+import {
+  Box,
+  Text,
+  Heading,
+  SimpleGrid,
+  Alert,
+  AlertIcon,
+  Card,
+  CardBody,
+  Flex,
+  VStack,
+  useColorModeValue
+} from '@chakra-ui/react'
 
 interface Stats {
   totalGroups: number
@@ -18,6 +31,9 @@ export default function AdminDashboard() {
     operationalComponents: 0,
   })
   const [error, setError] = useState('')
+  const textColor = useColorModeValue('gray.600', 'gray.400')
+  const cardBg = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
 
   useEffect(() => {
     const loadStats = async () => {
@@ -36,123 +52,102 @@ export default function AdminDashboard() {
 
   if (error) {
     return (
-      <div className="bg-red-50 p-4 rounded-md">
-        <div className="text-sm text-red-700">{error}</div>
-      </div>
+      <Box mt={2}>
+        <Alert status="error" borderRadius="md">
+          <AlertIcon />
+          {error}
+        </Alert>
+      </Box>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard Overview</h1>
-        <p className="mt-1 text-sm text-gray-600">
+    <VStack spacing={3} align="stretch">
+      <Box>
+        <Heading as="h1" size="lg" mb={1}>
+          Dashboard Overview
+        </Heading>
+        <Text color={textColor}>
           Welcome to your system status dashboard
-        </p>
-      </div>
+        </Text>
+      </Box>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={2}>
         {/* Total Groups */}
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <span className="text-2xl">👥</span>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    Total Groups
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    {stats.totalGroups}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Box shadow="md" borderRadius="md" bg={cardBg} height="100%">
+          <Flex p={2} align="center">
+            <Box fontSize="2rem" mr={2}>👥</Box>
+            <Box>
+              <Text fontSize="sm" color={textColor}>
+                Total Groups
+              </Text>
+              <Heading as="h3" size="md">
+                {stats.totalGroups}
+              </Heading>
+            </Box>
+          </Flex>
+        </Box>
 
         {/* Total Components */}
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <span className="text-2xl">⚙️</span>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    Total Components
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    {stats.totalComponents}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Box shadow="md" borderRadius="md" bg={cardBg} height="100%">
+          <Flex p={2} align="center">
+            <Box fontSize="2rem" mr={2}>⚙️</Box>
+            <Box>
+              <Text fontSize="sm" color={textColor}>
+                Total Components
+              </Text>
+              <Heading as="h3" size="md">
+                {stats.totalComponents}
+              </Heading>
+            </Box>
+          </Flex>
+        </Box>
 
         {/* Active Incidents */}
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <span className="text-2xl">🚨</span>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    Active Incidents
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    {stats.activeIncidents}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Box shadow="md" borderRadius="md" bg={cardBg} height="100%">
+          <Flex p={2} align="center">
+            <Box fontSize="2rem" mr={2}>🚨</Box>
+            <Box>
+              <Text fontSize="sm" color={textColor}>
+                Active Incidents
+              </Text>
+              <Heading as="h3" size="md">
+                {stats.activeIncidents}
+              </Heading>
+            </Box>
+          </Flex>
+        </Box>
 
         {/* Operational Components */}
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <span className="text-2xl">✅</span>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    Operational Components
-                  </dt>
-                  <dd className="text-lg font-medium text-gray-900">
-                    {stats.operationalComponents}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        <Box shadow="md" borderRadius="md" bg={cardBg} height="100%">
+          <Flex p={2} align="center">
+            <Box fontSize="2rem" mr={2}>✅</Box>
+            <Box>
+              <Text fontSize="sm" color={textColor}>
+                Operational Components
+              </Text>
+              <Heading as="h3" size="md">
+                {stats.operationalComponents}
+              </Heading>
+            </Box>
+          </Flex>
+        </Box>
+      </SimpleGrid>
 
       {/* Recent Activity */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg font-medium leading-6 text-gray-900">
+      <Card variant="outline">
+        <CardBody>
+          <Heading as="h3" size="sm" mb={2}>
             Recent Activity
-          </h3>
-        </div>
-        <div className="border-t border-gray-200">
-          <div className="px-4 py-5 sm:p-6">
-            <p className="text-sm text-gray-500">
+          </Heading>
+          <Box pt={1} borderTopWidth="1px" borderColor={borderColor}>
+            <Text fontSize="sm" color={textColor} py={2}>
               No recent activity to display
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Text>
+          </Box>
+        </CardBody>
+      </Card>
+    </VStack>
   )
-} 
+}
