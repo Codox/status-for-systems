@@ -2,8 +2,36 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import NextLink from 'next/link'
 import { fetchWithAuth } from '@/lib/api'
+import {
+  Box,
+  Text,
+  Heading,
+  Flex,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Textarea,
+  Checkbox,
+  VStack,
+  HStack,
+  Container,
+  Card,
+  CardHeader,
+  CardBody,
+  Icon,
+  Badge,
+  Alert,
+  AlertIcon,
+  Divider,
+  useColorModeValue,
+  Center,
+  Stack,
+  Spinner
+} from '@chakra-ui/react'
+import { LinkIcon, ArrowBackIcon, AddIcon } from '@chakra-ui/icons'
 
 interface Component {
   _id: string;
@@ -25,6 +53,13 @@ export default function NewGroupPage() {
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+
+  // Color mode values
+  const textColor = useColorModeValue('gray.600', 'gray.400')
+  const cardBg = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const headerBg = useColorModeValue('gray.50', 'gray.700')
+  const hoverBg = useColorModeValue('gray.50', 'gray.700')
 
   useEffect(() => {
     const loadComponents = async () => {
@@ -78,147 +113,150 @@ export default function NewGroupPage() {
     }))
   }
 
-  const handleComponentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target
+  const handleComponentChange = (componentId: string, isChecked: boolean) => {
     setFormData(prev => ({
       ...prev,
-      components: checked 
-        ? [...prev.components, value]
-        : prev.components.filter(id => id !== value)
+      components: isChecked
+        ? [...prev.components, componentId]
+        : prev.components.filter(id => id !== componentId)
     }))
   }
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-600">Loading components...</div>
-      </div>
+      <Center minH="300px">
+        <VStack spacing={4}>
+          <Spinner size="xl" color="blue.500" />
+          <Text color={textColor}>Loading components...</Text>
+        </VStack>
+      </Center>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="sm:flex sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-4 mb-4">
-            <Link
-              href="/admin/groups"
-              className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700"
-            >
-              <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Back to Groups
-            </Link>
-          </div>
-          <h1 className="text-2xl font-semibold text-gray-900">Create New Group</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Create a new group to organize your system components. Groups help you categorize and manage related components together, making it easier to monitor and maintain your system's health.
-          </p>
-        </div>
-      </div>
+    <Container maxW="container.xl" p={0}>
+      <VStack spacing={6} align="stretch">
+        {/* Header with back button */}
+        <Box>
+          <Button
+            as={NextLink}
+            href="/admin/groups"
+            variant="ghost"
+            leftIcon={<ArrowBackIcon />}
+            size="sm"
+            mb={4}
+            color={textColor}
+          >
+            Back to Groups
+          </Button>
+          <Heading as="h1" size="lg" mb={1}>
+            Create New Group
+          </Heading>
+          <Text color={textColor}>
+            Create a new group to organize your system components. Groups help you categorize and manage related components together.
+          </Text>
+        </Box>
 
-      <div className="bg-white shadow sm:rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="text-sm text-red-700">{error}</div>
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  placeholder="Enter group name"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                Description
-              </label>
-              <div className="mt-1">
-                <textarea
-                  name="description"
-                  id="description"
-                  rows={3}
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  placeholder="Enter group description"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Components
-              </label>
-              <div className="mt-1 space-y-2 max-h-60 overflow-y-auto border border-gray-300 rounded-md p-4">
-                {availableComponents.length > 0 ? (
-                  availableComponents.map((component) => (
-                    <div key={component._id} className="flex items-start">
-                      <div className="flex items-center h-5">
-                        <input
-                          id={`component-${component._id}`}
-                          name="components"
-                          type="checkbox"
-                          value={component._id}
-                          checked={formData.components.includes(component._id)}
-                          onChange={handleComponentChange}
-                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <label
-                          htmlFor={`component-${component._id}`}
-                          className="text-sm font-medium text-gray-700"
-                        >
-                          {component.name}
-                        </label>
-                        <p className="text-sm text-gray-500">{component.description}</p>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          component.status === 'operational' ? 'bg-green-100 text-green-800' :
-                          component.status === 'degraded' ? 'bg-yellow-100 text-yellow-800' :
-                          component.status === 'partial' ? 'bg-orange-100 text-orange-800' :
-                          component.status === 'major' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {component.status.replace('_', ' ')}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-500">No components available</p>
+        {/* Form Card */}
+        <Card shadow="md" borderRadius="lg" bg={cardBg} overflow="hidden">
+          <CardBody p={6}>
+            <form onSubmit={handleSubmit}>
+              <VStack spacing={6} align="stretch">
+                {error && (
+                  <Alert status="error" borderRadius="md">
+                    <AlertIcon />
+                    {error}
+                  </Alert>
                 )}
-              </div>
-            </div>
 
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Creating...' : 'Create Group'}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+                <FormControl isRequired>
+                  <FormLabel htmlFor="name">Name</FormLabel>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Enter group name"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel htmlFor="description">Description</FormLabel>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="Enter group description"
+                    rows={3}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Components</FormLabel>
+                  <Box
+                    borderWidth="1px"
+                    borderRadius="md"
+                    borderColor={borderColor}
+                    p={4}
+                    maxH="300px"
+                    overflowY="auto"
+                  >
+                    <VStack spacing={3} align="stretch">
+                      {availableComponents.length > 0 ? (
+                        availableComponents.map((component) => (
+                          <Box key={component._id} p={2} _hover={{ bg: hoverBg }} borderRadius="md">
+                            <Flex>
+                              <Checkbox
+                                id={`component-${component._id}`}
+                                isChecked={formData.components.includes(component._id)}
+                                onChange={(e) => handleComponentChange(component._id, e.target.checked)}
+                                mr={3}
+                                mt={1}
+                              />
+                              <Box>
+                                <Text fontWeight="medium">{component.name}</Text>
+                                <Text fontSize="sm" color={textColor} mb={1}>{component.description}</Text>
+                                <Badge
+                                  colorScheme={
+                                    component.status === 'operational' ? 'green' :
+                                    component.status === 'degraded' ? 'yellow' :
+                                    component.status === 'partial' ? 'orange' :
+                                    component.status === 'major' ? 'red' : 'gray'
+                                  }
+                                  borderRadius="full"
+                                  px={2}
+                                  py={0.5}
+                                  fontSize="xs"
+                                >
+                                  {component.status.replace('_', ' ')}
+                                </Badge>
+                              </Box>
+                            </Flex>
+                          </Box>
+                        ))
+                      ) : (
+                        <Text fontSize="sm" color={textColor}>No components available</Text>
+                      )}
+                    </VStack>
+                  </Box>
+                </FormControl>
+
+                <Flex justify="flex-end">
+                  <Button
+                    type="submit"
+                    colorScheme="blue"
+                    isLoading={isSubmitting}
+                    loadingText="Creating..."
+                  >
+                    Create Group
+                  </Button>
+                </Flex>
+              </VStack>
+            </form>
+          </CardBody>
+        </Card>
+      </VStack>
+    </Container>
   )
-} 
+}
