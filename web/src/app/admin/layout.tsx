@@ -25,11 +25,11 @@ import {
   DrawerBody,
   useDisclosure
 } from '@chakra-ui/react'
-import { FiInfo, FiBell, FiArrowLeft, FiMenu } from 'react-icons/fi'
+import { FiHome, FiAlertTriangle, FiArrowLeft, FiMenu } from 'react-icons/fi'
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin', icon: FiInfo },
-  { name: 'Incidents', href: '/admin/incidents', icon: FiBell },
+  { name: 'Dashboard', href: '/admin', icon: FiHome },
+  { name: 'Incidents', href: '/admin/incidents', icon: FiAlertTriangle },
 ]
 
 const DRAWER_WIDTH = "240px"
