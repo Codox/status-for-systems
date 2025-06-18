@@ -25,20 +25,11 @@ import {
   DrawerBody,
   useDisclosure
 } from '@chakra-ui/react'
-import {
-  InfoIcon,
-  SettingsIcon,
-  WarningIcon,
-  TimeIcon,
-  ArrowBackIcon,
-  HamburgerIcon
-} from '@chakra-ui/icons'
+import { FiInfo, FiBell, FiArrowLeft, FiMenu } from 'react-icons/fi'
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin', icon: InfoIcon },
-  { name: 'Groups', href: '/admin/groups', icon: TimeIcon },
-  { name: 'Components', href: '/admin/components', icon: SettingsIcon },
-  { name: 'Incidents', href: '/admin/incidents', icon: WarningIcon },
+  { name: 'Dashboard', href: '/admin', icon: FiInfo },
+  { name: 'Incidents', href: '/admin/incidents', icon: FiBell },
 ]
 
 const DRAWER_WIDTH = "240px"
@@ -121,7 +112,7 @@ export default function AdminLayout({
         >
           <Flex align="center">
             <Box minW="40px">
-              <Icon as={ArrowBackIcon} boxSize="20px" />
+              <Icon as={FiArrowLeft} boxSize="20px" />
             </Box>
             <Text>Back to Status Page</Text>
           </Flex>
@@ -150,7 +141,7 @@ export default function AdminLayout({
           </Heading>
           <IconButton
             aria-label="Open menu"
-            icon={<HamburgerIcon />}
+            icon={<FiMenu />}
             variant="ghost"
             color="white"
             _hover={{ bg: 'blue.600' }}
