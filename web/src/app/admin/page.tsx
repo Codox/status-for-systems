@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import NextLink from 'next/link'
+import { useRouter } from 'next/navigation'
 import { fetchWithAuth } from '@/lib/api'
 import {
   Box,
@@ -49,7 +51,25 @@ import {
   AvatarGroup,
   Tooltip,
   Skeleton,
-  SkeletonText
+  SkeletonText,
+  List,
+  ListItem,
+  Collapse,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Input,
+  Textarea,
+  Checkbox,
+  Center,
+  Spinner
 } from '@chakra-ui/react'
 import {
   ChevronDownIcon,
@@ -60,8 +80,28 @@ import {
   RepeatIcon,
   AddIcon,
   TimeIcon,
-  InfoIcon
+  InfoIcon,
+  EditIcon,
+  ChevronRightIcon
 } from '@chakra-ui/icons'
+
+interface Component {
+  _id: string;
+  name: string;
+  description: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Group {
+  _id: string;
+  name: string;
+  description: string;
+  components: Component[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface Stats {
   totalGroups: number
@@ -133,6 +173,7 @@ const mockSystemHealth: SystemHealth = {
 }
 
 export default function AdminDashboard() {
+  const router = useRouter()
   const [stats, setStats] = useState<Stats>({
     totalGroups: 0,
     totalComponents: 0,
@@ -144,6 +185,23 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  // Groups and components state
+  const [groups, setGroups] = useState<Group[]>([])
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
+  const [availableComponents, setAvailableComponents] = useState<Component[]>([])
+  const [groupsLoading, setGroupsLoading] = useState(true)
+  const [groupsError, setGroupsError] = useState('')
+
+  // Create group modal state
+  const { isOpen: isCreateGroupOpen, onOpen: onCreateGroupOpen, onClose: onCreateGroupClose } = useDisclosure()
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    components: [] as string[]
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formError, setFormError] = useState('')
+
   // Color mode values
   const textColor = useColorModeValue('gray.600', 'gray.400')
   const cardBg = useColorModeValue('white', 'gray.800')
@@ -152,13 +210,113 @@ export default function AdminDashboard() {
   const hoverBg = useColorModeValue('gray.50', 'gray.700')
   const subtleBg = useColorModeValue('gray.50', 'gray.700')
 
+  // Toggle group expansion
+  const toggleGroupExpansion = (groupId: string) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [groupId]: !prev[groupId]
+    }))
+  }
+
+  // Handle form input changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  // Handle component checkbox changes
+  const handleComponentChange = (componentId: string, isChecked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      components: isChecked
+        ? [...prev.components, componentId]
+        : prev.components.filter(id => id !== componentId)
+    }))
+  }
+
+  // Reset form data
+  const resetFormData = () => {
+    setFormData({
+      name: '',
+      description: '',
+      components: []
+    })
+    setFormError('')
+  }
+
+  // Handle create group form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setFormError('')
+
+    try {
+      const response = await fetchWithAuth('/admin/groups', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create group')
+      }
+
+      // Refresh groups data
+      loadGroups()
+
+      // Close modal and reset form
+      onCreateGroupClose()
+      resetFormData()
+    } catch (err) {
+      setFormError('Failed to create group. Please try again.')
+      console.error('Error creating group:', err)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  // Load groups data
+  const loadGroups = async () => {
+    setGroupsLoading(true)
+    try {
+      const response = await fetchWithAuth('/admin/groups')
+      const data: Group[] = await response.json()
+      setGroups(data)
+    } catch (err) {
+      setGroupsError('Failed to load groups. Please check your network and try again.')
+      console.error('Error fetching groups:', err)
+    } finally {
+      setGroupsLoading(false)
+    }
+  }
+
+  // Load components data
+  const loadComponents = async () => {
+    try {
+      const response = await fetchWithAuth('/admin/components')
+      const data = await response.json()
+      setAvailableComponents(data)
+    } catch (err) {
+      console.error('Error loading components:', err)
+    }
+  }
+
   useEffect(() => {
     const loadData = async () => {
       try {
         // Load dashboard statistics
-        const response = await fetchWithAuth('/api/admin/stats')
-        const data = await response.json()
-        setStats(data)
+        // const response = await fetchWithAuth('/api/admin/stats')
+        // const data = await response.json()
+        // setStats(data)
+
+        // Load groups and components
+        loadGroups()
+        loadComponents()
 
         // In a real app, you would fetch these from the API
         // For now, we'll use mock data after a short delay to simulate loading
@@ -355,6 +513,277 @@ export default function AdminDashboard() {
           </CardBody>
         </Card>
       </SimpleGrid>
+
+      {/* Groups and Components Section */}
+      <Card shadow="md" borderRadius="lg" bg={cardBg} overflow="hidden" mb={6}>
+        <CardHeader bg={headerBg} py={3} px={6}>
+          <Flex
+            direction={{ base: "column", sm: "row" }}
+            justify="space-between"
+            align={{ base: "flex-start", sm: "center" }}
+            gap={2}
+          >
+            <HStack spacing={2}>
+              <Icon as={LinkIcon} color="blue.500" />
+              <Heading as="h3" size="md">
+                Service Groups
+              </Heading>
+            </HStack>
+            <Button
+              colorScheme="blue"
+              size="sm"
+              leftIcon={<AddIcon />}
+              onClick={onCreateGroupOpen}
+            >
+              Add Group
+            </Button>
+          </Flex>
+        </CardHeader>
+        <CardBody p={0}>
+          {groupsLoading ? (
+            <VStack spacing={4} align="stretch" p={6}>
+              {[1, 2, 3].map((i) => (
+                <Box key={i} p={2}>
+                  <Skeleton height="1.5rem" width="60%" mb={2} />
+                  <Skeleton height="1rem" width="90%" mb={2} />
+                  <Skeleton height="1rem" width="30%" />
+                </Box>
+              ))}
+            </VStack>
+          ) : groupsError ? (
+            <Alert status="error" m={6} borderRadius="md">
+              <AlertIcon />
+              <Box>
+                <Heading as="h4" size="sm" mb={1}>
+                  Error Loading Groups
+                </Heading>
+                <Text fontSize="sm">{groupsError}</Text>
+              </Box>
+            </Alert>
+          ) : groups.length > 0 ? (
+            <List>
+              {groups.map((group: Group) => (
+                <ListItem key={group._id} borderBottomWidth={1} borderColor={borderColor} _last={{ borderBottomWidth: 0 }}>
+                  <Box>
+                    <Flex
+                      px={6}
+                      py={4}
+                      _hover={{ bg: hoverBg }}
+                      transition="background 0.2s"
+                      justify="space-between"
+                      align="flex-start"
+                      onClick={() => toggleGroupExpansion(group._id)}
+                      cursor="pointer"
+                    >
+                      <HStack spacing={3} align="flex-start">
+                        <Icon
+                          as={expandedGroups[group._id] ? ChevronDownIcon : ChevronRightIcon}
+                          mt={1}
+                          color="blue.500"
+                        />
+                        <Box>
+                          <Heading as="h4" size="sm" mb={1} color="blue.600">
+                            {group.name}
+                          </Heading>
+                          <Text fontSize="sm" color={textColor} mb={2}>
+                            {group.description}
+                          </Text>
+                          <Badge colorScheme="green" borderRadius="full" px={2}>
+                            {group.components?.length || 0} {group.components?.length === 1 ? 'component' : 'components'}
+                          </Badge>
+                        </Box>
+                      </HStack>
+                      <Button
+                        as={NextLink}
+                        href={`/admin/groups/${group._id}`}
+                        size="sm"
+                        colorScheme="blue"
+                        variant="ghost"
+                        leftIcon={<EditIcon />}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Edit
+                      </Button>
+                    </Flex>
+                    <Collapse in={expandedGroups[group._id]} animateOpacity>
+                      <Box pl={16} pr={6} pb={4} bg={subtleBg}>
+                        {group.components && group.components.length > 0 ? (
+                          <VStack spacing={3} align="stretch">
+                            {group.components.map((component) => (
+                              <Box key={component._id} p={2} bg={cardBg} borderRadius="md" borderWidth="1px" borderColor={borderColor}>
+                                <Flex justify="space-between" align="flex-start">
+                                  <Box>
+                                    <Text fontWeight="medium">{component.name}</Text>
+                                    <Text fontSize="sm" color={textColor} mb={1}>{component.description}</Text>
+                                    <Badge
+                                      colorScheme={
+                                        component.status === 'operational' ? 'green' :
+                                        component.status === 'degraded' ? 'yellow' :
+                                        component.status === 'partial' ? 'orange' :
+                                        component.status === 'major' ? 'red' : 'gray'
+                                      }
+                                      borderRadius="full"
+                                      px={2}
+                                      py={0.5}
+                                      fontSize="xs"
+                                    >
+                                      {component.status.replace('_', ' ')}
+                                    </Badge>
+                                  </Box>
+                                  <Button
+                                    as={NextLink}
+                                    href={`/admin/components/${component._id}`}
+                                    size="xs"
+                                    colorScheme="blue"
+                                    variant="ghost"
+                                    leftIcon={<EditIcon />}
+                                  >
+                                    Edit
+                                  </Button>
+                                </Flex>
+                              </Box>
+                            ))}
+                          </VStack>
+                        ) : (
+                          <Text fontSize="sm" color={textColor} py={2}>
+                            No components in this group.
+                          </Text>
+                        )}
+                      </Box>
+                    </Collapse>
+                  </Box>
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Box px={6} py={8} textAlign="center">
+              <VStack spacing={3}>
+                <Icon as={LinkIcon} boxSize="3rem" color="gray.300" />
+                <Text fontWeight="medium">No groups found</Text>
+                <Text color={textColor} fontSize="sm">
+                  Create your first group to get started.
+                </Text>
+                <Button
+                  colorScheme="blue"
+                  size="sm"
+                  mt={2}
+                  leftIcon={<AddIcon />}
+                  onClick={onCreateGroupOpen}
+                >
+                  Add Group
+                </Button>
+              </VStack>
+            </Box>
+          )}
+        </CardBody>
+      </Card>
+
+      {/* Create Group Modal */}
+      <Modal isOpen={isCreateGroupOpen} onClose={onCreateGroupClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create New Group</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={handleSubmit}>
+              <VStack spacing={6} align="stretch">
+                {formError && (
+                  <Alert status="error" borderRadius="md">
+                    <AlertIcon />
+                    {formError}
+                  </Alert>
+                )}
+
+                <FormControl isRequired>
+                  <FormLabel htmlFor="name">Name</FormLabel>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Enter group name"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel htmlFor="description">Description</FormLabel>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="Enter group description"
+                    rows={3}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Components</FormLabel>
+                  <Box
+                    borderWidth="1px"
+                    borderRadius="md"
+                    borderColor={borderColor}
+                    p={4}
+                    maxH="300px"
+                    overflowY="auto"
+                  >
+                    <VStack spacing={3} align="stretch">
+                      {availableComponents.length > 0 ? (
+                        availableComponents.map((component) => (
+                          <Box key={component._id} p={2} _hover={{ bg: hoverBg }} borderRadius="md">
+                            <Flex>
+                              <Checkbox
+                                id={`component-${component._id}`}
+                                isChecked={formData.components.includes(component._id)}
+                                onChange={(e) => handleComponentChange(component._id, e.target.checked)}
+                                mr={3}
+                                mt={1}
+                              />
+                              <Box>
+                                <Text fontWeight="medium">{component.name}</Text>
+                                <Text fontSize="sm" color={textColor} mb={1}>{component.description}</Text>
+                                <Badge
+                                  colorScheme={
+                                    component.status === 'operational' ? 'green' :
+                                    component.status === 'degraded' ? 'yellow' :
+                                    component.status === 'partial' ? 'orange' :
+                                    component.status === 'major' ? 'red' : 'gray'
+                                  }
+                                  borderRadius="full"
+                                  px={2}
+                                  py={0.5}
+                                  fontSize="xs"
+                                >
+                                  {component.status.replace('_', ' ')}
+                                </Badge>
+                              </Box>
+                            </Flex>
+                          </Box>
+                        ))
+                      ) : (
+                        <Text fontSize="sm" color={textColor}>No components available</Text>
+                      )}
+                    </VStack>
+                  </Box>
+                </FormControl>
+              </VStack>
+            </form>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onCreateGroupClose}>
+              Cancel
+            </Button>
+            <Button
+              colorScheme="blue"
+              onClick={handleSubmit}
+              isLoading={isSubmitting}
+              loadingText="Creating..."
+            >
+              Create Group
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
       {/* Main Content Grid */}
       <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
