@@ -2,6 +2,49 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Component } from '../../components/entities/component.entity';
 
+export enum IncidentStatus {
+  INVESTIGATING = 'investigating',
+  IDENTIFIED = 'identified',
+  MONITORING = 'monitoring',
+  RESOLVED = 'resolved',
+}
+
+export interface StatusChange {
+  from: IncidentStatus;
+  to: IncidentStatus;
+}
+
+export interface ComponentStatusChange {
+  componentId: string;
+  from: string;
+  to: string;
+}
+
+export interface IncidentUpdate {
+  message: string;
+  statusUpdate?: StatusChange;
+  componentStatusUpdates?: ComponentStatusChange[];
+  createdAt: Date;
+}
+
+const StatusChangeSchema = {
+  from: { type: String, enum: Object.values(IncidentStatus), required: true },
+  to: { type: String, enum: Object.values(IncidentStatus), required: true },
+};
+
+const ComponentStatusChangeSchema = {
+  componentId: { type: String, required: true },
+  from: { type: String, required: true },
+  to: { type: String, required: true },
+};
+
+const IncidentUpdateSchema = {
+  message: { type: String, required: true },
+  statusUpdate: StatusChangeSchema,
+  componentStatusUpdates: [ComponentStatusChangeSchema],
+  createdAt: { type: Date, default: Date.now },
+};
+
 @Schema({
   timestamps: true,
   toJSON: {
@@ -17,15 +60,25 @@ import { Component } from '../../components/entities/component.entity';
     },
   },
 })
-export class Group extends Document {
+export class Incident extends Document {
   @Prop({ required: true })
-  name: string;
+  title: string;
 
   @Prop({ required: true })
   description: string;
 
+  @Prop({
+    type: String,
+    enum: IncidentStatus,
+    default: IncidentStatus.INVESTIGATING,
+  })
+  status: IncidentStatus;
+
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Component' }] })
-  components: Component[];
+  affectedComponents: Component[];
+
+  @Prop({ type: [IncidentUpdateSchema] })
+  updates: IncidentUpdate[];
 
   @Prop()
   createdAt: Date;
@@ -34,4 +87,4 @@ export class Group extends Document {
   updatedAt: Date;
 }
 
-export const GroupSchema = SchemaFactory.createForClass(Group);
+export const IncidentSchema = SchemaFactory.createForClass(Incident);
