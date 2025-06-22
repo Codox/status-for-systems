@@ -9,7 +9,7 @@ export enum ComponentStatus {
   UNDER_MAINTENANCE = 'under_maintenance',
 }
 
-@Schema({ 
+@Schema({
   timestamps: true,
   toJSON: {
     transform: (_, ret) => {
@@ -45,4 +45,4 @@ export class Component extends Document {
   updatedAt: Date;
 }
 
-export const ComponentSchema = SchemaFactory.createForClass(Component); 
+export const ComponentSchema = SchemaFactory.createForClass(Component);

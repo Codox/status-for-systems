@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { Component } from '../components/entities/component.entity';
 import { Group } from '../groups/entities/group.entity';
 import { CreateComponentRequest } from '../components/requests/create-component.request';
@@ -27,7 +36,9 @@ export class AdminController {
   }
 
   @Post('components')
-  async createComponent(@Body() createComponentRequest: CreateComponentRequest): Promise<Component> {
+  async createComponent(
+    @Body() createComponentRequest: CreateComponentRequest,
+  ): Promise<Component> {
     // TODO: Implement create
     return null;
   }
@@ -58,7 +69,9 @@ export class AdminController {
   }
 
   @Post('groups')
-  async createGroup(@Body() createGroupRequest: CreateGroupRequest): Promise<Group> {
+  async createGroup(
+    @Body() createGroupRequest: CreateGroupRequest,
+  ): Promise<Group> {
     return this.groupsService.create(createGroupRequest);
   }
 
@@ -75,4 +88,4 @@ export class AdminController {
   async removeGroup(@Param('id') id: string): Promise<void> {
     // TODO: Implement remove
   }
-} 
+}
