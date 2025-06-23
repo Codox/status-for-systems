@@ -124,12 +124,14 @@ export default function NewGroupPage() {
 
   if (isLoading) {
     return (
-      <Center minH="300px">
-        <VStack spacing={4}>
-          <Spinner size="xl" color="blue.500" />
-          <Text color={textColor}>Loading components...</Text>
-        </VStack>
-      </Center>
+      <Container maxW="container.xl" p={0}>
+        <Center minH="300px">
+          <VStack spacing={4}>
+            <Spinner size="xl" color="blue.500" />
+            <Text color={textColor}>Loading components...</Text>
+          </VStack>
+        </Center>
+      </Container>
     )
   }
 

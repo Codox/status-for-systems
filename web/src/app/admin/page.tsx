@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { fetchWithAuth } from '@/lib/api'
 import {
   Box,
+  Container,
   Text,
   Heading,
   SimpleGrid,
@@ -398,9 +399,15 @@ export default function AdminDashboard() {
   }
 
   return (
-    <Box>
+    <Container maxW="container.xl" p={0}>
       {/* Header with actions */}
-      <Flex justify="space-between" align="center" mb={4}>
+      <Flex
+        direction={{ base: "column", sm: "row" }}
+        justify="space-between"
+        align={{ base: "flex-start", sm: "center" }}
+        mb={6}
+        mt={4}
+        gap={3}>
         <Box>
           <Heading as="h1" size="lg" mb={1}>
             Admin Dashboard
@@ -1058,6 +1065,6 @@ export default function AdminDashboard() {
           </Card>
         </GridItem>
       </Grid>
-    </Box>
+    </Container>
   )
 }

@@ -149,19 +149,25 @@ export default function NewIncidentPage() {
 
   return (
     <Container maxW="container.xl" p={0}>
-      <Flex mb={6} align="center">
+      <Box mb={6}>
         <Button
           as={NextLink}
           href="/admin/incidents"
           variant="ghost"
           leftIcon={<ArrowBackIcon />}
-          mr={3}
           size="sm"
+          mb={4}
+          color={textColor}
         >
-          Back
+          Back to Incidents
         </Button>
-        <Heading as="h1" size="lg">Create New Incident</Heading>
-      </Flex>
+        <Heading as="h1" size="lg" mb={1}>
+          Create New Incident
+        </Heading>
+        <Text color={textColor}>
+          Create a new incident to report system issues and keep users informed.
+        </Text>
+      </Box>
 
       {error && (
         <Alert status="error" mb={6} borderRadius="md">
