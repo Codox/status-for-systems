@@ -1,11 +1,16 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { Component } from '../components/entities/component.entity';
 import { Group } from '../groups/entities/group.entity';
+import { Incident } from '../incidents/entities/incident.entity';
 import { GroupsService } from '../groups/groups.service';
+import { IncidentsService } from '../incidents/incidents.service';
 
 @Controller('public')
 export class PublicController {
-  constructor(private readonly groupsService: GroupsService) {}
+  constructor(
+    private readonly groupsService: GroupsService,
+    private readonly incidentsService: IncidentsService,
+  ) {}
 
   @Get('components')
   async findAllComponents(): Promise<Component[]> {
@@ -27,5 +32,15 @@ export class PublicController {
   @Get('groups/:id')
   async findOneGroup(@Param('id') id: string): Promise<Group> {
     return this.groupsService.findOne(id);
+  }
+
+  @Get('incidents')
+  async findAllIncidents(): Promise<Incident[]> {
+    return this.incidentsService.findAll();
+  }
+
+  @Get('incidents/:id')
+  async findOneIncident(@Param('id') id: string): Promise<Incident> {
+    return this.incidentsService.findOne(id);
   }
 }

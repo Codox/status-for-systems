@@ -7,6 +7,7 @@ import { PublicController } from './controllers/public.controller';
 import { AdminController } from './controllers/admin.controller';
 import { AuthModule } from './auth/auth.module';
 import { ComponentsModule } from './components/components.module';
+import { IncidentsModule } from './incidents/incidents.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { ComponentsModule } from './components/components.module';
         const uri = configService.get<string>('MONGODB_URI');
         const user = configService.get<string>('MONGODB_USER');
         const pass = configService.get<string>('MONGODB_PASSWORD');
-            
+
         return {
           uri,
           user,
@@ -30,6 +31,7 @@ import { ComponentsModule } from './components/components.module';
     }),
     GroupsModule,
     ComponentsModule,
+    IncidentsModule,
     SeedersModule,
     AuthModule,
   ],
