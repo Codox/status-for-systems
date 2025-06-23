@@ -210,6 +210,7 @@ export default function IncidentsPage() {
                 href="/admin/incidents/new"
                 colorScheme="blue"
                 leftIcon={<AddIcon />}
+                size="md"
               >
                 Create First Incident
               </Button>

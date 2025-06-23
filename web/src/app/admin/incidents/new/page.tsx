@@ -139,7 +139,7 @@ export default function NewIncidentPage() {
 
   if (isLoading) {
     return (
-      <Container maxW="container.md" py={8}>
+      <Container maxW="container.xl" p={0}>
         <Center>
           <Spinner size="xl" />
         </Center>
@@ -148,7 +148,7 @@ export default function NewIncidentPage() {
   }
 
   return (
-    <Container maxW="container.md" py={4}>
+    <Container maxW="container.xl" p={0}>
       <Flex mb={6} align="center">
         <Button
           as={NextLink}
@@ -156,6 +156,7 @@ export default function NewIncidentPage() {
           variant="ghost"
           leftIcon={<ArrowBackIcon />}
           mr={3}
+          size="sm"
         >
           Back
         </Button>
@@ -272,6 +273,7 @@ export default function NewIncidentPage() {
                   as={NextLink}
                   href="/admin/incidents"
                   variant="outline"
+                  size="sm"
                 >
                   Cancel
                 </Button>
@@ -280,6 +282,7 @@ export default function NewIncidentPage() {
                   colorScheme="blue"
                   isLoading={isSubmitting}
                   loadingText="Creating..."
+                  size="md"
                 >
                   Create Incident
                 </Button>

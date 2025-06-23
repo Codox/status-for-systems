@@ -248,6 +248,7 @@ export default function NewGroupPage() {
                     colorScheme="blue"
                     isLoading={isSubmitting}
                     loadingText="Creating..."
+                    size="md"
                   >
                     Create Group
                   </Button>
