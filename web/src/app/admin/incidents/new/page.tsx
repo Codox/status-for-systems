@@ -326,7 +326,7 @@ export default function NewIncidentPage() {
                   as={NextLink}
                   href="/admin/incidents"
                   variant="outline"
-                  size="sm"
+                  size="md"
                 >
                   Cancel
                 </Button>
