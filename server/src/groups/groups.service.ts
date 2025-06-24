@@ -9,7 +9,8 @@ import { Component } from '../components/entities/component.entity';
 export class GroupsService {
   constructor(
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
-    @InjectModel(Component.name) private readonly componentModel: Model<Component>,
+    @InjectModel(Component.name)
+    private readonly componentModel: Model<Component>,
   ) {}
 
   async findAll(): Promise<Group[]> {
@@ -23,9 +24,11 @@ export class GroupsService {
   async create(createGroupRequest: CreateGroupRequest): Promise<Group> {
     // Verify that all component IDs exist
     const componentIds = createGroupRequest.components;
-    const existingComponents = await this.componentModel.find({
-      _id: { $in: componentIds }
-    }).exec();
+    const existingComponents = await this.componentModel
+      .find({
+        _id: { $in: componentIds },
+      })
+      .exec();
 
     if (existingComponents.length !== componentIds.length) {
       throw new NotFoundException('One or more component IDs do not exist');
@@ -34,4 +37,4 @@ export class GroupsService {
     const group = new this.groupModel(createGroupRequest);
     return group.save();
   }
-} 
+}

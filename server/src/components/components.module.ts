@@ -5,9 +5,11 @@ import { Component, ComponentSchema } from './entities/component.entity';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Component.name, schema: ComponentSchema }]),
+    MongooseModule.forFeature([
+      { name: Component.name, schema: ComponentSchema },
+    ]),
   ],
   providers: [ComponentsService],
   exports: [ComponentsService],
 })
-export class ComponentsModule {} 
+export class ComponentsModule {}

@@ -5,4 +5,4 @@ async function bootstrap() {
   await CommandFactory.run(AppModule, ['warn', 'error']);
 }
 
-bootstrap(); 
+bootstrap();
