@@ -15,7 +15,7 @@ import { CreateComponentRequest } from '../components/requests/create-component.
 import { CreateGroupRequest } from '../groups/requests/create-group.request';
 import { CreateIncidentRequest } from '../incidents/requests/create-incident.request';
 import { BasicAuthGuard } from '../auth/basic-auth.guard';
-import { GroupsService } from 'src/groups/groups.service';
+import { GroupsService } from '../groups/groups.service';
 import { ComponentsService } from '../components/components.service';
 import { IncidentsService } from '../incidents/incidents.service';
 

@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
+import { InjectModel, InjectConnection } from '@nestjs/mongoose';
+import { Model, Connection } from 'mongoose';
 import { Incident } from './entities/incident.entity';
 import { Component } from '../components/entities/component.entity';
 import { CreateIncidentRequest } from './requests/create-incident.request';
+import { map } from 'remeda';
 
 @Injectable()
 export class IncidentsService {
@@ -11,6 +12,7 @@ export class IncidentsService {
     @InjectModel(Incident.name) private readonly incidentModel: Model<Incident>,
     @InjectModel(Component.name)
     private readonly componentModel: Model<Component>,
+    @InjectConnection() private readonly connection: Connection,
   ) {}
 
   async findAll(): Promise<Incident[]> {
@@ -27,6 +29,30 @@ export class IncidentsService {
   async create(
     createIncidentRequest: CreateIncidentRequest,
   ): Promise<Incident> {
+    // Verify that all affected component IDs exist
+    let componentIds = map(
+      createIncidentRequest.affectedComponents,
+      (c) => c.id,
+    ) as string[];
 
+    const existingComponents = await this.componentModel
+      .find({
+        _id: { $in: componentIds },
+      })
+      .exec();
+
+    componentIds = existingComponents.map((c) => c._id) as string[];
+
+    const incident = new this.incidentModel({
+      title: createIncidentRequest.title,
+      description: createIncidentRequest.description,
+      status: createIncidentRequest.status || 'investigating',
+      impact: createIncidentRequest.impact || 'minor',
+      affectedComponents: componentIds,
+    });
+
+    const savedIncident = await incident.save();
+
+    return savedIncident;
   }
 }
