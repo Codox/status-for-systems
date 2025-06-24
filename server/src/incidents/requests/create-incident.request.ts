@@ -5,9 +5,21 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
-import { Types } from 'mongoose';
-import { IncidentStatus } from '../entities/incident.entity';
+import { Type } from 'class-transformer';
+import { IncidentStatus, IncidentImpact } from '../entities/incident.entity';
+import { ComponentStatus } from '../../components/entities/component.entity';
+
+export class AffectedComponentRequest {
+  @IsNotEmpty()
+  @IsMongoId()
+  id: string;
+
+  @IsNotEmpty()
+  @IsEnum(ComponentStatus)
+  status: ComponentStatus;
+}
 
 export class CreateIncidentRequest {
   @IsNotEmpty()
@@ -23,7 +35,12 @@ export class CreateIncidentRequest {
   status: IncidentStatus;
 
   @IsOptional()
+  @IsEnum(IncidentImpact)
+  impact: IncidentImpact;
+
+  @IsOptional()
   @IsArray()
-  @IsMongoId({ each: true })
-  affectedComponents: Types.ObjectId[];
+  @ValidateNested({ each: true })
+  @Type(() => AffectedComponentRequest)
+  affectedComponents: AffectedComponentRequest[];
 }
