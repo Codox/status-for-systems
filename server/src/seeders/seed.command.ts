@@ -4,17 +4,20 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Group } from '../groups/entities/group.entity';
 import { Component } from '../components/entities/component.entity';
+import { Incident } from '../incidents/entities/incident.entity';
 
 @Injectable()
 @Command({
   name: 'seed:test-data',
-  description: 'Seed the database with test data for groups and components',
+  description: 'Seed the database with test data for groups and components, and clear incidents',
 })
 export class SeedCommand extends CommandRunner {
   constructor(
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
     @InjectModel(Component.name)
     private readonly componentModel: Model<Component>,
+    @InjectModel(Incident.name)
+    private readonly incidentModel: Model<Incident>,
   ) {
     super();
   }
@@ -24,6 +27,7 @@ export class SeedCommand extends CommandRunner {
       // Clear existing data
       await this.groupModel.deleteMany({});
       await this.componentModel.deleteMany({});
+      await this.incidentModel.deleteMany({});
       console.log('Cleared existing data');
 
       // Create test components
