@@ -51,7 +51,7 @@ export default function NewIncidentPage() {
     description: '',
     status: 'investigating',
     impact: 'minor',
-    affectedComponents: [] as string[]
+    affectedComponents: [] as { id: string; status: string }[]
   })
   const [availableComponents, setAvailableComponents] = useState<Component[]>([])
   const [error, setError] = useState('')
@@ -121,19 +121,41 @@ export default function NewIncidentPage() {
     setFormData(prev => {
       const affectedComponents = [...prev.affectedComponents]
 
-      if (affectedComponents.includes(componentId)) {
+      // Check if component is already in the array
+      const existingIndex = affectedComponents.findIndex(comp => comp.id === componentId)
+
+      if (existingIndex !== -1) {
         // Remove if already selected
         return {
           ...prev,
-          affectedComponents: affectedComponents.filter(id => id !== componentId)
+          affectedComponents: affectedComponents.filter(comp => comp.id !== componentId)
         }
       } else {
-        // Add if not selected
+        // Add if not selected with default status "operational"
         return {
           ...prev,
-          affectedComponents: [...affectedComponents, componentId]
+          affectedComponents: [...affectedComponents, { id: componentId, status: 'operational' }]
         }
       }
+    })
+  }
+
+  // Handle component status change
+  const handleComponentStatusChange = (componentId: string, status: string) => {
+    setFormData(prev => {
+      const affectedComponents = [...prev.affectedComponents]
+      const componentIndex = affectedComponents.findIndex(comp => comp.id === componentId)
+
+      if (componentIndex !== -1) {
+        // Update the status of the component
+        affectedComponents[componentIndex] = { ...affectedComponents[componentIndex], status }
+        return {
+          ...prev,
+          affectedComponents
+        }
+      }
+
+      return prev
     })
   }
 
@@ -254,21 +276,46 @@ export default function NewIncidentPage() {
                       <Text color={textColor}>No components available</Text>
                     ) : (
                       <VStack align="stretch" spacing={2}>
-                        {availableComponents.map((component) => (
-                          <Checkbox
-                            key={component._id}
-                            isChecked={formData.affectedComponents.includes(component._id)}
-                            onChange={() => handleCheckboxChange(component._id)}
-                          >
-                            {component.name}
-                          </Checkbox>
-                        ))}
+                        {availableComponents.map((component) => {
+                          const isSelected = formData.affectedComponents.some(comp => comp.id === component._id);
+                          const selectedComponent = formData.affectedComponents.find(comp => comp.id === component._id);
+
+                          return (
+                            <Box key={component._id} mb={2}>
+                              <Checkbox
+                                isChecked={isSelected}
+                                onChange={() => handleCheckboxChange(component._id)}
+                                mb={isSelected ? 2 : 0}
+                              >
+                                {component.name}
+                              </Checkbox>
+
+                              {isSelected && (
+                                <HStack ml={6} mt={1}>
+                                  <Text fontSize="sm" width="80px">Status:</Text>
+                                  <Select
+                                    size="sm"
+                                    value={selectedComponent?.status || 'operational'}
+                                    onChange={(e) => handleComponentStatusChange(component._id, e.target.value)}
+                                    width="200px"
+                                  >
+                                    <option value="operational">Operational</option>
+                                    <option value="degraded">Degraded</option>
+                                    <option value="partial">Partial Outage</option>
+                                    <option value="major">Major Outage</option>
+                                    <option value="under_maintenance">Under Maintenance</option>
+                                  </Select>
+                                </HStack>
+                              )}
+                            </Box>
+                          );
+                        })}
                       </VStack>
                     )}
                   </CardBody>
                 </Card>
                 <FormHelperText>
-                  Select all components affected by this incident
+                  Select all components affected by this incident and set their status
                 </FormHelperText>
               </FormControl>
 
