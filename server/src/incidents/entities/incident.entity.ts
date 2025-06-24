@@ -9,8 +9,14 @@ export enum IncidentStatus {
   RESOLVED = 'resolved',
 }
 
+export enum IncidentImpact {
+  MINOR = 'minor',
+  MAJOR = 'major',
+  CRITICAL = 'critical',
+}
+
 export interface StatusChange {
-  from: IncidentStatus;
+  from: IncidentStatus | null;
   to: IncidentStatus;
 }
 
@@ -28,7 +34,7 @@ export interface IncidentUpdate {
 }
 
 const StatusChangeSchema = {
-  from: { type: String, enum: Object.values(IncidentStatus), required: true },
+  from: { type: String, enum: Object.values(IncidentStatus), required: false },
   to: { type: String, enum: Object.values(IncidentStatus), required: true },
 };
 
@@ -73,6 +79,13 @@ export class Incident extends Document {
     default: IncidentStatus.INVESTIGATING,
   })
   status: IncidentStatus;
+
+  @Prop({
+    type: String,
+    enum: IncidentImpact,
+    default: IncidentImpact.MINOR,
+  })
+  impact: IncidentImpact;
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Component' }] })
   affectedComponents: Component[];
