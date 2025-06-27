@@ -81,26 +81,29 @@ export class IncidentsService {
 
     // Create the initial incident update
     const initialUpdate = {
-      message: 'Incident created',
+      message: 'Incident Created',
       statusUpdate: {
         from: null,
         to: savedIncident.status,
       },
-      componentStatusUpdates: createIncidentRequest.affectedComponents.map(
-        (c) => ({
-          componentId: c.id,
+      componentStatusUpdates: map(existingComponents, (component) => ({
+        id: component.id,
 
-          // Get status before the update
-          from:
-            existingComponents.find(
-              (ec) => ec._id.toString() === c.id.toString(),
-            )?.status || 'operational',
+        // Get status before the update
+        from: component.status,
 
-          to: c.status,
-        }),
-      ),
+        // Set to the status from the request
+        to: find(
+          createIncidentRequest.affectedComponents,
+          (c) => c.id.toString() === component._id.toString(),
+        ).status,
+      })),
       createdAt: new Date(),
     };
+
+    // Add the initial update to the incident
+    savedIncident.updates = [initialUpdate];
+    await savedIncident.save();
 
     return savedIncident;
   }

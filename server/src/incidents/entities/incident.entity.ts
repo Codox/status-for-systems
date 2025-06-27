@@ -25,7 +25,7 @@ export interface IncidentUpdate {
     to: IncidentStatus;
   };
   componentStatusUpdates?: {
-    componentId: string;
+    id: string;
     from: ComponentStatus;
     to: ComponentStatus;
   }[];
@@ -90,7 +90,7 @@ export class Incident extends Document {
         },
         componentStatusUpdates: [
           {
-            componentId: { type: String, required: true },
+            id: { type: String, required: true },
             from: { type: String, required: true },
             to: { type: String, required: true },
           },
