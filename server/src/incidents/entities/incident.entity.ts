@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Component } from '../../components/entities/component.entity';
+import { Component, ComponentStatus } from '../../components/entities/component.entity';
 
 export enum IncidentStatus {
   INVESTIGATING = 'investigating',
@@ -15,41 +15,20 @@ export enum IncidentImpact {
   CRITICAL = 'critical',
 }
 
-export interface StatusChange {
-  from: IncidentStatus | null;
-  to: IncidentStatus;
-}
-
-export interface ComponentStatusChange {
-  componentId: string;
-  from: string;
-  to: string;
-}
-
 export interface IncidentUpdate {
   message: string;
-  statusUpdate?: StatusChange;
-  componentStatusUpdates?: ComponentStatusChange[];
+  statusUpdate?: {
+    from: IncidentStatus | null;
+    to: IncidentStatus;
+  };
+  componentStatusUpdates?: {
+    componentId: string;
+    from: ComponentStatus;
+    to: ComponentStatus;
+  }[];
+
   createdAt: Date;
 }
-
-const StatusChangeSchema = {
-  from: { type: String, enum: Object.values(IncidentStatus), required: false },
-  to: { type: String, enum: Object.values(IncidentStatus), required: true },
-};
-
-const ComponentStatusChangeSchema = {
-  componentId: { type: String, required: true },
-  from: { type: String, required: true },
-  to: { type: String, required: true },
-};
-
-const IncidentUpdateSchema = {
-  message: { type: String, required: true },
-  statusUpdate: StatusChangeSchema,
-  componentStatusUpdates: [ComponentStatusChangeSchema],
-  createdAt: { type: Date, default: Date.now },
-};
 
 @Schema({
   timestamps: true,
