@@ -55,7 +55,7 @@ export class IncidentsService {
     const savedIncident = await incident.save();
 
     // Update the components' statuses from the request
-    forEach(createIncidentRequest.affectedComponents, (component) => {
+    forEach(createIncidentRequest.affectedComponents, async (component) => {
       // Current component
       const existingComponent = find(
         existingComponents,
@@ -73,12 +73,9 @@ export class IncidentsService {
       console.log(requestComponent);
 
       if (existingComponent) {
-        console.log(
-          this.componentModel.updateOne(
-            { _id: existingComponent._id },
-            { status: requestComponent.status },
-          ),
-        );
+        await this.componentModel.updateOne({ _id: existingComponent._id }, [
+          { $set: { status: requestComponent.status } },
+        ]);
       }
     });
 
