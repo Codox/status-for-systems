@@ -1,6 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Component, ComponentStatus } from '../../components/entities/component.entity';
+import {
+  Component,
+  ComponentStatus,
+} from '../../components/entities/component.entity';
 
 export enum IncidentStatus {
   INVESTIGATING = 'investigating',
@@ -69,7 +72,33 @@ export class Incident extends Document {
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Component' }] })
   affectedComponents: Component[];
 
-  @Prop({ type: [IncidentUpdateSchema] })
+  @Prop({
+    type: [
+      {
+        message: { type: String, required: true },
+        statusUpdate: {
+          from: {
+            type: String,
+            enum: Object.values(IncidentStatus),
+            required: false,
+          },
+          to: {
+            type: String,
+            enum: Object.values(IncidentStatus),
+            required: true,
+          },
+        },
+        componentStatusUpdates: [
+          {
+            componentId: { type: String, required: true },
+            from: { type: String, required: true },
+            to: { type: String, required: true },
+          },
+        ],
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
+  })
   updates: IncidentUpdate[];
 
   @Prop()
