@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import NextLink from 'next/link'
+import { useRouter } from 'next/navigation'
 import { fetchWithAuth } from '@/lib/api'
 import {
   Box,
@@ -50,6 +51,7 @@ interface Incident {
 }
 
 export default function IncidentsPage() {
+  const router = useRouter()
   const [incidents, setIncidents] = useState<Incident[]>([])
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -236,16 +238,18 @@ export default function IncidentsPage() {
                 </Thead>
                 <Tbody>
                   {incidents.map((incident) => (
-                    <Tr key={incident._id} _hover={{ bg: hoverBg }}>
+                    <Tr
+                      key={incident._id}
+                      _hover={{ bg: hoverBg, cursor: 'pointer' }}
+                      onClick={() => router.push(`/admin/incidents/${incident._id}`)}
+                    >
                       <Td>
-                        <Link
-                          as={NextLink}
-                          href={`/admin/incidents/${incident._id}`}
+                        <Text
                           fontWeight="medium"
                           color="blue.500"
                         >
                           {incident.title}
-                        </Link>
+                        </Text>
                       </Td>
                       <Td>
                         <HStack>
