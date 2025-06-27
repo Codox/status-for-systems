@@ -261,14 +261,10 @@ export default function IncidentsPage() {
                         </Badge>
                       </Td>
                       <Td>
-                        <Tooltip label={formatDate(incident.createdAt)}>
-                          {new Date(incident.createdAt).toLocaleDateString()}
-                        </Tooltip>
+                        {formatDate(incident.createdAt)}
                       </Td>
                       <Td>
-                        <Tooltip label={formatDate(incident.updatedAt)}>
-                          {new Date(incident.updatedAt).toLocaleDateString()}
-                        </Tooltip>
+                        {formatDate(incident.updatedAt)}
                       </Td>
                     </Tr>
                   ))}
