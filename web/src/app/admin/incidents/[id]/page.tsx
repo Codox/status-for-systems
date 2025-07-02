@@ -396,12 +396,10 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
               ) : (
                 <VStack align="stretch" spacing={3}>
                   {incident.affectedComponents.map((affectedComponent) => {
-                    const component = components.find(c => c._id === affectedComponent.id);
-                    if (!component) return null;
 
                     return (
-                      <HStack key={component._id} justify="space-between" p={3} borderWidth="1px" borderRadius="md">
-                        <Text fontWeight="medium">{component.name}</Text>
+                      <HStack key={affectedComponent._id} justify="space-between" p={3} borderWidth="1px" borderRadius="md">
+                        <Text fontWeight="medium">{affectedComponent.name}</Text>
                         <Badge colorScheme={
                           affectedComponent.status === 'operational' ? 'green' :
                           affectedComponent.status === 'degraded' ? 'yellow' :
