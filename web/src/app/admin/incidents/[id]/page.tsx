@@ -65,7 +65,7 @@ interface Incident {
   description: string;
   status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
   impact: 'critical' | 'major' | 'minor' | 'none';
-  affectedComponents: { id: string; status: string }[];
+  affectedComponents: { _id: string; name: string; status: string }[];
   updates: Update[];
   createdAt: string;
   updatedAt: string;
@@ -457,11 +457,11 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                   <FormLabel>Component Statuses</FormLabel>
                   <VStack align="stretch" spacing={3}>
                     {incident.affectedComponents.map((affectedComponent) => {
-                      const component = components.find(c => c._id === affectedComponent.id);
+                      const component = components.find(c => c._id === affectedComponent._id);
                       if (!component) return null;
 
                       const currentStatus = statusUpdate.componentUpdates.find(
-                        c => c.id === affectedComponent.id
+                        c => c.id === affectedComponent._id
                       )?.status || affectedComponent.status;
 
                       return (
@@ -469,7 +469,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                           <Text fontWeight="medium" mb={2}>{component.name}</Text>
                           <Select
                             value={currentStatus}
-                            onChange={(e) => handleComponentStatusChange(affectedComponent.id, e.target.value)}
+                            onChange={(e) => handleComponentStatusChange(affectedComponent._id, e.target.value)}
                             size="sm"
                           >
                             <option value="operational">Operational</option>
