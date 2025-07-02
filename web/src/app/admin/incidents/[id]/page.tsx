@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import NextLink from 'next/link'
 import { fetchWithAuth } from '@/lib/api'
@@ -30,14 +30,6 @@ import {
   Center,
   Spinner,
   FormHelperText,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   Checkbox
 } from '@chakra-ui/react'
 import { ArrowBackIcon, WarningIcon, CheckIcon, InfoIcon, TimeIcon } from '@chakra-ui/icons'
@@ -51,6 +43,22 @@ interface Component {
   updatedAt: string;
 }
 
+interface Update {
+  statusUpdate?: {
+    from: string | null;
+    to: string;
+  };
+  message: string;
+  componentStatusUpdates?: {
+    id: string;
+    from: string;
+    to: string;
+    _id: string;
+  }[];
+  createdAt: string;
+  _id: string;
+}
+
 interface Incident {
   _id: string;
   title: string;
@@ -58,6 +66,7 @@ interface Incident {
   status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
   impact: 'critical' | 'major' | 'minor' | 'none';
   affectedComponents: { id: string; status: string }[];
+  updates: Update[];
   createdAt: string;
   updatedAt: string;
   resolvedAt?: string;
@@ -65,7 +74,9 @@ interface Incident {
 
 export default function IncidentPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  // Create a ref for the update form
+  const updateFormRef = React.useRef<HTMLDivElement>(null)
+  const [incidentId, setIncidentId] = useState<string>('')
   const [incident, setIncident] = useState<Incident | null>(null)
   const [components, setComponents] = useState<Component[]>([])
   const [error, setError] = useState('')
@@ -76,6 +87,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
   // Status update form
   const [statusUpdate, setStatusUpdate] = useState({
     status: '',
+    message: '',
     componentUpdates: [] as { id: string; status: string }[]
   })
 
@@ -139,17 +151,29 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
     return date.toLocaleString();
   }
 
+  // Set incidentId from params when component mounts or params changes
   useEffect(() => {
+    if (params.id) {
+      setIncidentId(params.id);
+    }
+  }, [params.id]);
+
+  // Load data when incidentId changes
+  useEffect(() => {
+    // Skip if incidentId is not set yet
+    if (!incidentId) return;
+
     const loadData = async () => {
       try {
         // Fetch incident details
-        const incidentResponse = await fetchWithAuth(`/admin/incidents/${params.id}`)
+        const incidentResponse = await fetchWithAuth(`/admin/incidents/${incidentId}`)
         const incidentData = await incidentResponse.json()
         setIncident(incidentData)
 
         // Initialize status update form with current values
         setStatusUpdate({
           status: incidentData.status,
+          message: '',
           componentUpdates: [...incidentData.affectedComponents]
         })
 
@@ -166,12 +190,19 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
     }
 
     loadData()
-  }, [params.id])
+  }, [incidentId])
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setStatusUpdate(prev => ({
       ...prev,
       status: e.target.value
+    }))
+  }
+
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setStatusUpdate(prev => ({
+      ...prev,
+      message: e.target.value
     }))
   }
 
@@ -200,13 +231,14 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
     setError('')
 
     try {
-      const response = await fetchWithAuth(`/admin/incidents/${params.id}`, {
+      const response = await fetchWithAuth(`/admin/incidents/${incidentId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           status: statusUpdate.status,
+          message: statusUpdate.message,
           affectedComponents: statusUpdate.componentUpdates
         }),
       })
@@ -219,8 +251,11 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
       const updatedIncident = await response.json()
       setIncident(updatedIncident)
 
-      // Close the modal
-      onClose()
+      // Reset the message field
+      setStatusUpdate(prev => ({
+        ...prev,
+        message: ''
+      }))
     } catch (err) {
       setError('Failed to update incident. Please try again.')
       console.error('Error updating incident:', err)
@@ -234,7 +269,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
     setError('')
 
     try {
-      const response = await fetchWithAuth(`/admin/incidents/${params.id}/resolve`, {
+      const response = await fetchWithAuth(`/admin/incidents/${incidentId}/resolve`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -253,6 +288,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
       setIsClosing(false)
     }
   }
+
 
   if (isLoading) {
     return (
@@ -318,12 +354,6 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
             </Text>
           </Box>
           <HStack spacing={4}>
-            <Button
-              colorScheme="blue"
-              onClick={onOpen}
-            >
-              Update Status
-            </Button>
             {incident.status !== 'resolved' && (
               <Button
                 colorScheme="green"
@@ -391,86 +421,146 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
         </CardBody>
       </Card>
 
-      {/* Status Update Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Update Incident Status</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={6} align="stretch">
-              <FormControl>
-                <FormLabel>Incident Status</FormLabel>
-                <Select
-                  value={statusUpdate.status}
-                  onChange={handleStatusChange}
+      {/* Updates Section */}
+      <Card shadow="md" borderRadius="lg" bg={cardBg} overflow="hidden" mb={6}>
+        <CardHeader bg={headerBg} py={4} px={6}>
+          <Heading size="md">Updates</Heading>
+        </CardHeader>
+        <CardBody>
+          <VStack spacing={6} align="stretch">
+            {/* Update Form */}
+            <Box ref={updateFormRef} p={4} borderWidth="1px" borderRadius="md" borderColor={borderColor}>
+              <Heading size="sm" mb={4}>Add Update</Heading>
+              <VStack spacing={4} align="stretch">
+                <FormControl>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    value={statusUpdate.status}
+                    onChange={handleStatusChange}
+                  >
+                    <option value="investigating">Investigating</option>
+                    <option value="identified">Identified</option>
+                    <option value="monitoring">Monitoring</option>
+                    <option value="resolved">Resolved</option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Message</FormLabel>
+                  <Textarea
+                    value={statusUpdate.message}
+                    onChange={handleMessageChange}
+                    placeholder="Provide details about this update"
+                    rows={3}
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Component Statuses</FormLabel>
+                  <VStack align="stretch" spacing={3}>
+                    {incident.affectedComponents.map((affectedComponent) => {
+                      const component = components.find(c => c._id === affectedComponent.id);
+                      if (!component) return null;
+
+                      const currentStatus = statusUpdate.componentUpdates.find(
+                        c => c.id === affectedComponent.id
+                      )?.status || affectedComponent.status;
+
+                      return (
+                        <Box key={component._id} p={3} borderWidth="1px" borderRadius="md">
+                          <Text fontWeight="medium" mb={2}>{component.name}</Text>
+                          <Select
+                            value={currentStatus}
+                            onChange={(e) => handleComponentStatusChange(affectedComponent.id, e.target.value)}
+                            size="sm"
+                          >
+                            <option value="operational">Operational</option>
+                            <option value="degraded">Degraded</option>
+                            <option value="partial">Partial Outage</option>
+                            <option value="major">Major Outage</option>
+                            <option value="under_maintenance">Under Maintenance</option>
+                          </Select>
+                        </Box>
+                      );
+                    })}
+                  </VStack>
+                </FormControl>
+
+                <Button
+                  colorScheme="blue"
+                  onClick={handleUpdateIncident}
+                  isLoading={isSaving}
+                  loadingText="Saving..."
+                  alignSelf="flex-end"
                 >
-                  <option value="investigating">Investigating</option>
-                  <option value="identified">Identified</option>
-                  <option value="monitoring">Monitoring</option>
-                  <option value="resolved">Resolved</option>
-                </Select>
-                <FormHelperText>
-                  Current status of the incident
-                </FormHelperText>
-              </FormControl>
+                  Save Update
+                </Button>
+              </VStack>
+            </Box>
 
-              <FormControl>
-                <FormLabel>Component Statuses</FormLabel>
-                <Card variant="outline" borderColor={borderColor}>
-                  <CardBody>
-                    {incident.affectedComponents.length === 0 ? (
-                      <Text color={textColor}>No components affected</Text>
-                    ) : (
-                      <VStack align="stretch" spacing={3}>
-                        {incident.affectedComponents.map((affectedComponent) => {
-                          const component = components.find(c => c._id === affectedComponent.id);
-                          if (!component) return null;
+            <Divider />
 
-                          const currentStatus = statusUpdate.componentUpdates.find(
-                            c => c.id === affectedComponent.id
-                          )?.status || affectedComponent.status;
+            {/* Updates List */}
+            {incident.updates && incident.updates.length > 0 ? (
+              <VStack align="stretch" spacing={4}>
+                {incident.updates.map((update) => (
+                  <Box key={update._id} p={4} borderWidth="1px" borderRadius="md" borderColor={borderColor}>
+                    <HStack justify="space-between" mb={2}>
+                      <Text fontWeight="bold">
+                        {update.statusUpdate && (
+                          <Badge colorScheme={getStatusColor(update.statusUpdate.to as Incident['status'])} mr={2}>
+                            {update.statusUpdate.to.charAt(0).toUpperCase() + update.statusUpdate.to.slice(1)}
+                          </Badge>
+                        )}
+                        {update.message}
+                      </Text>
+                      <Text fontSize="sm" color={textColor}>
+                        {formatDate(update.createdAt)}
+                      </Text>
+                    </HStack>
 
-                          return (
-                            <Box key={component._id} p={3} borderWidth="1px" borderRadius="md">
-                              <Text fontWeight="medium" mb={2}>{component.name}</Text>
-                              <Select
-                                value={currentStatus}
-                                onChange={(e) => handleComponentStatusChange(affectedComponent.id, e.target.value)}
-                                size="sm"
-                              >
-                                <option value="operational">Operational</option>
-                                <option value="degraded">Degraded</option>
-                                <option value="partial">Partial Outage</option>
-                                <option value="major">Major Outage</option>
-                                <option value="under_maintenance">Under Maintenance</option>
-                              </Select>
-                            </Box>
-                          );
-                        })}
-                      </VStack>
+                    {update.componentStatusUpdates && update.componentStatusUpdates.length > 0 && (
+                      <Box mt={2}>
+                        <Text fontSize="sm" fontWeight="medium" mb={1}>Component Updates:</Text>
+                        <VStack align="stretch" spacing={1}>
+                          {update.componentStatusUpdates.map((compUpdate) => {
+                            const component = components.find(c => c._id === compUpdate.id);
+                            return component ? (
+                              <HStack key={compUpdate._id} spacing={2}>
+                                <Text fontSize="sm">{component.name}:</Text>
+                                <Badge size="sm" colorScheme={
+                                  compUpdate.from === 'operational' ? 'green' :
+                                  compUpdate.from === 'degraded' ? 'yellow' :
+                                  compUpdate.from === 'partial' ? 'orange' :
+                                  compUpdate.from === 'major' ? 'red' : 'purple'
+                                }>
+                                  {compUpdate.from.charAt(0).toUpperCase() + compUpdate.from.slice(1)}
+                                </Badge>
+                                <Text fontSize="sm">→</Text>
+                                <Badge size="sm" colorScheme={
+                                  compUpdate.to === 'operational' ? 'green' :
+                                  compUpdate.to === 'degraded' ? 'yellow' :
+                                  compUpdate.to === 'partial' ? 'orange' :
+                                  compUpdate.to === 'major' ? 'red' : 'purple'
+                                }>
+                                  {compUpdate.to.charAt(0).toUpperCase() + compUpdate.to.slice(1)}
+                                </Badge>
+                              </HStack>
+                            ) : null;
+                          })}
+                        </VStack>
+                      </Box>
                     )}
-                  </CardBody>
-                </Card>
-              </FormControl>
-            </VStack>
-          </ModalBody>
+                  </Box>
+                ))}
+              </VStack>
+            ) : (
+              <Text color={textColor}>No updates yet</Text>
+            )}
+          </VStack>
+        </CardBody>
+      </Card>
 
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button
-              colorScheme="blue"
-              onClick={handleUpdateIncident}
-              isLoading={isSaving}
-              loadingText="Saving..."
-            >
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </Container>
   )
 }
