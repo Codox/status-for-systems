@@ -14,6 +14,7 @@ import { Incident } from '../incidents/entities/incident.entity';
 import { CreateComponentRequest } from '../components/requests/create-component.request';
 import { CreateGroupRequest } from '../groups/requests/create-group.request';
 import { CreateIncidentRequest } from '../incidents/requests/create-incident.request';
+import { UpdateIncidentRequest } from '../incidents/requests/update-incident.request';
 import { BasicAuthGuard } from '../auth/basic-auth.guard';
 import { GroupsService } from '../groups/groups.service';
 import { ComponentsService } from '../components/components.service';
@@ -113,7 +114,7 @@ export class AdminController {
   @Put('incidents/:id')
   async updateIncident(
     @Param('id') id: string,
-    @Body() updateIncidentRequest: CreateIncidentRequest,
+    @Body() updateIncidentRequest: UpdateIncidentRequest,
   ): Promise<Incident> {
     return this.incidentsService.update(id, updateIncidentRequest);
   }
