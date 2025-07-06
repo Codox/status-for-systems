@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Model, Connection } from 'mongoose';
-import { Incident } from './entities/incident.entity';
+import { Incident, IncidentStatus } from './entities/incident.entity';
 import { Component } from '../components/entities/component.entity';
 import { CreateIncidentRequest } from './requests/create-incident.request';
-import { map, forEach, find } from 'remeda';
+import { map, forEach, find, difference } from 'remeda';
 
 @Injectable()
 export class IncidentsService {
@@ -49,7 +49,7 @@ export class IncidentsService {
       description: createIncidentRequest.description,
       status: createIncidentRequest.status || 'investigating',
       impact: createIncidentRequest.impact || 'minor',
-      affectedComponents: componentIds,
+      affectedComponents: existingComponents,
     });
 
     const savedIncident = await incident.save();
@@ -67,10 +67,6 @@ export class IncidentsService {
         createIncidentRequest.affectedComponents,
         (c) => c.id.toString() === existingComponent._id.toString(),
       );
-
-      console.log(existingComponent);
-      console.log(existingComponent._id);
-      console.log(requestComponent);
 
       if (existingComponent) {
         await this.componentModel.updateOne({ _id: existingComponent._id }, [
@@ -106,5 +102,132 @@ export class IncidentsService {
     await savedIncident.save();
 
     return savedIncident;
+  }
+
+  async update(
+    id: string,
+    updateIncidentRequest: CreateIncidentRequest,
+  ): Promise<Incident> {
+    // Find the existing incident
+    const existingIncident = await this.incidentModel
+      .findById(id)
+      .populate('affectedComponents')
+      .exec();
+
+    if (!existingIncident) {
+      throw new NotFoundException(`Incident with ID ${id} not found`);
+    }
+
+    // Get the current status before updating
+    const previousStatus = existingIncident.status;
+
+    // Get the current affected components before updating
+    const previousComponentIds = existingIncident.affectedComponents.map((c) =>
+      c._id.toString(),
+    );
+
+    // Verify that all affected component IDs in the request exist
+    let requestedComponentIds = map(
+      updateIncidentRequest.affectedComponents,
+      (c) => c.id,
+    ) as string[];
+
+    // Get all components from the database that are in the request
+    const requestedComponents = await this.componentModel
+      .find({
+        _id: { $in: requestedComponentIds },
+      })
+      .exec();
+
+    // Update the validated component IDs
+    requestedComponentIds = requestedComponents.map((c) => c._id) as string[];
+
+    // Update the incident fields
+    existingIncident.title = updateIncidentRequest.title;
+    existingIncident.description = updateIncidentRequest.description;
+    existingIncident.status =
+      updateIncidentRequest.status || existingIncident.status;
+    existingIncident.impact =
+      updateIncidentRequest.impact || existingIncident.impact;
+    existingIncident.affectedComponents = requestedComponents;
+
+    // Save the updated incident
+    const updatedIncident = await existingIncident.save();
+
+    // Update the components' statuses from the request
+    forEach(updateIncidentRequest.affectedComponents, async (component) => {
+      // Find the component in the database
+      const existingComponent = find(
+        requestedComponents,
+        (c) => c._id.toString() === component.id.toString(),
+      );
+
+      if (existingComponent) {
+        await this.componentModel.updateOne({ _id: existingComponent._id }, [
+          { $set: { status: component.status } },
+        ]);
+      }
+    });
+
+    // Create an incident update to track the changes
+    const incidentUpdate = {
+      message: 'Incident Updated',
+      statusUpdate: {
+        from: previousStatus,
+        to: updatedIncident.status,
+      },
+      componentStatusUpdates: [],
+      createdAt: new Date(),
+    };
+
+    // Track component status updates
+    const componentStatusUpdates = [];
+
+    // For existing components that were in the incident before the update
+    for (const component of requestedComponents) {
+      // Check if this component was already in the incident
+      const wasInIncident = previousComponentIds.includes(
+        component._id.toString(),
+      );
+
+      // Find the requested status for this component
+      const requestedStatus = find(
+        updateIncidentRequest.affectedComponents,
+        (c) => c.id.toString() === component._id.toString(),
+      )?.status;
+
+      if (wasInIncident) {
+        // Component was already in the incident, check if status changed
+        const previousComponent = await this.componentModel
+          .findById(component._id)
+          .exec();
+        if (previousComponent && previousComponent.status !== requestedStatus) {
+          componentStatusUpdates.push({
+            id: component._id.toString(),
+            from: previousComponent.status,
+            to: requestedStatus,
+          });
+        }
+      } else {
+        // Component is newly added to the incident
+        componentStatusUpdates.push({
+          id: component._id.toString(),
+          from: component.status,
+          to: requestedStatus,
+        });
+      }
+    }
+
+    // Add the component status updates to the incident update
+    incidentUpdate.componentStatusUpdates = componentStatusUpdates;
+
+    // Add the update to the incident's updates array
+    if (!updatedIncident.updates) {
+      updatedIncident.updates = [];
+    }
+    updatedIncident.updates.push(incidentUpdate);
+    await updatedIncident.save();
+
+    return updatedIncident;
   }
 }

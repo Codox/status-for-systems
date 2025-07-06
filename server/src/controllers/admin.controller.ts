@@ -115,8 +115,7 @@ export class AdminController {
     @Param('id') id: string,
     @Body() updateIncidentRequest: CreateIncidentRequest,
   ): Promise<Incident> {
-    // TODO: Implement update
-    return null;
+    return this.incidentsService.update(id, updateIncidentRequest);
   }
 
   @Delete('incidents/:id')
