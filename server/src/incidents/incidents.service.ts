@@ -32,7 +32,7 @@ export class IncidentsService {
 
   async getIncidentUpdates(incidentId: string): Promise<IncidentUpdate[]> {
     return this.incidentUpdateModel
-      .find({ incident_id: incidentId })
+      .find({ incidentId: incidentId })
       .sort({ createdAt: 1 })
       .exec();
   }
@@ -207,7 +207,7 @@ export class IncidentsService {
 
     // Create an incident update to track the changes
     const incidentUpdate = new this.incidentUpdateModel({
-      incident_id: updatedIncident._id,
+      incidentId: updatedIncident._id,
       message: 'Incident Updated',
       statusUpdate: {
         from: previousStatus,

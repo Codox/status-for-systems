@@ -4,6 +4,7 @@ import { ComponentStatus } from '../../components/entities/component.entity';
 import { IncidentStatus } from './incident.entity';
 
 @Schema({
+  collection: 'incident_updates',
   timestamps: true,
   toJSON: {
     transform: (_, ret) => {
