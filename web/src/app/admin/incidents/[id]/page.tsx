@@ -48,7 +48,8 @@ interface Update {
     from: string | null;
     to: string;
   };
-  message: string;
+  description: string | null;
+  type: string;
   componentStatusUpdates?: {
     id: string;
     from: string;
@@ -87,7 +88,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
   // Status update form
   const [statusUpdate, setStatusUpdate] = useState({
     status: '',
-    message: '',
+    description: '',
     componentUpdates: [] as { id: string; status: string }[]
   })
 
@@ -178,7 +179,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
         // Initialize status update form with current values
         setStatusUpdate({
           status: incidentData.status,
-          message: '',
+          description: '',
           componentUpdates: [...incidentData.affectedComponents]
         })
 
@@ -204,10 +205,10 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
     }))
   }
 
-  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setStatusUpdate(prev => ({
       ...prev,
-      message: e.target.value
+      description: e.target.value
     }))
   }
 
@@ -244,7 +245,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
         body: JSON.stringify({
           incidentId: incidentId,
           status: statusUpdate.status,
-          message: statusUpdate.message,
+          description: statusUpdate.description,
           componentUpdates: statusUpdate.componentUpdates
         }),
       })
@@ -262,10 +263,10 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
       const updatesData = await updatesResponse.json()
       setUpdates(updatesData)
 
-      // Reset the message field
+      // Reset the description field
       setStatusUpdate(prev => ({
         ...prev,
-        message: ''
+        description: ''
       }))
     } catch (err) {
       setError('Failed to update incident. Please try again.')
@@ -455,10 +456,10 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>Message</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <Textarea
-                    value={statusUpdate.message}
-                    onChange={handleMessageChange}
+                    value={statusUpdate.description}
+                    onChange={handleDescriptionChange}
                     placeholder="Provide details about this update"
                     rows={3}
                   />
@@ -521,12 +522,19 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                             {update.statusUpdate.to.charAt(0).toUpperCase() + update.statusUpdate.to.slice(1)}
                           </Badge>
                         )}
-                        {update.message}
+                        {update.type === 'created' ? 'Incident Created' :
+                         update.type.charAt(0).toUpperCase() + update.type.slice(1)}
                       </Text>
                       <Text fontSize="sm" color={textColor}>
                         {formatDate(update.createdAt)}
                       </Text>
                     </HStack>
+
+                    {update.description && (
+                      <Box mb={2}>
+                        <Text whiteSpace="pre-wrap">{update.description}</Text>
+                      </Box>
+                    )}
 
                     {update.componentStatusUpdates && update.componentStatusUpdates.length > 0 && (
                       <Box mt={2}>
