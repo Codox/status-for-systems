@@ -3,6 +3,12 @@ import { Document, Types } from 'mongoose';
 import { ComponentStatus } from '../../components/entities/component.entity';
 import { IncidentStatus } from './incident.entity';
 
+export enum IncidentUpdateType {
+  CREATED = 'created',
+  UPDATED = 'updated',
+  CLOSED = 'closed',
+}
+
 @Schema({
   collection: 'incident_updates',
   timestamps: true,
@@ -23,8 +29,15 @@ export class IncidentUpdate extends Document {
   @Prop({ type: Types.ObjectId, ref: 'Incident', required: true })
   incidentId: Types.ObjectId;
 
-  @Prop({ required: true })
-  message: string;
+  @Prop({ required: false })
+  description: string;
+
+  @Prop({
+    type: String,
+    enum: IncidentUpdateType,
+    required: true,
+  })
+  type: IncidentUpdateType;
 
   @Prop({
     type: {

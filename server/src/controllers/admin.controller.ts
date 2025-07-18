@@ -58,6 +58,11 @@ export class AdminController {
     );
   }
 
+
+
+
+
+
   @Get('components')
   async findAllComponents(): Promise<Component[]> {
     return this.componentsService.findAll();

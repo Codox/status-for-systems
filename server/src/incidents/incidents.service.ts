@@ -2,7 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Model, Connection, Types } from 'mongoose';
 import { Incident } from './entities/incident.entity';
-import { IncidentUpdate } from './entities/incident-update.entity';
+import {
+  IncidentUpdate,
+  IncidentUpdateType,
+} from './entities/incident-update.entity';
 import { Component } from '../components/entities/component.entity';
 import { CreateIncidentRequest } from './requests/create-incident.request';
 import { UpdateIncidentRequest } from './requests/update-incident.request';
@@ -90,7 +93,8 @@ export class IncidentsService {
     // Create the initial incident update
     const initialUpdate = new this.incidentUpdateModel({
       incidentId: savedIncident._id as any,
-      message: 'Incident Created',
+      description: null,
+      type: IncidentUpdateType.CREATED,
       statusUpdate: {
         from: null,
         to: savedIncident.status,
@@ -235,7 +239,8 @@ export class IncidentsService {
     // Create an incident update
     const incidentUpdate = new this.incidentUpdateModel({
       incidentId: incident._id,
-      message: createIncidentUpdateRequest.message,
+      description: createIncidentUpdateRequest.description,
+      type: createIncidentUpdateRequest.type,
       statusUpdate: {
         from: previousStatus,
         to: newStatus,

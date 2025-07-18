@@ -10,6 +10,7 @@ import {
 import { Type } from 'class-transformer';
 import { IncidentStatus } from '../entities/incident.entity';
 import { ComponentStatus } from '../../components/entities/component.entity';
+import { IncidentUpdateType } from '../entities/incident-update.entity';
 
 export class ComponentStatusUpdateRequest {
   @IsNotEmpty()
@@ -26,9 +27,13 @@ export class CreateIncidentUpdateRequest {
   @IsMongoId()
   incidentId: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  message: string;
+  description?: string;
+
+  @IsNotEmpty()
+  @IsEnum(IncidentUpdateType)
+  type: IncidentUpdateType;
 
   @IsOptional()
   @IsEnum(IncidentStatus)
