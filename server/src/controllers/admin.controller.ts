@@ -95,14 +95,16 @@ export class AdminController {
   }
 
   @Get('incidents')
-  async findAllIncidents(): Promise<Incident[]> {
-    return this.incidentsService.findAll();
+  async getIncidents(): Promise<Incident[]> {
+    return this.incidentsService.all();
   }
 
   @Get('incidents/:id')
-  async findOneIncident(@Param('id') id: string): Promise<Incident> {
-    return this.incidentsService.findOne(id);
+  async getIncident(@Param('id') id: string): Promise<Incident> {
+    return this.incidentsService.one(id);
   }
+
+
 
   @Post('incidents')
   async createIncident(

@@ -16,11 +16,11 @@ export class IncidentsService {
     @InjectConnection() private readonly connection: Connection,
   ) {}
 
-  async findAll(): Promise<Incident[]> {
+  async all(): Promise<Incident[]> {
     return this.incidentModel.find().populate('affectedComponents').exec();
   }
 
-  async findOne(id: string): Promise<Incident> {
+  async one(id: string): Promise<Incident> {
     return this.incidentModel
       .findById(id)
       .populate('affectedComponents')
@@ -184,7 +184,7 @@ export class IncidentsService {
         // Find the component in the database
         const existingComponent = find(
           requestedComponents,
-          (c) => c._id.toString() === component.id.toString(),
+          (c) => c._id.toString() === component.id,
         );
 
         if (existingComponent) {
@@ -224,7 +224,7 @@ export class IncidentsService {
         // Find the requested status for this component
         const requestedStatus = find(
           updateIncidentRequest.affectedComponents,
-          (c) => c.id.toString() === component._id.toString(),
+          (c) => c.id === component._id.toString(),
         )?.status;
 
         if (wasInIncident) {
