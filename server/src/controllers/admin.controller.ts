@@ -11,6 +11,7 @@ import {
 import { Component } from '../components/entities/component.entity';
 import { Group } from '../groups/entities/group.entity';
 import { Incident } from '../incidents/entities/incident.entity';
+import { IncidentUpdate } from '../incidents/entities/incident-update.entity';
 import { CreateComponentRequest } from '../components/requests/create-component.request';
 import { CreateGroupRequest } from '../groups/requests/create-group.request';
 import { CreateIncidentRequest } from '../incidents/requests/create-incident.request';
@@ -102,6 +103,11 @@ export class AdminController {
   @Get('incidents/:id')
   async getIncident(@Param('id') id: string): Promise<Incident> {
     return this.incidentsService.one(id);
+  }
+
+  @Get('incidents/:id/updates')
+  async getIncidentUpdates(@Param('id') id: string): Promise<IncidentUpdate[]> {
+    return this.incidentsService.getIncidentUpdates(id);
   }
 
 

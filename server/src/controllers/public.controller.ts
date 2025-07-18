@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { Component } from '../components/entities/component.entity';
 import { Group } from '../groups/entities/group.entity';
 import { Incident } from '../incidents/entities/incident.entity';
+import { IncidentUpdate } from '../incidents/entities/incident-update.entity';
 import { GroupsService } from '../groups/groups.service';
 import { IncidentsService } from '../incidents/incidents.service';
 
@@ -42,5 +43,10 @@ export class PublicController {
   @Get('incidents/:id')
   async getIncident(@Param('id') id: string): Promise<Incident> {
     return this.incidentsService.one(id);
+  }
+
+  @Get('incidents/:id/updates')
+  async getIncidentUpdates(@Param('id') id: string): Promise<IncidentUpdate[]> {
+    return this.incidentsService.getIncidentUpdates(id);
   }
 }

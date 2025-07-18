@@ -1,0 +1,71 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+import { ComponentStatus } from '../../components/entities/component.entity';
+import { IncidentStatus } from './incident.entity';
+
+@Schema({
+  timestamps: true,
+  toJSON: {
+    transform: (_, ret) => {
+      delete ret.__v;
+      return ret;
+    },
+  },
+  toObject: {
+    transform: (_, ret) => {
+      delete ret.__v;
+      return ret;
+    },
+  },
+})
+export class IncidentUpdate extends Document {
+  @Prop({ type: Types.ObjectId, ref: 'Incident', required: true })
+  incidentId: Types.ObjectId;
+
+  @Prop({ required: true })
+  message: string;
+
+  @Prop({
+    type: {
+      from: {
+        type: String,
+        enum: Object.values(IncidentStatus),
+        required: false,
+      },
+      to: {
+        type: String,
+        enum: Object.values(IncidentStatus),
+        required: true,
+      },
+    },
+    required: false,
+  })
+  statusUpdate?: {
+    from: IncidentStatus | null;
+    to: IncidentStatus;
+  };
+
+  @Prop({
+    type: [
+      {
+        id: { type: String, required: true },
+        from: { type: String, required: true },
+        to: { type: String, required: true },
+      },
+    ],
+    required: false,
+  })
+  componentStatusUpdates?: {
+    id: string;
+    from: ComponentStatus;
+    to: ComponentStatus;
+  }[];
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
+
+  @Prop()
+  updatedAt: Date;
+}
+
+export const IncidentUpdateSchema = SchemaFactory.createForClass(IncidentUpdate);

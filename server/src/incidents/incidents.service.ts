@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Model, Connection } from 'mongoose';
 import { Incident } from './entities/incident.entity';
+import { IncidentUpdate } from './entities/incident-update.entity';
 import { Component } from '../components/entities/component.entity';
 import { CreateIncidentRequest } from './requests/create-incident.request';
 import { UpdateIncidentRequest } from './requests/update-incident.request';
@@ -11,6 +12,8 @@ import { map, forEach, find, difference } from 'remeda';
 export class IncidentsService {
   constructor(
     @InjectModel(Incident.name) private readonly incidentModel: Model<Incident>,
+    @InjectModel(IncidentUpdate.name)
+    private readonly incidentUpdateModel: Model<IncidentUpdate>,
     @InjectModel(Component.name)
     private readonly componentModel: Model<Component>,
     @InjectConnection() private readonly connection: Connection,
@@ -24,6 +27,13 @@ export class IncidentsService {
     return this.incidentModel
       .findById(id)
       .populate('affectedComponents')
+      .exec();
+  }
+
+  async getIncidentUpdates(incidentId: string): Promise<IncidentUpdate[]> {
+    return this.incidentUpdateModel
+      .find({ incident_id: incidentId })
+      .sort({ createdAt: 1 })
       .exec();
   }
 
@@ -77,7 +87,8 @@ export class IncidentsService {
     });
 
     // Create the initial incident update
-    const initialUpdate = {
+    const initialUpdate = new this.incidentUpdateModel({
+      incidentId: savedIncident._id as any,
       message: 'Incident Created',
       statusUpdate: {
         from: null,
@@ -96,11 +107,10 @@ export class IncidentsService {
         ).status,
       })),
       createdAt: new Date(),
-    };
+    });
 
-    // Add the initial update to the incident
-    savedIncident.updates = [initialUpdate];
-    await savedIncident.save();
+    // Save the incident update
+    await initialUpdate.save();
 
     return savedIncident;
   }
@@ -196,7 +206,8 @@ export class IncidentsService {
     }
 
     // Create an incident update to track the changes
-    const incidentUpdate = {
+    const incidentUpdate = new this.incidentUpdateModel({
+      incident_id: updatedIncident._id,
       message: 'Incident Updated',
       statusUpdate: {
         from: previousStatus,
@@ -204,7 +215,7 @@ export class IncidentsService {
       },
       componentStatusUpdates: [],
       createdAt: new Date(),
-    };
+    });
 
     // Track component status updates
     const componentStatusUpdates = [];
@@ -256,12 +267,8 @@ export class IncidentsService {
     // Add the component status updates to the incident update
     incidentUpdate.componentStatusUpdates = componentStatusUpdates;
 
-    // Add the update to the incident's updates array
-    if (!updatedIncident.updates) {
-      updatedIncident.updates = [];
-    }
-    updatedIncident.updates.push(incidentUpdate);
-    await updatedIncident.save();
+    // Save the incident update
+    await incidentUpdate.save();
 
     return updatedIncident;
   }
