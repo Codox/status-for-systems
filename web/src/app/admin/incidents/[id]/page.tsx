@@ -236,15 +236,16 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
     setError('')
 
     try {
-      const response = await fetchWithAuth(`/admin/incidents/${incidentId}`, {
-        method: 'PUT',
+      const response = await fetchWithAuth(`/admin/incidents/updates`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          incidentId: incidentId,
           status: statusUpdate.status,
           message: statusUpdate.message,
-          affectedComponents: statusUpdate.componentUpdates
+          componentUpdates: statusUpdate.componentUpdates
         }),
       })
 

@@ -16,6 +16,7 @@ import { CreateComponentRequest } from '../components/requests/create-component.
 import { CreateGroupRequest } from '../groups/requests/create-group.request';
 import { CreateIncidentRequest } from '../incidents/requests/create-incident.request';
 import { UpdateIncidentRequest } from '../incidents/requests/update-incident.request';
+import { CreateIncidentUpdateRequest } from '../incidents/requests/create-incident-update.request';
 import { BasicAuthGuard } from '../auth/basic-auth.guard';
 import { GroupsService } from '../groups/groups.service';
 import { ComponentsService } from '../components/components.service';
@@ -29,6 +30,33 @@ export class AdminController {
     private readonly componentsService: ComponentsService,
     private readonly incidentsService: IncidentsService,
   ) {}
+
+  /**
+   * DONE
+   */
+  @Get('incidents')
+  async getIncidents(): Promise<Incident[]> {
+    return this.incidentsService.all();
+  }
+
+  @Get('incidents/:id')
+  async getIncident(@Param('id') id: string): Promise<Incident> {
+    return this.incidentsService.one(id);
+  }
+
+  @Get('incidents/:id/updates')
+  async getIncidentUpdates(@Param('id') id: string): Promise<IncidentUpdate[]> {
+    return this.incidentsService.getIncidentUpdates(id);
+  }
+
+  @Post('incidents/updates')
+  async createIncidentUpdate(
+    @Body() createIncidentUpdateRequest: CreateIncidentUpdateRequest,
+  ): Promise<IncidentUpdate> {
+    return this.incidentsService.createIncidentUpdate(
+      createIncidentUpdateRequest,
+    );
+  }
 
   @Get('components')
   async findAllComponents(): Promise<Component[]> {
@@ -48,6 +76,7 @@ export class AdminController {
     // TODO: Implement create
     return null;
   }
+
 
   @Put('components/:id')
   async updateComponent(
@@ -94,23 +123,6 @@ export class AdminController {
   async removeGroup(@Param('id') id: string): Promise<void> {
     // TODO: Implement remove
   }
-
-  @Get('incidents')
-  async getIncidents(): Promise<Incident[]> {
-    return this.incidentsService.all();
-  }
-
-  @Get('incidents/:id')
-  async getIncident(@Param('id') id: string): Promise<Incident> {
-    return this.incidentsService.one(id);
-  }
-
-  @Get('incidents/:id/updates')
-  async getIncidentUpdates(@Param('id') id: string): Promise<IncidentUpdate[]> {
-    return this.incidentsService.getIncidentUpdates(id);
-  }
-
-
 
   @Post('incidents')
   async createIncident(
