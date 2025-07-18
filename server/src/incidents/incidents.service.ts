@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
-import { Model, Connection } from 'mongoose';
+import { Model, Connection, Types } from 'mongoose';
 import { Incident } from './entities/incident.entity';
 import { IncidentUpdate } from './entities/incident-update.entity';
 import { Component } from '../components/entities/component.entity';
@@ -32,7 +32,7 @@ export class IncidentsService {
 
   async getIncidentUpdates(incidentId: string): Promise<IncidentUpdate[]> {
     return this.incidentUpdateModel
-      .find({ incidentId: incidentId })
+      .find({ incidentId: new Types.ObjectId(incidentId) })
       .sort({ createdAt: 1 })
       .exec();
   }

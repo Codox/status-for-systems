@@ -66,7 +66,6 @@ interface Incident {
   status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
   impact: 'critical' | 'major' | 'minor' | 'none';
   affectedComponents: { _id: string; name: string; status: string }[];
-  updates: Update[];
   createdAt: string;
   updatedAt: string;
   resolvedAt?: string;
@@ -78,6 +77,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
   const updateFormRef = React.useRef<HTMLDivElement>(null)
   const [incidentId, setIncidentId] = useState<string>('')
   const [incident, setIncident] = useState<Incident | null>(null)
+  const [updates, setUpdates] = useState<Update[]>([])
   const [components, setComponents] = useState<Component[]>([])
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -170,6 +170,11 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
         const incidentData = await incidentResponse.json()
         setIncident(incidentData)
 
+        // Fetch incident updates from the new endpoint
+        const updatesResponse = await fetchWithAuth(`/admin/incidents/${incidentId}/updates`)
+        const updatesData = await updatesResponse.json()
+        setUpdates(updatesData)
+
         // Initialize status update form with current values
         setStatusUpdate({
           status: incidentData.status,
@@ -250,6 +255,11 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
       // Refresh incident data
       const updatedIncident = await response.json()
       setIncident(updatedIncident)
+
+      // Refresh updates from the new endpoint
+      const updatesResponse = await fetchWithAuth(`/admin/incidents/${incidentId}/updates`)
+      const updatesData = await updatesResponse.json()
+      setUpdates(updatesData)
 
       // Reset the message field
       setStatusUpdate(prev => ({
@@ -499,9 +509,9 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
             <Divider />
 
             {/* Updates List */}
-            {incident.updates && incident.updates.length > 0 ? (
+            {updates && updates.length > 0 ? (
               <VStack align="stretch" spacing={4}>
-                {incident.updates.map((update) => (
+                {updates.map((update) => (
                   <Box key={update._id} p={4} borderWidth="1px" borderRadius="md" borderColor={borderColor}>
                     <HStack justify="space-between" mb={2}>
                       <Text fontWeight="bold">
