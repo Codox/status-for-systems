@@ -146,6 +146,25 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
     }
   }
 
+  // Format update type for display
+  const formatUpdateType = (type: string) => {
+    switch (type) {
+      case 'created':
+        return 'Incident Created';
+      case 'updated':
+        return 'Incident Updated';
+      case 'status_changed':
+        return 'Status Changed';
+      case 'component_updated':
+        return 'Component Updated';
+      default:
+        // For any other types, capitalize the first letter and replace underscores with spaces
+        return type.replace(/_/g, ' ').split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+    }
+  }
+
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -522,8 +541,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                             {update.statusUpdate.to.charAt(0).toUpperCase() + update.statusUpdate.to.slice(1)}
                           </Badge>
                         )}
-                        {update.type === 'created' ? 'Incident Created' :
-                         update.type.charAt(0).toUpperCase() + update.type.slice(1)}
+                        {formatUpdateType(update.type)}
                       </Text>
                       <Text fontSize="sm" color={textColor}>
                         {formatDate(update.createdAt)}
