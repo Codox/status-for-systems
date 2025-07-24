@@ -240,7 +240,7 @@ export class IncidentsService {
     const incidentUpdate = new this.incidentUpdateModel({
       incidentId: incident._id,
       description: createIncidentUpdateRequest.description,
-      type: createIncidentUpdateRequest.type,
+      type: createIncidentUpdateRequest.type || IncidentUpdateType.UPDATED,
       statusUpdate: {
         from: previousStatus,
         to: newStatus,
