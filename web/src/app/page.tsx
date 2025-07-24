@@ -37,6 +37,18 @@ interface Group {
   updatedAt: string;
 }
 
+interface Incident {
+  _id: string;
+  title: string;
+  description: string;
+  status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
+  impact: 'critical' | 'major' | 'minor' | 'none';
+  affectedComponents: { _id: string; name: string; status: string }[];
+  createdAt: string;
+  updatedAt: string;
+  resolvedAt?: string;
+}
+
 const getStatusStyles = (status: string) => {
   switch (status) {
     case "operational":
@@ -135,6 +147,33 @@ async function getGroups(): Promise<Group[]> {
   }
 }
 
+async function getActiveIncidents(): Promise<Incident[]> {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiUrl) {
+      throw new Error('API URL is not configured');
+    }
+
+    const response = await fetch(`${apiUrl}/public/incidents`, {
+      next: { revalidate: 30 }, // Revalidate every 30 seconds
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch incidents: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    // Filter out resolved incidents to show only active ones
+    return data.filter((incident: Incident) => incident.status !== 'resolved');
+  } catch (error) {
+    console.error('Error fetching incidents:', error);
+    throw error;
+  }
+}
+
 function ErrorState({ message }: { message: string }) {
   const textColor = useColorModeValue('gray.600', 'gray.400');
 
@@ -214,15 +253,22 @@ function EmptyState() {
 // Data fetching component
 async function HomeData() {
   try {
-    const groups = await getGroups();
-    return { groups, error: null };
+    const [groups, activeIncidents] = await Promise.all([
+      getGroups(),
+      getActiveIncidents()
+    ]);
+    return { groups, activeIncidents, error: null };
   } catch (error) {
-    return { groups: null, error };
+    return { groups: null, activeIncidents: null, error };
   }
 }
 
 // Client component for rendering
-function HomeContent({ groups, error }: { groups: Group[] | null, error: any }) {
+function HomeContent({ groups, activeIncidents, error }: {
+  groups: Group[] | null,
+  activeIncidents: Incident[] | null,
+  error: any
+}) {
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const textColor = useColorModeValue('gray.600', 'gray.400');
 
@@ -317,7 +363,74 @@ function HomeContent({ groups, error }: { groups: Group[] | null, error: any }) 
             </Flex>
           </Box>
 
+          {/* Active Incidents */}
+          {activeIncidents && activeIncidents.length > 0 && (
+            <Box mb={4}>
+              <Heading as="h2" size="md" mb={3}>
+                Active Incidents
+              </Heading>
+              <VStack spacing={3} align="stretch">
+                {activeIncidents.map((incident) => {
+                  // Get status color and icon
+                  const statusColor = incident.status === 'investigating' ? 'orange' :
+                                     incident.status === 'identified' ? 'blue' :
+                                     incident.status === 'monitoring' ? 'purple' : 'green';
+
+                  const statusIcon = incident.status === 'investigating' ? '⚠️' :
+                                    incident.status === 'identified' ? 'ℹ️' :
+                                    incident.status === 'monitoring' ? '⏱️' : '✓';
+
+                  // Get impact color
+                  const impactColor = incident.impact === 'critical' ? 'red' :
+                                     incident.impact === 'major' ? 'orange' :
+                                     incident.impact === 'minor' ? 'yellow' : 'green';
+
+                  return (
+                    <Box
+                      key={incident._id}
+                      p={4}
+                      shadow="md"
+                      borderRadius="md"
+                      bg={useColorModeValue('white', 'gray.800')}
+                      _hover={{
+                        boxShadow: 'md',
+                        transform: 'translateY(-2px)',
+                        transition: 'all 0.2s ease-in-out'
+                      }}
+                      as="a"
+                      href={`/incidents/${incident._id}`}
+                      cursor="pointer"
+                    >
+                      <Flex justify="space-between" align="center" mb={2}>
+                        <Heading as="h3" size="sm" fontWeight="medium">
+                          {incident.title}
+                        </Heading>
+                        <HStack>
+                          <Badge colorScheme={statusColor} px={2} py={1} borderRadius="md">
+                            {statusIcon} {incident.status.charAt(0).toUpperCase() + incident.status.slice(1)}
+                          </Badge>
+                          <Badge colorScheme={impactColor} px={2} py={1} borderRadius="md">
+                            {incident.impact.charAt(0).toUpperCase() + incident.impact.slice(1)}
+                          </Badge>
+                        </HStack>
+                      </Flex>
+                      <Text fontSize="sm" color={textColor} noOfLines={2} mb={2}>
+                        {incident.description}
+                      </Text>
+                      <Text fontSize="xs" color={textColor}>
+                        Updated: {new Date(incident.updatedAt).toLocaleString()}
+                      </Text>
+                    </Box>
+                  );
+                })}
+              </VStack>
+            </Box>
+          )}
+
           {/* Service Groups */}
+          <Heading as="h2" size="md" mb={3}>
+            Services
+          </Heading>
           <Suspense fallback={<LoadingState />}>
             {groups && groups.length > 0 ? (
                 <VStack spacing={4} mb={4} align="stretch">
@@ -392,6 +505,6 @@ function HomeContent({ groups, error }: { groups: Group[] | null, error: any }) 
 
 // Main component that combines data fetching and rendering
 export default async function Home() {
-  const { groups, error } = await HomeData();
-  return <HomeContent groups={groups} error={error} />;
+  const { groups, activeIncidents, error } = await HomeData();
+  return <HomeContent groups={groups} activeIncidents={activeIncidents} error={error} />;
 }
