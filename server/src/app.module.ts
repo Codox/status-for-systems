@@ -8,6 +8,10 @@ import { AdminController } from './controllers/admin.controller';
 import { AuthModule } from './auth/auth.module';
 import { ComponentsModule } from './components/components.module';
 import { IncidentsModule } from './incidents/incidents.module';
+import * as mongoose from 'mongoose';
+
+mongoose.set('debug', true);
+
 
 @Module({
   imports: [
