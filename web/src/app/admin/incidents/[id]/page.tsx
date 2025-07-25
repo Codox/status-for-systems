@@ -48,6 +48,10 @@ interface Update {
     from: string | null;
     to: string;
   };
+  impactUpdate?: {
+    from: string;
+    to: string;
+  };
   description: string | null;
   type: string;
   componentStatusUpdates?: {
@@ -156,6 +160,8 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
         return 'Incident Updated';
       case 'status_changed':
         return 'Status Changed';
+      case 'impact_changed':
+        return 'Impact Changed';
       case 'component_updated':
         return 'Component Updated';
       default:
@@ -564,6 +570,11 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                             {update.statusUpdate.to.charAt(0).toUpperCase() + update.statusUpdate.to.slice(1)}
                           </Badge>
                         )}
+                        {update.impactUpdate && (
+                          <Badge colorScheme={getImpactColor(update.impactUpdate.to as Incident['impact'])} mr={2}>
+                            {update.impactUpdate.to.charAt(0).toUpperCase() + update.impactUpdate.to.slice(1)}
+                          </Badge>
+                        )}
                         {formatUpdateType(update.type)}
                       </Text>
                       <Text fontSize="sm" color={textColor}>
@@ -574,6 +585,21 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                     {update.description && (
                       <Box mb={2}>
                         <Text whiteSpace="pre-wrap">{update.description}</Text>
+                      </Box>
+                    )}
+
+                    {update.impactUpdate && (
+                      <Box mt={2}>
+                        <Text fontSize="sm" fontWeight="medium" mb={1}>Impact Change:</Text>
+                        <HStack spacing={2}>
+                          <Badge size="sm" colorScheme={getImpactColor(update.impactUpdate.from as Incident['impact'])}>
+                            {update.impactUpdate.from.charAt(0).toUpperCase() + update.impactUpdate.from.slice(1)}
+                          </Badge>
+                          <Text fontSize="sm">→</Text>
+                          <Badge size="sm" colorScheme={getImpactColor(update.impactUpdate.to as Incident['impact'])}>
+                            {update.impactUpdate.to.charAt(0).toUpperCase() + update.impactUpdate.to.slice(1)}
+                          </Badge>
+                        </HStack>
                       </Box>
                     )}
 
