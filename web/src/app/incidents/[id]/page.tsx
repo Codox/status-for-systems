@@ -339,11 +339,6 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                   <Box key={update._id} p={4} borderWidth="1px" borderRadius="md" borderColor={borderColor}>
                     <HStack justify="space-between" mb={2}>
                       <Text fontWeight="bold">
-                        {update.statusUpdate && (
-                          <Badge colorScheme={getStatusColor(update.statusUpdate.to as Incident['status'])} mr={2}>
-                            {update.statusUpdate.to.charAt(0).toUpperCase() + update.statusUpdate.to.slice(1)}
-                          </Badge>
-                        )}
                         {update.impactUpdate && (
                           <Badge colorScheme={getImpactColor(update.impactUpdate.to as Incident['impact'])} mr={2}>
                             {update.impactUpdate.to.charAt(0).toUpperCase() + update.impactUpdate.to.slice(1)}
@@ -358,7 +353,23 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
 
                     {update.description && (
                       <Box mb={2}>
+                        <Text fontSize="sm" fontWeight="medium" mb={1}>Description:</Text>
                         <Text whiteSpace="pre-wrap">{update.description}</Text>
+                      </Box>
+                    )}
+
+                    {update.statusUpdate && (
+                      <Box mt={2}>
+                        <Text fontSize="sm" fontWeight="medium" mb={1}>Status Change:</Text>
+                        <HStack spacing={2}>
+                          <Badge size="sm" colorScheme={getStatusColor(update.statusUpdate.from as Incident['status'])}>
+                            {update.statusUpdate.from.charAt(0).toUpperCase() + update.statusUpdate.from.slice(1)}
+                          </Badge>
+                          <Text fontSize="sm">→</Text>
+                          <Badge size="sm" colorScheme={getStatusColor(update.statusUpdate.to as Incident['status'])}>
+                            {update.statusUpdate.to.charAt(0).toUpperCase() + update.statusUpdate.to.slice(1)}
+                          </Badge>
+                        </HStack>
                       </Box>
                     )}
 
