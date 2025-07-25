@@ -358,11 +358,11 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                         <Text fontSize="sm" fontWeight="medium" mb={1}>Status Change:</Text>
                         <HStack spacing={2}>
                           <Badge size="sm" colorScheme={getStatusColor(update.statusUpdate.from as Incident['status'])}>
-                            {update.statusUpdate.from.charAt(0).toUpperCase() + update.statusUpdate.from.slice(1)}
+                            {update.statusUpdate.from ? update.statusUpdate.from.charAt(0).toUpperCase() + update.statusUpdate.from.slice(1) : 'Unknown'}
                           </Badge>
                           <Text fontSize="sm">→</Text>
                           <Badge size="sm" colorScheme={getStatusColor(update.statusUpdate.to as Incident['status'])}>
-                            {update.statusUpdate.to.charAt(0).toUpperCase() + update.statusUpdate.to.slice(1)}
+                            {update.statusUpdate.to ? update.statusUpdate.to.charAt(0).toUpperCase() + update.statusUpdate.to.slice(1) : 'Unknown'}
                           </Badge>
                         </HStack>
                       </Box>
@@ -385,7 +385,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                                   compUpdate.from === 'partial' ? 'orange' :
                                   compUpdate.from === 'major' ? 'red' : 'purple'
                                 }>
-                                  {compUpdate.from.charAt(0).toUpperCase() + compUpdate.from.slice(1)}
+                                  {compUpdate.from ? compUpdate.from.charAt(0).toUpperCase() + compUpdate.from.slice(1) : 'Unknown'}
                                 </Badge>
                                 <Text fontSize="sm">→</Text>
                                 <Badge size="sm" colorScheme={
@@ -394,7 +394,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                                   compUpdate.to === 'partial' ? 'orange' :
                                   compUpdate.to === 'major' ? 'red' : 'purple'
                                 }>
-                                  {compUpdate.to.charAt(0).toUpperCase() + compUpdate.to.slice(1)}
+                                  {compUpdate.to ? compUpdate.to.charAt(0).toUpperCase() + compUpdate.to.slice(1) : 'Unknown'}
                                 </Badge>
                               </HStack>
                             ) : null;

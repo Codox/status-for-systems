@@ -588,7 +588,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                           </Badge>
                           <Text fontSize="sm">→</Text>
                           <Badge size="sm" colorScheme={getStatusColor(update.statusUpdate.to as Incident['status'])}>
-                            {update.statusUpdate.to.charAt(0).toUpperCase() + update.statusUpdate.to.slice(1)}
+                            {update.statusUpdate?.to?.charAt(0).toUpperCase() + update.statusUpdate.to.slice(1)}
                           </Badge>
                         </HStack>
                       </Box>
