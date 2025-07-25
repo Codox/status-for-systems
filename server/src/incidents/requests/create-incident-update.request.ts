@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { IncidentStatus } from '../entities/incident.entity';
+import { IncidentStatus, IncidentImpact } from '../entities/incident.entity';
 import { ComponentStatus } from '../../components/entities/component.entity';
 import { IncidentUpdateType } from '../entities/incident-update.entity';
 
@@ -38,6 +38,10 @@ export class CreateIncidentUpdateRequest {
   @IsOptional()
   @IsEnum(IncidentStatus)
   status?: IncidentStatus;
+
+  @IsOptional()
+  @IsEnum(IncidentImpact)
+  impact?: IncidentImpact;
 
   @IsOptional()
   @IsArray()

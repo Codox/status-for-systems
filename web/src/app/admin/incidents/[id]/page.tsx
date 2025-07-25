@@ -88,6 +88,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
   // Status update form
   const [statusUpdate, setStatusUpdate] = useState({
     status: '',
+    impact: '',
     description: '',
     componentUpdates: [] as { id: string; status: string }[]
   })
@@ -198,6 +199,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
         // Initialize status update form with current values
         setStatusUpdate({
           status: incidentData.status,
+          impact: incidentData.impact,
           description: '',
           componentUpdates: [...incidentData.affectedComponents]
         })
@@ -221,6 +223,13 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
     setStatusUpdate(prev => ({
       ...prev,
       status: e.target.value
+    }))
+  }
+
+  const handleImpactChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setStatusUpdate(prev => ({
+      ...prev,
+      impact: e.target.value
     }))
   }
 
@@ -264,6 +273,7 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
         body: JSON.stringify({
           incidentId: incidentId,
           status: statusUpdate.status,
+          impact: statusUpdate.impact,
           description: statusUpdate.description,
           componentUpdates: statusUpdate.componentUpdates
         }),
@@ -471,6 +481,19 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                     <option value="identified">Identified</option>
                     <option value="monitoring">Monitoring</option>
                     <option value="resolved">Resolved</option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Impact</FormLabel>
+                  <Select
+                    value={statusUpdate.impact}
+                    onChange={handleImpactChange}
+                  >
+                    <option value="none">None</option>
+                    <option value="minor">Minor</option>
+                    <option value="major">Major</option>
+                    <option value="critical">Critical</option>
                   </Select>
                 </FormControl>
 

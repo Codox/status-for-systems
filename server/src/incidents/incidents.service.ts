@@ -233,6 +233,15 @@ export class IncidentsService {
     if (createIncidentUpdateRequest.status) {
       incident.status = createIncidentUpdateRequest.status;
       newStatus = createIncidentUpdateRequest.status;
+    }
+
+    // Update the incident impact if provided
+    if (createIncidentUpdateRequest.impact) {
+      incident.impact = createIncidentUpdateRequest.impact;
+    }
+
+    // Save the incident if status or impact was updated
+    if (createIncidentUpdateRequest.status || createIncidentUpdateRequest.impact) {
       await incident.save();
     }
 

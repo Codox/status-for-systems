@@ -13,6 +13,7 @@ export enum IncidentStatus {
 }
 
 export enum IncidentImpact {
+  NONE = 'none',
   MINOR = 'minor',
   MAJOR = 'major',
   CRITICAL = 'critical',
