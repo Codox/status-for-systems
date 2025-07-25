@@ -259,21 +259,31 @@ export class IncidentsService {
     }
 
     // Create an incident update
-    const incidentUpdate = new this.incidentUpdateModel({
+    const incidentUpdateData: any = {
       incidentId: incident._id,
       description: createIncidentUpdateRequest.description,
       type: updateType,
-      statusUpdate: {
-        from: previousStatus,
-        to: newStatus,
-      },
-      impactUpdate: {
-        from: previousImpact,
-        to: newImpact,
-      },
       componentStatusUpdates: [],
       createdAt: new Date(),
-    });
+    };
+
+    // Only add statusUpdate if the status actually changed
+    if (previousStatus !== newStatus) {
+      incidentUpdateData.statusUpdate = {
+        from: previousStatus,
+        to: newStatus,
+      };
+    }
+
+    // Only add impactUpdate if the impact actually changed
+    if (previousImpact !== newImpact) {
+      incidentUpdateData.impactUpdate = {
+        from: previousImpact,
+        to: newImpact,
+      };
+    }
+
+    const incidentUpdate = new this.incidentUpdateModel(incidentUpdateData);
 
     // Track component status updates
     const componentStatusUpdates = [];
