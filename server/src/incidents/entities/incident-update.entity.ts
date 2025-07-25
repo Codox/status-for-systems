@@ -6,6 +6,7 @@ import { IncidentStatus } from './incident.entity';
 export enum IncidentUpdateType {
   CREATED = 'created',
   UPDATED = 'updated',
+  RESOLVED = 'resolved',
   CLOSED = 'closed',
 }
 

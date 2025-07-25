@@ -31,9 +31,9 @@ export class CreateIncidentUpdateRequest {
   @IsString()
   description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(IncidentUpdateType)
-  type: IncidentUpdateType;
+  type?: IncidentUpdateType;
 
   @IsOptional()
   @IsEnum(IncidentStatus)

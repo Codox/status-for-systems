@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Model, Connection, Types } from 'mongoose';
-import { Incident } from './entities/incident.entity';
+import { Incident, IncidentStatus } from './entities/incident.entity';
 import {
   IncidentUpdate,
   IncidentUpdateType,
@@ -236,11 +236,19 @@ export class IncidentsService {
       await incident.save();
     }
 
+    // Determine the update type - if status is being set to resolved, mark as resolved
+    let updateType = createIncidentUpdateRequest.type;
+    if (!updateType) {
+      updateType = newStatus === IncidentStatus.RESOLVED
+        ? IncidentUpdateType.RESOLVED
+        : IncidentUpdateType.UPDATED;
+    }
+
     // Create an incident update
     const incidentUpdate = new this.incidentUpdateModel({
       incidentId: incident._id,
       description: createIncidentUpdateRequest.description,
-      type: createIncidentUpdateRequest.type || IncidentUpdateType.UPDATED,
+      type: updateType,
       statusUpdate: {
         from: previousStatus,
         to: newStatus,
