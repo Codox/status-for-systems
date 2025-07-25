@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Model, Connection, Types } from 'mongoose';
-import { Incident, IncidentStatus } from './entities/incident.entity';
+import { Incident, IncidentStatus, IncidentImpact } from './entities/incident.entity';
 import {
   IncidentUpdate,
   IncidentUpdateType,
@@ -229,6 +229,10 @@ export class IncidentsService {
     const previousStatus = incident.status;
     let newStatus = previousStatus;
 
+    // Get the current impact before updating
+    const previousImpact = incident.impact;
+    let newImpact = previousImpact;
+
     // Update the incident status if provided
     if (createIncidentUpdateRequest.status) {
       incident.status = createIncidentUpdateRequest.status;
@@ -238,6 +242,7 @@ export class IncidentsService {
     // Update the incident impact if provided
     if (createIncidentUpdateRequest.impact) {
       incident.impact = createIncidentUpdateRequest.impact;
+      newImpact = createIncidentUpdateRequest.impact;
     }
 
     // Save the incident if status or impact was updated
@@ -261,6 +266,10 @@ export class IncidentsService {
       statusUpdate: {
         from: previousStatus,
         to: newStatus,
+      },
+      impactUpdate: {
+        from: previousImpact,
+        to: newImpact,
       },
       componentStatusUpdates: [],
       createdAt: new Date(),

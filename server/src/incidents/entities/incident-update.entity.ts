@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ComponentStatus } from '../../components/entities/component.entity';
-import { IncidentStatus } from './incident.entity';
+import { IncidentStatus, IncidentImpact } from './incident.entity';
 
 export enum IncidentUpdateType {
   CREATED = 'created',
@@ -58,6 +58,26 @@ export class IncidentUpdate extends Document {
   statusUpdate?: {
     from: IncidentStatus | null;
     to: IncidentStatus;
+  };
+
+  @Prop({
+    type: {
+      from: {
+        type: String,
+        enum: Object.values(IncidentImpact),
+        required: false,
+      },
+      to: {
+        type: String,
+        enum: Object.values(IncidentImpact),
+        required: true,
+      },
+    },
+    required: false,
+  })
+  impactUpdate?: {
+    from: IncidentImpact | null;
+    to: IncidentImpact;
   };
 
   @Prop({
