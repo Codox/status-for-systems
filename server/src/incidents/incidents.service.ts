@@ -37,7 +37,7 @@ export class IncidentsService {
   async getIncidentUpdates(incidentId: string): Promise<IncidentUpdate[]> {
     return this.incidentUpdateModel
       .find({ incidentId: new Types.ObjectId(incidentId) })
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: 'desc' })
       .exec();
   }
 
