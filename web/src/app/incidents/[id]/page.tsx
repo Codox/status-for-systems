@@ -339,11 +339,6 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                   <Box key={update._id} p={4} borderWidth="1px" borderRadius="md" borderColor={borderColor}>
                     <HStack justify="space-between" mb={2}>
                       <Text fontWeight="bold">
-                        {update.impactUpdate && (
-                          <Badge colorScheme={getImpactColor(update.impactUpdate.to as Incident['impact'])} mr={2}>
-                            {update.impactUpdate.to.charAt(0).toUpperCase() + update.impactUpdate.to.slice(1)}
-                          </Badge>
-                        )}
                         {formatUpdateType(update.type)}
                       </Text>
                       <Text fontSize="sm" color={textColor}>
@@ -373,20 +368,6 @@ export default function IncidentPage({ params }: { params: { id: string } }) {
                       </Box>
                     )}
 
-                    {update.impactUpdate && (
-                      <Box mt={2}>
-                        <Text fontSize="sm" fontWeight="medium" mb={1}>Impact Change:</Text>
-                        <HStack spacing={2}>
-                          <Badge size="sm" colorScheme={getImpactColor(update.impactUpdate.from as Incident['impact'])}>
-                            {update.impactUpdate.from.charAt(0).toUpperCase() + update.impactUpdate.from.slice(1)}
-                          </Badge>
-                          <Text fontSize="sm">→</Text>
-                          <Badge size="sm" colorScheme={getImpactColor(update.impactUpdate.to as Incident['impact'])}>
-                            {update.impactUpdate.to.charAt(0).toUpperCase() + update.impactUpdate.to.slice(1)}
-                          </Badge>
-                        </HStack>
-                      </Box>
-                    )}
 
                     {update.componentStatusUpdates && update.componentStatusUpdates.length > 0 && (
                       <Box mt={2}>
