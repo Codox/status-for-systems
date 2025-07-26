@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'models/uptime_data.dart';
 import 'widgets/status_card.dart';
 import 'widgets/status_dashboard.dart';
+import 'widgets/incident_detail_page.dart';
 
 Future<void> main() async {
   // Load environment variables from .env file
@@ -90,9 +91,21 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.grey[900],
       ),
       themeMode: ThemeMode.system,
-      home: const StatusPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const StatusPage(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name?.startsWith('/incidents/') == true) {
+          final incidentId = settings.name!.substring('/incidents/'.length);
+          return MaterialPageRoute(
+            builder: (context) => IncidentDetailPage(incidentId: incidentId),
+            settings: settings,
+          );
+        }
+        return null;
+      },
       debugShowCheckedModeBanner: false,
     );
   }
 }
-

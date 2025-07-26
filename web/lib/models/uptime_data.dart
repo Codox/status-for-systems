@@ -102,6 +102,60 @@ class AffectedComponent {
   });
 }
 
+class StatusUpdate {
+  final String? from;
+  final String to;
+
+  StatusUpdate({
+    this.from,
+    required this.to,
+  });
+}
+
+class ImpactUpdate {
+  final String from;
+  final String to;
+
+  ImpactUpdate({
+    required this.from,
+    required this.to,
+  });
+}
+
+class ComponentStatusUpdate {
+  final String id;
+  final String from;
+  final String to;
+  final String updateId;
+
+  ComponentStatusUpdate({
+    required this.id,
+    required this.from,
+    required this.to,
+    required this.updateId,
+  });
+}
+
+class Update {
+  final String id;
+  final String type;
+  final String? description;
+  final StatusUpdate? statusUpdate;
+  final ImpactUpdate? impactUpdate;
+  final List<ComponentStatusUpdate>? componentStatusUpdates;
+  final String createdAt;
+
+  Update({
+    required this.id,
+    required this.type,
+    this.description,
+    this.statusUpdate,
+    this.impactUpdate,
+    this.componentStatusUpdates,
+    required this.createdAt,
+  });
+}
+
 // Data service for fetching and processing uptime data
 class UptimeDataService {
   // API data fetching methods
@@ -262,6 +316,95 @@ class UptimeDataService {
         print('Returning empty list for incidents');
         return [];
       }
+    }
+  }
+
+  static Future<Incident> fetchIncident(String incidentId) async {
+    try {
+      // Get API URL from .env file, or use a default value
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final response = await http.get(
+        Uri.parse('$apiUrl/public/incidents/$incidentId'),
+        headers: {
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch incident: ${response.statusCode}');
+      }
+
+      final dynamic data = jsonDecode(response.body);
+      return Incident(
+        id: data['_id'],
+        title: data['title'],
+        description: data['description'],
+        status: data['status'],
+        impact: data['impact'],
+        affectedComponents: (data['affectedComponents'] as List<dynamic>).map((component) => AffectedComponent(
+          id: component['_id'],
+          name: component['name'],
+          status: component['status'],
+        )).toList(),
+        createdAt: data['createdAt'],
+        updatedAt: data['updatedAt'],
+        resolvedAt: data['resolvedAt'],
+      );
+    } catch (error) {
+      print('Error fetching incident: $error');
+      rethrow;
+    }
+  }
+
+  static Future<List<Update>> fetchIncidentUpdates(String incidentId) async {
+    try {
+      // Get API URL from .env file, or use a default value
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final response = await http.get(
+        Uri.parse('$apiUrl/public/incidents/$incidentId/updates'),
+        headers: {
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch updates: ${response.statusCode}');
+      }
+
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((update) => Update(
+        id: update['_id'],
+        type: update['type'],
+        description: update['description'],
+        statusUpdate: update['statusUpdate'] != null ? StatusUpdate(
+          from: update['statusUpdate']['from'],
+          to: update['statusUpdate']['to'],
+        ) : null,
+        impactUpdate: update['impactUpdate'] != null ? ImpactUpdate(
+          from: update['impactUpdate']['from'],
+          to: update['impactUpdate']['to'],
+        ) : null,
+        componentStatusUpdates: update['componentStatusUpdates'] != null 
+          ? (update['componentStatusUpdates'] as List<dynamic>).map((compUpdate) => ComponentStatusUpdate(
+              id: compUpdate['id'],
+              from: compUpdate['from'],
+              to: compUpdate['to'],
+              updateId: compUpdate['_id'],
+            )).toList()
+          : null,
+        createdAt: update['createdAt'],
+      )).toList();
+    } catch (error) {
+      print('Error fetching incident updates: $error');
+      rethrow;
     }
   }
 
