@@ -29,7 +29,7 @@ class StatusDashboard extends StatelessWidget {
         backgroundColor: bgColor,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 120.0, vertical: 16.0),
             child: ErrorState(
               message: error is Exception ? error.toString() : 'An unexpected error occurred',
             ),
@@ -44,7 +44,7 @@ class StatusDashboard extends StatelessWidget {
         backgroundColor: bgColor,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 120.0, vertical: 16.0),
             child: LoadingState(),
           ),
         ),
@@ -55,7 +55,7 @@ class StatusDashboard extends StatelessWidget {
       backgroundColor: bgColor,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 120.0, vertical: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -317,13 +317,16 @@ class StatusDashboard extends StatelessWidget {
             LayoutBuilder(
               builder: (context, constraints) {
                 final isWideScreen = constraints.maxWidth > 600;
+                final cardWidth = isWideScreen ? (constraints.maxWidth - 32) / 3 : (constraints.maxWidth - 16) / 2;
+
                 return Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: 16,
+                  runSpacing: 16,
                   children: group.components.map((component) {
                     final statusStyles = _getStatusStyles(component.status);
                     return Container(
-                      width: isWideScreen ? (constraints.maxWidth - 8) / 2 : constraints.maxWidth,
+                      width: cardWidth,
+                      height: 120, // Fixed height for consistent card dimensions
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.light
@@ -333,38 +336,48 @@ class StatusDashboard extends StatelessWidget {
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Text(
-                                  component.name,
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      component.name,
+                                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  _buildBadge(
+                                    context,
+                                    '${statusStyles['icon']} ${statusStyles['displayText']}',
+                                    isDarkMode
+                                        ? _getColorFromName(statusStyles['colorDark'])
+                                        : _getColorFromName(statusStyles['color']),
+                                    backgroundColor: isDarkMode
+                                        ? _getColorFromName(statusStyles['bgColorDark']).withOpacity(0.2)
+                                        : _getColorFromName(statusStyles['bgColor']).withOpacity(0.2),
+                                  ),
+                                ],
                               ),
-                              _buildBadge(
-                                context,
-                                '${statusStyles['icon']} ${statusStyles['displayText']}',
-                                isDarkMode
-                                    ? _getColorFromName(statusStyles['colorDark'])
-                                    : _getColorFromName(statusStyles['color']),
-                                backgroundColor: isDarkMode
-                                    ? _getColorFromName(statusStyles['bgColorDark']).withOpacity(0.2)
-                                    : _getColorFromName(statusStyles['bgColor']).withOpacity(0.2),
-                              ),
+                              const SizedBox(height: 8),
                             ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            component.description,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context).brightness == Brightness.light
-                                  ? Colors.grey[600]
-                                  : Colors.grey[400],
+                          Expanded(
+                            child: Text(
+                              component.description,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).brightness == Brightness.light
+                                    ? Colors.grey[600]
+                                    : Colors.grey[400],
+                              ),
                             ),
                           ),
                         ],
