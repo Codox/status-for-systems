@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'models/uptime_data.dart';
 import 'widgets/status_card.dart';
 import 'widgets/status_dashboard.dart';
 
-void main() {
+Future<void> main() async {
+  // Load environment variables from .env file
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    // For web builds, try loading from assets
+    // await dotenv.load(fileName: "assets/.env");
+  }
   runApp(const MyApp());
 }
 
@@ -31,8 +39,8 @@ class _StatusPageState extends State<StatusPage> {
   Future<void> _loadData() async {
     try {
       // Fetch data from API
-      final fetchedGroups = await MockDataGenerator.fetchGroups();
-      final fetchedIncidents = await MockDataGenerator.fetchActiveIncidents();
+      final fetchedGroups = await UptimeDataService.fetchGroups();
+      final fetchedIncidents = await UptimeDataService.fetchActiveIncidents();
 
       setState(() {
         groups = fetchedGroups;
@@ -104,7 +112,7 @@ class _UptimeDashboardState extends State<UptimeDashboard> {
   void initState() {
     super.initState();
     // Load mock data
-    services = MockDataGenerator.generateMockServices();
+    services = UptimeDataService.generateMockServices();
     // Initially select the first service
     if (services.isNotEmpty) {
       selectedService = services.first;
