@@ -27,16 +27,16 @@ class _StatusPageState extends State<StatusPage> {
     _loadData();
   }
 
-  // Simulate loading data from an API
+  // Load data from API
   Future<void> _loadData() async {
     try {
-      // Simulate network delay
-      await Future.delayed(const Duration(seconds: 1));
+      // Fetch data from API
+      final fetchedGroups = await MockDataGenerator.fetchGroups();
+      final fetchedIncidents = await MockDataGenerator.fetchActiveIncidents();
 
-      // Load mock data
       setState(() {
-        groups = MockDataGenerator.generateMockGroups();
-        activeIncidents = MockDataGenerator.generateMockIncidents();
+        groups = fetchedGroups;
+        activeIncidents = fetchedIncidents;
         isLoading = false;
       });
     } catch (e) {

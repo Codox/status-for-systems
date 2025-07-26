@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 // Legacy model - keeping for backward compatibility
 class Service {
   final String name;
@@ -100,6 +103,142 @@ class AffectedComponent {
 
 // Mock data generator for demonstration purposes
 class MockDataGenerator {
+  // API data fetching methods
+  static Future<List<Group>> fetchGroups() async {
+    try {
+      // Using the provided JSON response for testing/development
+      const String mockResponse = '''
+[
+  {
+    "_id": "6883d9115ea05ff4c228e524",
+    "name": "Core Infrastructure",
+    "description": "Essential infrastructure components",
+    "components": [
+      {
+        "_id": "6883d9115ea05ff4c228e51f",
+        "name": "API Gateway",
+        "description": "Main API gateway handling all incoming requests",
+        "status": "major",
+        "createdAt": "2025-07-25T19:20:49.933Z",
+        "updatedAt": "2025-07-25T19:35:31.356Z"
+      },
+      {
+        "_id": "6883d9115ea05ff4c228e521",
+        "name": "Database Cluster",
+        "description": "Primary database cluster",
+        "status": "operational",
+        "createdAt": "2025-07-25T19:20:49.933Z",
+        "updatedAt": "2025-07-25T19:20:49.933Z"
+      }
+    ],
+    "createdAt": "2025-07-25T19:20:49.940Z",
+    "updatedAt": "2025-07-25T19:20:49.940Z"
+  },
+  {
+    "_id": "6883d9115ea05ff4c228e525",
+    "name": "Security Services",
+    "description": "Security and authentication related services",
+    "components": [
+      {
+        "_id": "6883d9115ea05ff4c228e520",
+        "name": "Authentication Service",
+        "description": "Handles user authentication and authorization",
+        "status": "major",
+        "createdAt": "2025-07-25T19:20:49.933Z",
+        "updatedAt": "2025-07-25T19:21:59.367Z"
+      }
+    ],
+    "createdAt": "2025-07-25T19:20:49.941Z",
+    "updatedAt": "2025-07-25T19:20:49.941Z"
+  },
+  {
+    "_id": "6883d9115ea05ff4c228e526",
+    "name": "Performance Layer",
+    "description": "Services focused on performance optimization",
+    "components": [
+      {
+        "_id": "6883d9115ea05ff4c228e522",
+        "name": "Redis Cache",
+        "description": "Caching layer for improved performance",
+        "status": "major",
+        "createdAt": "2025-07-25T19:20:49.933Z",
+        "updatedAt": "2025-07-25T19:21:59.371Z"
+      }
+    ],
+    "createdAt": "2025-07-25T19:20:49.941Z",
+    "updatedAt": "2025-07-25T19:20:49.941Z"
+  }
+]
+''';
+
+      final List<dynamic> data = jsonDecode(mockResponse);
+      return data.map((group) => Group(
+        id: group['_id'],
+        name: group['name'],
+        description: group['description'],
+        components: (group['components'] as List<dynamic>).map((component) => Component(
+          id: component['_id'],
+          name: component['name'],
+          description: component['description'],
+          status: component['status'],
+          createdAt: component['createdAt'],
+          updatedAt: component['updatedAt'],
+        )).toList(),
+        createdAt: group['createdAt'],
+        updatedAt: group['updatedAt'],
+      )).toList();
+    } catch (error) {
+      print('Error processing groups data: $error');
+      // Return mock data as fallback
+      return generateMockGroups();
+    }
+  }
+
+  static Future<List<Incident>> fetchActiveIncidents() async {
+    try {
+      // Try to get API URL from environment, or use a default value
+      final apiUrl = const String.fromEnvironment('API_URL', defaultValue: 'https://api.statusforsystems.com');
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final response = await http.get(
+        Uri.parse('$apiUrl/public/incidents'),
+        headers: {
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch incidents: ${response.statusCode}');
+      }
+
+      final List<dynamic> data = jsonDecode(response.body);
+      // Filter out resolved incidents to show only active ones
+      return data
+        .where((incident) => incident['status'] != 'resolved')
+        .map((incident) => Incident(
+          id: incident['_id'],
+          title: incident['title'],
+          description: incident['description'],
+          status: incident['status'],
+          impact: incident['impact'],
+          affectedComponents: (incident['affectedComponents'] as List<dynamic>).map((component) => AffectedComponent(
+            id: component['_id'],
+            name: component['name'],
+            status: component['status'],
+          )).toList(),
+          createdAt: incident['createdAt'],
+          updatedAt: incident['updatedAt'],
+          resolvedAt: incident['resolvedAt'],
+        )).toList();
+    } catch (error) {
+      print('Error fetching incidents: $error');
+      // Return mock data as fallback
+      return generateMockIncidents();
+    }
+  }
+
   // Legacy mock data generator
   static List<Service> generateMockServices() {
     final now = DateTime.now();
