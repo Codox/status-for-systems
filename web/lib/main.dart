@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
 import 'models/uptime_data.dart';
 import 'widgets/status_card.dart';
 import 'widgets/status_dashboard.dart';
 import 'widgets/incident_detail_page.dart';
+import 'widgets/admin_layout.dart';
+import 'widgets/admin_dashboard.dart';
+import 'widgets/admin_incidents.dart';
+
+// Import for web URL strategy
+import 'package:flutter_web_plugins/flutter_web_plugins.dart' if (dart.library.html) 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 Future<void> main() async {
+  // Configure URL strategy for web
+  if (kIsWeb) {
+    setUrlStrategy(PathUrlStrategy());
+  }
+
   // Load environment variables from .env file
   try {
     await dotenv.load(fileName: ".env");
@@ -94,6 +106,14 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const StatusPage(),
+        '/admin': (context) => const AdminLayout(
+              currentRoute: '/admin',
+              child: AdminDashboard(),
+            ),
+        '/admin/incidents': (context) => const AdminLayout(
+              child: AdminIncidents(),
+              currentRoute: '/admin/incidents',
+            ),
       },
       onGenerateRoute: (settings) {
         if (settings.name?.startsWith('/incidents/') == true) {
