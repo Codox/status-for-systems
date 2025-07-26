@@ -316,74 +316,101 @@ class StatusDashboard extends StatelessWidget {
             // Components grid
             LayoutBuilder(
               builder: (context, constraints) {
-                final isWideScreen = constraints.maxWidth > 600;
-                final cardWidth = isWideScreen ? (constraints.maxWidth - 32) / 3 : (constraints.maxWidth - 16) / 2;
+                // Improved responsive breakpoints
+                int crossAxisCount;
+                double childAspectRatio;
 
-                return Wrap(
-                  spacing: 16,
-                  runSpacing: 16,
-                  children: group.components.map((component) {
+                if (constraints.maxWidth > 1200) {
+                  crossAxisCount = 4;
+                  childAspectRatio = 3.5;
+                } else if (constraints.maxWidth > 800) {
+                  crossAxisCount = 3;
+                  childAspectRatio = 3.2;
+                } else if (constraints.maxWidth > 600) {
+                  crossAxisCount = 2;
+                  childAspectRatio = 3.0;
+                } else {
+                  crossAxisCount = 1;
+                  childAspectRatio = 4.5;
+                }
+
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: childAspectRatio,
+                  ),
+                  itemCount: group.components.length,
+                  itemBuilder: (context, index) {
+                    final component = group.components[index];
                     final statusStyles = _getStatusStyles(component.status);
+
                     return Container(
-                      width: cardWidth,
-                      height: 120, // Fixed height for consistent card dimensions
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.light
-                            ? Colors.grey[100]
+                            ? Colors.grey[50]
                             : Colors.grey[800],
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Theme.of(context).brightness == Brightness.light
+                              ? Colors.grey[200]!
+                              : Colors.grey[700]!,
+                          width: 1,
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          // Header with name and status
+                          Row(
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      component.name,
-                                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  _buildBadge(
-                                    context,
-                                    '${statusStyles['icon']} ${statusStyles['displayText']}',
-                                    isDarkMode
-                                        ? _getColorFromName(statusStyles['colorDark'])
-                                        : _getColorFromName(statusStyles['color']),
-                                    backgroundColor: isDarkMode
-                                        ? _getColorFromName(statusStyles['bgColorDark']).withOpacity(0.2)
-                                        : _getColorFromName(statusStyles['bgColor']).withOpacity(0.2),
-                                  ),
-                                ],
+                              Expanded(
+                                child: Text(
+                                  component.name,
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(width: 8),
+                              _buildBadge(
+                                context,
+                                '${statusStyles['icon']} ${statusStyles['displayText']}',
+                                isDarkMode
+                                    ? _getColorFromName(statusStyles['colorDark'])
+                                    : _getColorFromName(statusStyles['color']),
+                                backgroundColor: isDarkMode
+                                    ? _getColorFromName(statusStyles['bgColorDark']).withOpacity(0.2)
+                                    : _getColorFromName(statusStyles['bgColor']).withOpacity(0.2),
+                              ),
                             ],
                           ),
+                          const SizedBox(height: 6),
+                          // Description
                           Expanded(
                             child: Text(
                               component.description,
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 12,
+                                height: 1.3,
                                 color: Theme.of(context).brightness == Brightness.light
                                     ? Colors.grey[600]
                                     : Colors.grey[400],
                               ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
                     );
-                  }).toList(),
+                  },
                 );
               },
             ),
