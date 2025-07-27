@@ -12,7 +12,7 @@ class AuthService {
 
   // Get the API base URL from environment
   static String get _baseUrl {
-    return dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
+    return dotenv.env['API_URL'] ?? 'http://localhost:3000';
   }
 
   // Login with username and password
