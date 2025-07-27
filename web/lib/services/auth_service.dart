@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'storage_service.dart';
 
 class AuthService {
   static const String _tokenKey = 'jwt_token';
   static const String _expiryKey = 'jwt_expiry';
-  
+
   static String? _cachedToken;
   static DateTime? _cachedExpiry;
 
@@ -29,10 +29,10 @@ class AuthService {
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        final token = data['token'] as String?;
-        
+        final token = data['access_token'] as String?;
+
         if (token != null) {
           await _storeToken(token);
           return true;
@@ -47,12 +47,12 @@ class AuthService {
 
   // Store JWT token and extract expiry
   static Future<void> _storeToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    
+    final storage = StorageService.instance;
+
     // Store the token
-    await prefs.setString(_tokenKey, token);
+    await storage.setString(_tokenKey, token);
     _cachedToken = token;
-    
+
     // Extract expiry from JWT payload
     try {
       final parts = token.split('.');
@@ -64,15 +64,15 @@ class AuthService {
           (payload.length + 3) ~/ 4 * 4, 
           '='
         );
-        
+
         final decodedBytes = base64Url.decode(normalizedPayload);
         final decodedPayload = jsonDecode(utf8.decode(decodedBytes));
-        
+
         if (decodedPayload['exp'] != null) {
           final expiry = DateTime.fromMillisecondsSinceEpoch(
             decodedPayload['exp'] * 1000
           );
-          await prefs.setString(_expiryKey, expiry.toIso8601String());
+          await storage.setString(_expiryKey, expiry.toIso8601String());
           _cachedExpiry = expiry;
         }
       }
@@ -86,38 +86,38 @@ class AuthService {
     if (_cachedToken != null && await isTokenValid()) {
       return _cachedToken;
     }
-    
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(_tokenKey);
-    
+
+    final storage = StorageService.instance;
+    final token = await storage.getString(_tokenKey);
+
     if (token != null && await isTokenValid()) {
       _cachedToken = token;
       return token;
     }
-    
+
     return null;
   }
 
   // Check if token is valid (exists and not expired)
   static Future<bool> isTokenValid() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = _cachedToken ?? prefs.getString(_tokenKey);
-    
+    final storage = StorageService.instance;
+    final token = _cachedToken ?? await storage.getString(_tokenKey);
+
     if (token == null) return false;
-    
+
     // Check expiry
-    final expiryString = prefs.getString(_expiryKey);
+    final expiryString = await storage.getString(_expiryKey);
     if (expiryString != null) {
       final expiry = DateTime.parse(expiryString);
       _cachedExpiry = expiry;
-      
+
       // Add 5 minute buffer before expiry
       if (DateTime.now().isAfter(expiry.subtract(const Duration(minutes: 5)))) {
         await logout();
         return false;
       }
     }
-    
+
     return true;
   }
 
@@ -128,9 +128,9 @@ class AuthService {
 
   // Logout and clear stored token
   static Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_tokenKey);
-    await prefs.remove(_expiryKey);
+    final storage = StorageService.instance;
+    await storage.remove(_tokenKey);
+    await storage.remove(_expiryKey);
     _cachedToken = null;
     _cachedExpiry = null;
   }
@@ -157,7 +157,7 @@ class AuthService {
   }) async {
     final headers = await getAuthHeaders();
     final uri = Uri.parse('$_baseUrl$endpoint');
-    
+
     switch (method.toUpperCase()) {
       case 'GET':
         return await http.get(uri, headers: headers);
