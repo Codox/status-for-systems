@@ -9,6 +9,8 @@ import 'widgets/admin_layout.dart';
 import 'widgets/admin_dashboard.dart';
 import 'widgets/admin_incidents.dart';
 import 'widgets/admin_incident_detail.dart';
+import 'widgets/login_page.dart';
+import 'widgets/auth_guard.dart';
 
 // Import for web URL strategy
 import 'package:flutter_web_plugins/flutter_web_plugins.dart' if (dart.library.html) 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -107,13 +109,20 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const StatusPage(),
-        '/admin': (context) => const AdminLayout(
+        '/admin/login': (context) => const LoginPage(),
+        '/admin': (context) => AuthGuard(
               currentRoute: '/admin',
-              child: AdminDashboard(),
+              child: const AdminLayout(
+                currentRoute: '/admin',
+                child: AdminDashboard(),
+              ),
             ),
-        '/admin/incidents': (context) => const AdminLayout(
-              child: AdminIncidents(),
+        '/admin/incidents': (context) => AuthGuard(
               currentRoute: '/admin/incidents',
+              child: const AdminLayout(
+                child: AdminIncidents(),
+                currentRoute: '/admin/incidents',
+              ),
             ),
       },
       onGenerateRoute: (settings) {
@@ -127,9 +136,12 @@ class MyApp extends StatelessWidget {
         if (settings.name?.startsWith('/admin/incident/') == true) {
           final incidentId = settings.name!.substring('/admin/incident/'.length);
           return MaterialPageRoute(
-            builder: (context) => AdminLayout(
+            builder: (context) => AuthGuard(
               currentRoute: settings.name!,
-              child: AdminIncidentDetail(incidentId: incidentId),
+              child: AdminLayout(
+                currentRoute: settings.name!,
+                child: AdminIncidentDetail(incidentId: incidentId),
+              ),
             ),
             settings: settings,
           );

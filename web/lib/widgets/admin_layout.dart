@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 
 class AdminLayout extends StatefulWidget {
   final Widget child;
@@ -110,7 +111,7 @@ class _AdminLayoutState extends State<AdminLayout> {
     final headerBgColor = theme.brightness == Brightness.light 
         ? Colors.blue[500]! 
         : Colors.blue[600]!;
-    
+
     return Drawer(
       child: _buildNavigationContent(bgColor, activeBgColor, hoverBgColor, headerBgColor),
     );
@@ -154,7 +155,13 @@ class _AdminLayoutState extends State<AdminLayout> {
         const Divider(),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: _buildBackToStatusPageButton(hoverBgColor),
+          child: Column(
+            children: [
+              _buildBackToStatusPageButton(hoverBgColor),
+              const SizedBox(height: 4),
+              _buildLogoutButton(hoverBgColor),
+            ],
+          ),
         ),
       ],
     );
@@ -238,6 +245,73 @@ class _AdminLayoutState extends State<AdminLayout> {
                 Text(
                   'Back to Status Page',
                   style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(Color hoverBgColor) {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () async {
+            if (isMobile) {
+              Navigator.of(context).pop(); // Close drawer
+            }
+
+            // Show confirmation dialog
+            final shouldLogout = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Logout'),
+                content: const Text('Are you sure you want to logout?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Logout'),
+                  ),
+                ],
+              ),
+            );
+
+            if (shouldLogout == true) {
+              await AuthService.logout();
+              if (mounted) {
+                Navigator.of(context).pushReplacementNamed('/admin/login');
+              }
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 40,
+                  child: Icon(
+                    Icons.logout,
+                    size: 20,
+                    color: Colors.red,
+                  ),
+                ),
+                Text(
+                  'Logout',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.red,
+                  ),
                 ),
               ],
             ),
