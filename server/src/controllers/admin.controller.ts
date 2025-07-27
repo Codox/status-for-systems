@@ -17,13 +17,13 @@ import { CreateGroupRequest } from '../groups/requests/create-group.request';
 import { CreateIncidentRequest } from '../incidents/requests/create-incident.request';
 import { UpdateIncidentRequest } from '../incidents/requests/update-incident.request';
 import { CreateIncidentUpdateRequest } from '../incidents/requests/create-incident-update.request';
-import { BasicAuthGuard } from '../auth/basic-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { GroupsService } from '../groups/groups.service';
 import { ComponentsService } from '../components/components.service';
 import { IncidentsService } from '../incidents/incidents.service';
 
 @Controller('admin')
-@UseGuards(BasicAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class AdminController {
   constructor(
     private readonly groupsService: GroupsService,
@@ -58,11 +58,6 @@ export class AdminController {
     );
   }
 
-
-
-
-
-
   @Get('components')
   async findAllComponents(): Promise<Component[]> {
     return this.componentsService.findAll();
@@ -81,7 +76,6 @@ export class AdminController {
     // TODO: Implement create
     return null;
   }
-
 
   @Put('components/:id')
   async updateComponent(

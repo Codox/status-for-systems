@@ -5,6 +5,7 @@ import { GroupsModule } from './groups/groups.module';
 import { SeedersModule } from './seeders/seeders.module';
 import { PublicController } from './controllers/public.controller';
 import { AdminController } from './controllers/admin.controller';
+import { AuthController } from './controllers/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { ComponentsModule } from './components/components.module';
 import { IncidentsModule } from './incidents/incidents.module';
@@ -39,7 +40,7 @@ mongoose.set('debug', true);
     SeedersModule,
     AuthModule,
   ],
-  controllers: [PublicController, AdminController],
+  controllers: [PublicController, AdminController, AuthController],
   providers: [],
 })
 export class AppModule {}
