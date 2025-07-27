@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import '../services/auth_service.dart';
 
 // Legacy model - keeping for backward compatibility
 class Service {
@@ -160,26 +161,53 @@ class Update {
 class UptimeDataService {
   // Helper method for authenticated requests
   static Future<http.Response> _fetchWithAuth(String url, {String method = 'GET', Map<String, String>? headers, String? body}) async {
+    // Check if token is valid, if not this will throw an exception
+    final token = await AuthService.getToken();
+    if (token == null) {
+      throw Exception('Authentication token not available. Please login again.');
+    }
+
     final defaultHeaders = {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      // TODO: Add actual authentication token here
-      // 'Authorization': 'Bearer $token',
+      'Authorization': 'Bearer $token',
     };
 
     final finalHeaders = {...defaultHeaders, ...?headers};
 
-    switch (method.toUpperCase()) {
-      case 'GET':
-        return await http.get(Uri.parse(url), headers: finalHeaders);
-      case 'POST':
-        return await http.post(Uri.parse(url), headers: finalHeaders, body: body);
-      case 'PUT':
-        return await http.put(Uri.parse(url), headers: finalHeaders, body: body);
-      case 'DELETE':
-        return await http.delete(Uri.parse(url), headers: finalHeaders);
-      default:
-        throw Exception('Unsupported HTTP method: $method');
+    try {
+      http.Response response;
+      switch (method.toUpperCase()) {
+        case 'GET':
+          response = await http.get(Uri.parse(url), headers: finalHeaders);
+          break;
+        case 'POST':
+          response = await http.post(Uri.parse(url), headers: finalHeaders, body: body);
+          break;
+        case 'PUT':
+          response = await http.put(Uri.parse(url), headers: finalHeaders, body: body);
+          break;
+        case 'DELETE':
+          response = await http.delete(Uri.parse(url), headers: finalHeaders);
+          break;
+        default:
+          throw Exception('Unsupported HTTP method: $method');
+      }
+
+      // Check if the response indicates token expiration (401 Unauthorized)
+      if (response.statusCode == 401) {
+        // Token has expired, logout and throw exception
+        await AuthService.logout();
+        throw Exception('Authentication token expired. Please login again.');
+      }
+
+      return response;
+    } catch (e) {
+      // If it's an authentication error, make sure to logout
+      if (e.toString().contains('Authentication token')) {
+        await AuthService.logout();
+      }
+      rethrow;
     }
   }
   // API data fetching methods

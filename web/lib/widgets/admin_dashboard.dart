@@ -31,6 +31,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
         isLoading = false;
       });
     } catch (e) {
+      // Check if it's an authentication error
+      if (e.toString().contains('Authentication token')) {
+        print('[DEBUG_LOG] Authentication error in admin dashboard, redirecting to login');
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed('/admin/login');
+        }
+        return;
+      }
+
       setState(() {
         error = e.toString();
         isLoading = false;

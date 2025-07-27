@@ -74,6 +74,16 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
       print('[DEBUG_LOG] Data loading completed successfully');
     } catch (e) {
       print('[DEBUG_LOG] Error loading incident data: $e');
+
+      // Check if it's an authentication error
+      if (e.toString().contains('Authentication token')) {
+        print('[DEBUG_LOG] Authentication error detected, redirecting to login');
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed('/admin/login');
+        }
+        return;
+      }
+
       setState(() {
         error = 'Failed to load incident details: $e';
         isLoading = false;
@@ -121,6 +131,15 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
         const SnackBar(content: Text('Incident updated successfully')),
       );
     } catch (e) {
+      // Check if it's an authentication error
+      if (e.toString().contains('Authentication token')) {
+        print('[DEBUG_LOG] Authentication error during incident update, redirecting to login');
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed('/admin/login');
+        }
+        return;
+      }
+
       setState(() {
         error = 'Failed to update incident. Please try again.';
         isSaving = false;
@@ -141,6 +160,15 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
         Navigator.of(context).pushReplacementNamed('/admin/incidents');
       }
     } catch (e) {
+      // Check if it's an authentication error
+      if (e.toString().contains('Authentication token')) {
+        print('[DEBUG_LOG] Authentication error during incident close, redirecting to login');
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed('/admin/login');
+        }
+        return;
+      }
+
       setState(() {
         error = 'Failed to close incident. Please try again.';
         isClosing = false;
