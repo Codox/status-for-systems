@@ -8,6 +8,7 @@ import 'widgets/incident_detail_page.dart';
 import 'widgets/admin_layout.dart';
 import 'widgets/admin_dashboard.dart';
 import 'widgets/admin_incidents.dart';
+import 'widgets/admin_incident_detail.dart';
 
 // Import for web URL strategy
 import 'package:flutter_web_plugins/flutter_web_plugins.dart' if (dart.library.html) 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -116,10 +117,20 @@ class MyApp extends StatelessWidget {
             ),
       },
       onGenerateRoute: (settings) {
-        if (settings.name?.startsWith('/incidents/') == true) {
-          final incidentId = settings.name!.substring('/incidents/'.length);
+        if (settings.name?.startsWith('/incident/') == true) {
+          final incidentId = settings.name!.substring('/incident/'.length);
           return MaterialPageRoute(
             builder: (context) => IncidentDetailPage(incidentId: incidentId),
+            settings: settings,
+          );
+        }
+        if (settings.name?.startsWith('/admin/incident/') == true) {
+          final incidentId = settings.name!.substring('/admin/incident/'.length);
+          return MaterialPageRoute(
+            builder: (context) => AdminLayout(
+              currentRoute: settings.name!,
+              child: AdminIncidentDetail(incidentId: incidentId),
+            ),
             settings: settings,
           );
         }

@@ -158,6 +158,30 @@ class Update {
 
 // Data service for fetching and processing uptime data
 class UptimeDataService {
+  // Helper method for authenticated requests
+  static Future<http.Response> _fetchWithAuth(String url, {String method = 'GET', Map<String, String>? headers, String? body}) async {
+    final defaultHeaders = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      // TODO: Add actual authentication token here
+      // 'Authorization': 'Bearer $token',
+    };
+
+    final finalHeaders = {...defaultHeaders, ...?headers};
+
+    switch (method.toUpperCase()) {
+      case 'GET':
+        return await http.get(Uri.parse(url), headers: finalHeaders);
+      case 'POST':
+        return await http.post(Uri.parse(url), headers: finalHeaders, body: body);
+      case 'PUT':
+        return await http.put(Uri.parse(url), headers: finalHeaders, body: body);
+      case 'DELETE':
+        return await http.delete(Uri.parse(url), headers: finalHeaders);
+      default:
+        throw Exception('Unsupported HTTP method: $method');
+    }
+  }
   // API data fetching methods
   static Future<List<Group>> fetchGroups() async {
     try {
@@ -404,6 +428,184 @@ class UptimeDataService {
       )).toList();
     } catch (error) {
       print('Error fetching incident updates: $error');
+      rethrow;
+    }
+  }
+
+  // Admin API methods
+  static Future<Incident> updateIncident({
+    required String incidentId,
+    required String status,
+    required String impact,
+    required String description,
+    required List<Map<String, String>> componentUpdates,
+  }) async {
+    try {
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final response = await _fetchWithAuth(
+        '$apiUrl/admin/incidents/updates',
+        method: 'POST',
+        body: jsonEncode({
+          'incidentId': incidentId,
+          'status': status,
+          'impact': impact,
+          'description': description,
+          'componentUpdates': componentUpdates,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update incident: ${response.statusCode}');
+      }
+
+      final dynamic data = jsonDecode(response.body);
+      return Incident(
+        id: data['_id'],
+        title: data['title'],
+        description: data['description'],
+        status: data['status'],
+        impact: data['impact'],
+        affectedComponents: (data['affectedComponents'] as List<dynamic>).map((component) => AffectedComponent(
+          id: component['_id'],
+          name: component['name'],
+          status: component['status'],
+        )).toList(),
+        createdAt: data['createdAt'],
+        updatedAt: data['updatedAt'],
+        resolvedAt: data['resolvedAt'],
+      );
+    } catch (error) {
+      print('Error updating incident: $error');
+      rethrow;
+    }
+  }
+
+  static Future<void> closeIncident(String incidentId) async {
+    try {
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final response = await _fetchWithAuth(
+        '$apiUrl/admin/incidents/$incidentId/resolve',
+        method: 'POST',
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to close incident: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error closing incident: $error');
+      rethrow;
+    }
+  }
+
+  static Future<Incident> fetchAdminIncident(String incidentId) async {
+    try {
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final response = await _fetchWithAuth('$apiUrl/admin/incidents/$incidentId');
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch incident: ${response.statusCode}');
+      }
+
+      final dynamic data = jsonDecode(response.body);
+      return Incident(
+        id: data['_id'],
+        title: data['title'],
+        description: data['description'],
+        status: data['status'],
+        impact: data['impact'],
+        affectedComponents: (data['affectedComponents'] as List<dynamic>).map((component) => AffectedComponent(
+          id: component['_id'],
+          name: component['name'],
+          status: component['status'],
+        )).toList(),
+        createdAt: data['createdAt'],
+        updatedAt: data['updatedAt'],
+        resolvedAt: data['resolvedAt'],
+      );
+    } catch (error) {
+      print('Error fetching admin incident: $error');
+      rethrow;
+    }
+  }
+
+  static Future<List<Update>> fetchAdminIncidentUpdates(String incidentId) async {
+    try {
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final response = await _fetchWithAuth('$apiUrl/admin/incidents/$incidentId/updates');
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch updates: ${response.statusCode}');
+      }
+
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((update) => Update(
+        id: update['_id'],
+        type: update['type'],
+        description: update['description'],
+        statusUpdate: update['statusUpdate'] != null ? StatusUpdate(
+          from: update['statusUpdate']['from'],
+          to: update['statusUpdate']['to'],
+        ) : null,
+        impactUpdate: update['impactUpdate'] != null ? ImpactUpdate(
+          from: update['impactUpdate']['from'],
+          to: update['impactUpdate']['to'],
+        ) : null,
+        componentStatusUpdates: update['componentStatusUpdates'] != null 
+          ? (update['componentStatusUpdates'] as List<dynamic>).map((compUpdate) => ComponentStatusUpdate(
+              id: compUpdate['id'],
+              from: compUpdate['from'],
+              to: compUpdate['to'],
+              updateId: compUpdate['_id'],
+            )).toList()
+          : null,
+        createdAt: update['createdAt'],
+      )).toList();
+    } catch (error) {
+      print('Error fetching admin incident updates: $error');
+      rethrow;
+    }
+  }
+
+  static Future<List<Component>> fetchAllComponents() async {
+    try {
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final response = await _fetchWithAuth('$apiUrl/admin/components');
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch components: ${response.statusCode}');
+      }
+
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((component) => Component(
+        id: component['_id'],
+        name: component['name'],
+        description: component['description'],
+        status: component['status'],
+        createdAt: component['createdAt'],
+        updatedAt: component['updatedAt'],
+      )).toList();
+    } catch (error) {
+      print('Error fetching components: $error');
       rethrow;
     }
   }

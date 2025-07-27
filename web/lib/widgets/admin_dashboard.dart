@@ -275,7 +275,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 backgroundColor: _getIncidentColor(incident.impact).withOpacity(0.1),
               ),
               onTap: () {
-                Navigator.of(context).pushNamed('/incidents/${incident.id}');
+                Navigator.of(context).pushNamed('/incident/${incident.id}');
               },
             ),
           )),

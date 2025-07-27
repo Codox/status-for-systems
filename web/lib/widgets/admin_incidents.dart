@@ -370,7 +370,7 @@ class _AdminIncidentsState extends State<AdminIncidents> {
         mainAxisSize: MainAxisSize.min,
         children: [
           GestureDetector(
-            onTap: () => Navigator.of(context).pushNamed('/incidents/${incident.id}'),
+            onTap: () => Navigator.of(context).pushNamed('/admin/incident/${incident.id}'),
             child: Text(
               incident.title,
               style: theme.textTheme.titleSmall?.copyWith(
@@ -514,7 +514,7 @@ class _AdminIncidentsState extends State<AdminIncidents> {
       alignment: Alignment.topLeft,
       constraints: const BoxConstraints(minHeight: 60),
       child: TextButton(
-        onPressed: () => Navigator.of(context).pushNamed('/incidents/${incident.id}'),
+        onPressed: () => Navigator.of(context).pushNamed('/admin/incident/${incident.id}'),
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           minimumSize: Size.zero,

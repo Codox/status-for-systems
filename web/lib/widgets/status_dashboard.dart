@@ -191,7 +191,7 @@ class StatusDashboard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: InkWell(
         onTap: () {
-          Navigator.of(context).pushNamed('/incidents/${incident.id}');
+          Navigator.of(context).pushNamed('/incident/${incident.id}');
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
