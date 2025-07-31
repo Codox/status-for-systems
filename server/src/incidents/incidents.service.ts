@@ -323,12 +323,14 @@ export class IncidentsService {
             { $set: { status: componentUpdate.status } },
           ]);
 
-          // Add to component status updates
-          componentStatusUpdates.push({
-            id: component._id.toString(),
-            from: previousComponentStatus,
-            to: componentUpdate.status,
-          });
+          // Only add to component status updates if the status has actually changed
+          if (previousComponentStatus !== componentUpdate.status) {
+            componentStatusUpdates.push({
+              id: component._id.toString(),
+              from: previousComponentStatus,
+              to: componentUpdate.status,
+            });
+          }
         }
       }
     }
