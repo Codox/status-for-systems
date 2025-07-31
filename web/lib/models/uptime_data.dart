@@ -474,6 +474,7 @@ class UptimeDataService {
         throw Exception('API URL is not configured');
       }
 
+      // Create the update
       final response = await _fetchWithAuth(
         '$apiUrl/admin/incidents/updates',
         method: 'POST',
@@ -486,26 +487,14 @@ class UptimeDataService {
         }),
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200 && response.statusCode != 201) {
         throw Exception('Failed to update incident: ${response.statusCode}');
       }
 
-      final dynamic data = jsonDecode(response.body);
-      return Incident(
-        id: data['_id'],
-        title: data['title'],
-        description: data['description'],
-        status: data['status'],
-        impact: data['impact'],
-        affectedComponents: (data['affectedComponents'] as List<dynamic>).map((component) => AffectedComponent(
-          id: component['_id'],
-          name: component['name'],
-          status: component['status'],
-        )).toList(),
-        createdAt: data['createdAt'],
-        updatedAt: data['updatedAt'],
-        resolvedAt: data['resolvedAt'],
-      );
+      // The update response contains update data, not full incident data
+      // So we need to fetch the updated incident separately
+      final updatedIncident = await fetchAdminIncident(incidentId);
+      return updatedIncident;
     } catch (error) {
       print('Error updating incident: $error');
       rethrow;

@@ -128,7 +128,17 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Incident updated successfully')),
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              const Text('Incident updated successfully! Page data refreshed.'),
+            ],
+          ),
+          backgroundColor: Colors.green[600],
+          duration: const Duration(seconds: 4),
+        ),
       );
     } catch (e) {
       // Check if it's an authentication error
@@ -218,10 +228,14 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
                 ),
               ),
               const SizedBox(height: 16),
-              ElevatedButton.icon(
+              TextButton.icon(
                 onPressed: () => Navigator.of(context).pushReplacementNamed('/admin/incidents'),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Back to Incidents'),
+                icon: const Icon(Icons.arrow_back, size: 16),
+                label: const Text('← Back'),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey[600],
+                  textStyle: const TextStyle(fontSize: 12),
+                ),
               ),
             ],
           ),
@@ -239,14 +253,15 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Back button
+                // Back button - made less prominent to avoid accidental navigation
                 TextButton.icon(
                   onPressed: () => Navigator.of(context).pushReplacementNamed('/admin/incidents'),
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Back to Incidents'),
+                  icon: Icon(Icons.arrow_back, size: 16),
+                  label: const Text('← Back'),
                   style: TextButton.styleFrom(
-                    foregroundColor: textColor,
+                    foregroundColor: textColor?.withOpacity(0.7),
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    textStyle: const TextStyle(fontSize: 12),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -640,10 +655,17 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
                                                   ),
                                                 ),
                                                 SizedBox(width: 8),
-                                                Text('Saving...'),
+                                                Text('Updating...'),
                                               ],
                                             )
-                                          : const Text('Save Update'),
+                                          : const Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Icons.save, size: 16),
+                                                SizedBox(width: 6),
+                                                Text('Add Update'),
+                                              ],
+                                            ),
                                     ),
                                   ),
                                 ],

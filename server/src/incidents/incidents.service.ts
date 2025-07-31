@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Model, Connection, Types } from 'mongoose';
-import { Incident, IncidentStatus, IncidentImpact } from './entities/incident.entity';
+import { Incident, IncidentStatus } from './entities/incident.entity';
 import {
   IncidentUpdate,
   IncidentUpdateType,
@@ -10,7 +10,7 @@ import { Component } from '../components/entities/component.entity';
 import { CreateIncidentRequest } from './requests/create-incident.request';
 import { UpdateIncidentRequest } from './requests/update-incident.request';
 import { CreateIncidentUpdateRequest } from './requests/create-incident-update.request';
-import { map, forEach, find, difference } from 'remeda';
+import { map, forEach, find } from 'remeda';
 
 @Injectable()
 export class IncidentsService {
@@ -134,11 +134,6 @@ export class IncidentsService {
       throw new NotFoundException(`Incident with ID ${id} not found`);
     }
 
-    // Get the current affected components before updating
-    const previousComponentIds = existingIncident.affectedComponents.map((c) =>
-      c._id.toString(),
-    );
-
     let requestedComponents = [];
 
     // Only process affected components if they are provided in the request
@@ -246,16 +241,20 @@ export class IncidentsService {
     }
 
     // Save the incident if status or impact was updated
-    if (createIncidentUpdateRequest.status || createIncidentUpdateRequest.impact) {
+    if (
+      createIncidentUpdateRequest.status ||
+      createIncidentUpdateRequest.impact
+    ) {
       await incident.save();
     }
 
     // Determine the update type - if status is being set to resolved, mark as resolved
     let updateType = createIncidentUpdateRequest.type;
     if (!updateType) {
-      updateType = newStatus === IncidentStatus.RESOLVED
-        ? IncidentUpdateType.RESOLVED
-        : IncidentUpdateType.UPDATED;
+      updateType =
+        newStatus === IncidentStatus.RESOLVED
+          ? IncidentUpdateType.RESOLVED
+          : IncidentUpdateType.UPDATED;
     }
 
     // Create an incident update
