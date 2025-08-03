@@ -880,6 +880,23 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
               ],
             ),
           ],
+          if (update.impactUpdate != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Impact Change:',
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                _buildImpactBadge(update.impactUpdate!.from),
+                const SizedBox(width: 8),
+                const Text('→'),
+                const SizedBox(width: 8),
+                _buildImpactBadge(update.impactUpdate!.to),
+              ],
+            ),
+          ],
           if (update.componentStatusUpdates != null && update.componentStatusUpdates!.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
