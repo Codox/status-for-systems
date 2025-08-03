@@ -858,7 +858,7 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
             const SizedBox(height: 8),
             Text(
               'Description:',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             const SizedBox(height: 4),
             Text(update.description!),
@@ -867,7 +867,7 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
             const SizedBox(height: 8),
             Text(
               'Status Change:',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             const SizedBox(height: 4),
             Row(
@@ -884,7 +884,7 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
             const SizedBox(height: 8),
             Text(
               'Impact Change:',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             const SizedBox(height: 4),
             Row(
@@ -901,7 +901,7 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
             const SizedBox(height: 8),
             Text(
               'Component Updates:',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             const SizedBox(height: 4),
             ...update.componentStatusUpdates!.map((compUpdate) {
