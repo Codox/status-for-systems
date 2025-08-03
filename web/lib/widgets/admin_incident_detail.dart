@@ -231,7 +231,7 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
               TextButton.icon(
                 onPressed: () => Navigator.of(context).pushReplacementNamed('/admin/incidents'),
                 icon: const Icon(Icons.arrow_back, size: 16),
-                label: const Text('← Back'),
+                label: const Text('Back'),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.grey[600],
                   textStyle: const TextStyle(fontSize: 12),
@@ -257,7 +257,7 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
                 TextButton.icon(
                   onPressed: () => Navigator.of(context).pushReplacementNamed('/admin/incidents'),
                   icon: Icon(Icons.arrow_back, size: 16),
-                  label: const Text('← Back'),
+                  label: const Text('Back'),
                   style: TextButton.styleFrom(
                     foregroundColor: textColor?.withOpacity(0.7),
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
