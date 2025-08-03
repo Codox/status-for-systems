@@ -776,7 +776,7 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Text(
-        'Impact: ${_capitalizeFirstLetter(impact)}',
+        _capitalizeFirstLetter(impact),
         style: TextStyle(
           color: color,
           fontSize: 12,
