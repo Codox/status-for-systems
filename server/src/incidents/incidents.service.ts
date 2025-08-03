@@ -6,7 +6,10 @@ import {
   IncidentUpdate,
   IncidentUpdateType,
 } from './entities/incident-update.entity';
-import { Component } from '../components/entities/component.entity';
+import {
+  Component,
+  ComponentStatus,
+} from '../components/entities/component.entity';
 import { CreateIncidentRequest } from './requests/create-incident.request';
 import { UpdateIncidentRequest } from './requests/update-incident.request';
 import { CreateIncidentUpdateRequest } from './requests/create-incident-update.request';
@@ -330,6 +333,29 @@ export class IncidentsService {
               to: componentUpdate.status,
             });
           }
+        }
+      }
+    }
+
+    // If incident is being resolved, automatically set all affected components to OPERATIONAL
+    if (newStatus === IncidentStatus.RESOLVED && incident.affectedComponents) {
+      for (const affectedComponent of incident.affectedComponents) {
+        // Get the current status before updating
+        const previousComponentStatus = affectedComponent.status;
+
+        // Only update if the component is not already OPERATIONAL
+        if (previousComponentStatus !== ComponentStatus.OPERATIONAL) {
+          // Update the component status to OPERATIONAL
+          await this.componentModel.updateOne({ _id: affectedComponent._id }, [
+            { $set: { status: ComponentStatus.OPERATIONAL } },
+          ]);
+
+          // Add to component status updates
+          componentStatusUpdates.push({
+            id: affectedComponent._id.toString(),
+            from: previousComponentStatus,
+            to: ComponentStatus.OPERATIONAL,
+          });
         }
       }
     }
