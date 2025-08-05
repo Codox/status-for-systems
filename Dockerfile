@@ -1,3 +1,4 @@
+# API Builder
 FROM node:20-alpine AS api-builder
 
 WORKDIR /app/api
@@ -7,6 +8,7 @@ RUN npm ci
 COPY server/ ./
 RUN npm run build
 
+# Flutter Builder
 FROM ubuntu:22.04 AS flutter-builder
 
 RUN apt-get update && apt-get install -y \
@@ -22,8 +24,8 @@ ENV FLUTTER_HOME="/opt/flutter"
 ENV PATH="$FLUTTER_HOME/bin:$PATH"
 
 RUN git clone https://github.com/flutter/flutter.git $FLUTTER_HOME
-RUN flutter channel stable
-RUN flutter upgrade
+RUN cd $FLUTTER_HOME && git checkout stable
+RUN flutter doctor --android-licenses || true
 RUN flutter config --enable-web
 
 WORKDIR /app/web
@@ -31,6 +33,7 @@ COPY web/ ./
 RUN flutter pub get
 RUN flutter build web --release
 
+# Production Image
 FROM nginx:alpine
 
 RUN apk add --no-cache nodejs npm supervisor
