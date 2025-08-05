@@ -20,7 +20,6 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
   List<Component>? allComponents;
   bool isLoading = true;
   bool isSaving = false;
-  bool isClosing = false;
   String? error;
 
   // Status update form
@@ -157,22 +156,54 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
     }
   }
 
-  Future<void> _closeIncident() async {
+  Future<void> _resolveIncident() async {
     setState(() {
-      isClosing = true;
+      isSaving = true;
       error = null;
     });
 
     try {
-      await UptimeDataService.closeIncident(widget.incidentId);
+      // Set all affected components to operational
+      final componentUpdatesList = incident!.affectedComponents
+          .map((component) => {'id': component.id, 'status': 'operational'})
+          .toList();
 
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/admin/incidents');
-      }
+      final updatedIncident = await UptimeDataService.updateIncident(
+        incidentId: widget.incidentId,
+        status: 'resolved',
+        impact: 'none',
+        description: 'Incident has been resolved.',
+        componentUpdates: componentUpdatesList,
+      );
+
+      // Refresh data
+      final refreshedUpdates = await UptimeDataService.fetchAdminIncidentUpdates(widget.incidentId);
+
+      setState(() {
+        incident = updatedIncident;
+        updates = refreshedUpdates;
+        _selectedStatus = 'resolved';
+        _selectedImpact = 'none';
+        isSaving = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              const Text('Incident resolved successfully! Page data refreshed.'),
+            ],
+          ),
+          backgroundColor: Colors.green[600],
+          duration: const Duration(seconds: 4),
+        ),
+      );
     } catch (e) {
       // Check if it's an authentication error
       if (e.toString().contains('Authentication token')) {
-        print('[DEBUG_LOG] Authentication error during incident close, redirecting to login');
+        print('[DEBUG_LOG] Authentication error during incident resolve, redirecting to login');
         if (mounted) {
           Navigator.of(context).pushReplacementNamed('/admin/login');
         }
@@ -180,11 +211,12 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
       }
 
       setState(() {
-        error = 'Failed to close incident. Please try again.';
-        isClosing = false;
+        error = 'Failed to resolve incident. Please try again.';
+        isSaving = false;
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -302,15 +334,15 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
                     if (incident!.status != 'resolved') ...[
                       const SizedBox(width: 16),
                       ElevatedButton.icon(
-                        onPressed: isClosing ? null : _closeIncident,
-                        icon: isClosing 
+                        onPressed: isSaving ? null : _resolveIncident,
+                        icon: isSaving 
                             ? const SizedBox(
                                 width: 16,
                                 height: 16,
                                 child: CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Icon(Icons.check),
-                        label: Text(isClosing ? 'Closing...' : 'Close Incident'),
+                        label: Text(isSaving ? 'Resolving...' : 'Resolve Incident'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[600],
                           foregroundColor: Colors.white,
@@ -672,6 +704,7 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
                               ),
                             ),
                             const SizedBox(height: 16),
+
                             const Divider(),
                             const SizedBox(height: 16),
 
