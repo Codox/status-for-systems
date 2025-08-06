@@ -1,0 +1,25 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies from requirements.txt
+        run: |
+          pip install -r docs/requirements.txt
+
+      - name: Deploy docs
+        working-directory: docs
+        run: mkdocs gh-deploy --force 
