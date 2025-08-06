@@ -13,7 +13,6 @@ import * as mongoose from 'mongoose';
 
 mongoose.set('debug', true);
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
