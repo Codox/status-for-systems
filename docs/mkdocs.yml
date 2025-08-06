@@ -1,1 +1,4 @@
-site_name: My Docs
+site_name: Status For Systems
+site_url: https://statusfor.systems
+theme:
+  name: material
