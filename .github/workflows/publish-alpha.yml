@@ -32,10 +32,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/codox/status-for-systems/status-for-systems:alpha .
-          docker tag ghcr.io/codox/status-for-systems/status-for-systems:alpha ghcr.io/codox/status-for-systems/status-for-systems:${{ env.VERSION }}
+          docker build -t ghcr.io/codox/status-for-systems:alpha .
+          docker tag ghcr.io/codox/status-for-systems:alpha ghcr.io/codox/status-for-systems:${{ env.VERSION }}
 
       - name: Push Docker images
         run: |
-          docker push ghcr.io/codox/status-for-systems/status-for-systems:alpha
-          docker push ghcr.io/codox/status-for-systems/status-for-systems:${{ env.VERSION }}
+          docker push ghcr.io/codox/status-for-systems:alpha
+          docker push ghcr.io/codox/status-for-systems:${{ env.VERSION }}
