@@ -192,27 +192,27 @@ class StatusDashboard extends StatelessWidget {
         double mainAxisSpacing;
 
         if (constraints.maxWidth > 1200) {
-          // Large desktop: 2 columns for incidents - further reduced aspect ratio
+          // Large desktop: 2 columns for incidents - minimally reduced height
           crossAxisCount = 2;
-          childAspectRatio = 2.4;
+          childAspectRatio = 2.45;
           crossAxisSpacing = 16;
           mainAxisSpacing = 16;
         } else if (constraints.maxWidth > 900) {
-          // Desktop: 2 columns - aspect ratio provides sufficient height
+          // Desktop: 2 columns - minimally reduced height
           crossAxisCount = 2;
-          childAspectRatio = 2.4;
+          childAspectRatio = 2.45;
           crossAxisSpacing = 16;
           mainAxisSpacing = 16;
         } else if (constraints.maxWidth > 600) {
-          // Tablet: 1 column with good aspect ratio for content
+          // Tablet: 1 column with minimally reduced height
           crossAxisCount = 1;
-          childAspectRatio = 3.4;
+          childAspectRatio = 3.45;
           crossAxisSpacing = 12;
           mainAxisSpacing = 12;
         } else {
-          // Mobile: 1 column with taller cards to eliminate overflow
+          // Mobile: 1 column with slightly reduced height
           crossAxisCount = 1;
-          childAspectRatio = 1.6;
+          childAspectRatio = 1.65;
           crossAxisSpacing = 8;
           mainAxisSpacing = 8;
         }
@@ -328,18 +328,16 @@ class StatusDashboard extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 8),
-              // Use Expanded to allow description to take available space
-              Expanded(
-                child: Text(
-                  incident.description,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).brightness == Brightness.light
-                            ? Colors.grey[600]
-                            : Colors.grey[400],
-                      ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              // Description text without Expanded to prevent excessive gaps
+              Text(
+                incident.description,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey[600]
+                          : Colors.grey[400],
+                    ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 8),
               // Timestamp at bottom
