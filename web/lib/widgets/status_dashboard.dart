@@ -70,8 +70,8 @@ class StatusDashboard extends StatelessWidget {
                   Text(
                     'System Status',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -109,10 +109,10 @@ class StatusDashboard extends StatelessWidget {
               groups!.isEmpty
                   ? EmptyState()
                   : Column(
-                      children: groups!
-                          .map((group) => _buildGroupCard(context, group))
-                          .toList(),
-                    ),
+                children: groups!
+                    .map((group) => _buildGroupCard(context, group))
+                    .toList(),
+              ),
             ],
           ),
         ),
@@ -162,16 +162,16 @@ class StatusDashboard extends StatelessWidget {
                   Text(
                     overallStatus['text'],
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   Text(
                     overallStatus['subtext'],
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).brightness == Brightness.light
-                              ? Colors.grey[600]
-                              : Colors.grey[400],
-                        ),
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey[600]
+                          : Colors.grey[400],
+                    ),
                   ),
                 ],
               ),
@@ -192,27 +192,27 @@ class StatusDashboard extends StatelessWidget {
         double mainAxisSpacing;
 
         if (constraints.maxWidth > 1200) {
-          // Large desktop: 2 columns for incidents - minimally reduced height
+          // Large desktop: 2 columns for incidents
           crossAxisCount = 2;
-          childAspectRatio = 2.45;
+          childAspectRatio = 4.0;
           crossAxisSpacing = 16;
           mainAxisSpacing = 16;
         } else if (constraints.maxWidth > 900) {
-          // Desktop: 2 columns - minimally reduced height
+          // Desktop: 2 columns
           crossAxisCount = 2;
-          childAspectRatio = 2.45;
+          childAspectRatio = 3.5;
           crossAxisSpacing = 16;
           mainAxisSpacing = 16;
         } else if (constraints.maxWidth > 600) {
-          // Tablet: 1 column with minimally reduced height
+          // Tablet: 1 column with good aspect ratio
           crossAxisCount = 1;
-          childAspectRatio = 3.45;
+          childAspectRatio = 5.0;
           crossAxisSpacing = 12;
           mainAxisSpacing = 12;
         } else {
-          // Mobile: 1 column with slightly reduced height
+          // Mobile: 1 column with taller cards
           crossAxisCount = 1;
-          childAspectRatio = 1.65;
+          childAspectRatio = 4.0;
           crossAxisSpacing = 8;
           mainAxisSpacing = 8;
         }
@@ -259,7 +259,7 @@ class StatusDashboard extends StatelessWidget {
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isSmallScreen = constraints.maxWidth < 500;
-                  
+
                   if (isSmallScreen) {
                     // Stack title and badges vertically on small screens
                     return Column(
@@ -268,10 +268,8 @@ class StatusDashboard extends StatelessWidget {
                         Text(
                           incident.title,
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w500,
-                              ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Wrap(
@@ -301,10 +299,8 @@ class StatusDashboard extends StatelessWidget {
                           child: Text(
                             incident.title,
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                         Wrap(
@@ -328,26 +324,24 @@ class StatusDashboard extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 8),
-              // Description text without Expanded to prevent excessive gaps
               Text(
                 incident.description,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? Colors.grey[600]
-                          : Colors.grey[400],
-                    ),
-                maxLines: 3,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.grey[600]
+                      : Colors.grey[400],
+                ),
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 8),
-              // Timestamp at bottom
               Text(
                 'Updated: ${_formatDateTime(incident.updatedAt)}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? Colors.grey[600]
-                          : Colors.grey[400],
-                    ),
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.grey[600]
+                      : Colors.grey[400],
+                ),
               ),
             ],
           ),
@@ -387,8 +381,8 @@ class StatusDashboard extends StatelessWidget {
                         Text(
                           group.name,
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w500,
-                              ),
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                         Text(
                           group.description,
@@ -495,8 +489,8 @@ class StatusDashboard extends StatelessWidget {
                                 child: Text(
                                   component.name,
                                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -718,7 +712,7 @@ class StatusDashboard extends StatelessWidget {
   Map<String, dynamic> _getHighestSeverityStatus(List<Component> components) {
     return components.fold(
       _getStatusStyles('operational'),
-      (highest, component) {
+          (highest, component) {
         final currentStatus = _getStatusStyles(component.status);
         return currentStatus['severity'] > highest['severity']
             ? currentStatus
@@ -859,8 +853,8 @@ class ErrorState extends StatelessWidget {
             Text(
               'Unable to Load System Status',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                fontWeight: FontWeight.w500,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -899,7 +893,7 @@ class LoadingState extends StatelessWidget {
       children: [
         LayoutBuilder(
           builder: (context, constraints) => Skeleton(
-            height: 40, 
+            height: 40,
             width: constraints.maxWidth > 200 ? 200 : constraints.maxWidth * 0.8,
           ),
         ),
@@ -908,7 +902,7 @@ class LoadingState extends StatelessWidget {
         const SizedBox(height: 24),
         LayoutBuilder(
           builder: (context, constraints) => Skeleton(
-            height: 30, 
+            height: 30,
             width: constraints.maxWidth > 150 ? 150 : constraints.maxWidth * 0.6,
           ),
         ),
@@ -923,7 +917,7 @@ class LoadingState extends StatelessWidget {
                 children: [
                   LayoutBuilder(
                     builder: (context, constraints) => Skeleton(
-                      height: 24, 
+                      height: 24,
                       width: constraints.maxWidth > 200 ? 200 : constraints.maxWidth * 0.7,
                     ),
                   ),
@@ -931,16 +925,16 @@ class LoadingState extends StatelessWidget {
                   LayoutBuilder(
                     builder: (context, constraints) {
                       // Make skeleton containers responsive
-                      final containerWidth = constraints.maxWidth > 600 
+                      final containerWidth = constraints.maxWidth > 600
                           ? (constraints.maxWidth - 16) / 2 // Two columns on larger screens
                           : constraints.maxWidth; // Full width on mobile
-                      
+
                       return Wrap(
                         spacing: 8,
                         runSpacing: 8,
                         children: List.generate(
                           2,
-                          (index) => Container(
+                              (index) => Container(
                             width: containerWidth,
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
@@ -951,12 +945,12 @@ class LoadingState extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Skeleton(
-                                  height: 20, 
+                                  height: 20,
                                   width: containerWidth * 0.6, // 60% of container width
                                 ),
                                 const SizedBox(height: 8),
                                 Skeleton(
-                                  height: 16, 
+                                  height: 16,
                                   width: containerWidth * 0.8, // 80% of container width
                                 ),
                               ],
@@ -1020,8 +1014,8 @@ class EmptyState extends StatelessWidget {
             Text(
               'No Service Groups Available',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                fontWeight: FontWeight.w500,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
