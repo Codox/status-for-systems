@@ -16,14 +16,43 @@ Demo: https://demo.statusfor.systems/
 
 ## Quick Start
 
-1. See [`web/README.md`](./web/README.md) for frontend setup, dependencies, and usage.
-2. See [`server/README.md`](./server/README.md) for backend setup, dependencies, and usage.
+See Releases for available versions.
+
+1. Generate a JWT secret by running:
+   ```bash
+   openssl rand -base64 32
+   ```
+
+2. Pull the Docker image:
+   ```bash
+   docker pull ghcr.io/codox/status-for-systems:<VERSION>
+   ```
+   Replace `<VERSION>` with the desired version tag.
+
+3. Run the Docker container:
+   ```bash
+   docker run -d -p 8080:80 \
+   -e MONGODB_URI="mongodb://localhost:27017/status-for-systems" \
+   -e MONGODB_USER=admin \
+   -e MONGODB_PASSWORD=admin \
+   -e BASIC_AUTH_USERNAME=admin \
+   -e BASIC_AUTH_PASSWORD=admin \
+   -e JWT_SECRET=<YOUR_JWT_SECRET> \
+   ghcr.io/codox/status-for-systems:<VERSION>
+   ```
+
+4. Access the status page at `http://localhost:8080`. The admin panel is available at `http://localhost:8080/admin`. Use the credentials set in the environment variables for authentication.
 
 ## Project Structure
 
 - **web/**: Flutter web app
 - **server/**: NestJS API
 - **docs/**: MKDocs documentation
+
+## Development
+
+1. See [`web/README.md`](./web/README.md) for frontend setup, dependencies, and usage.
+2. See [`server/README.md`](./server/README.md) for backend setup, dependencies, and usage.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
