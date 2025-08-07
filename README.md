@@ -54,5 +54,8 @@ See Releases for available versions.
 1. See [`web/README.md`](./web/README.md) for frontend setup, dependencies, and usage.
 2. See [`server/README.md`](./server/README.md) for backend setup, dependencies, and usage.
 
+## Contributing
+Contributions are welcome! Please read the [CONTRIBUTING](./CONTRIBUTING.md) guide for details on how to contribute to this project.
+
 ## License
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.

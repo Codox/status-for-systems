@@ -1,0 +1,31 @@
+# Contributing to Status for Systems
+
+Thank you for your interest in contributing! Here are some guidelines to help you get started.
+
+## How to Contribute
+
+1. **Fork the repository** and create your branch from `main`.
+2. **Clone your fork** and set up the project locally.
+3. **Make your changes** with clear, descriptive commit messages.
+4. **Test your changes** to ensure nothing is broken.
+5. **Submit a pull request** with a clear description of your changes.
+
+## Pull Requests
+
+- Ensure your PR addresses a single issue or feature.
+- Reference related issues in your PR description.
+- Include relevant tests for your changes.
+- Make sure CI passes before requesting review.
+
+## Reporting Issues
+
+- Search for existing issues before opening a new one.
+- Provide clear steps to reproduce the issue.
+- Include screenshots or logs if helpful.
+
+## Community
+
+- Be respectful and constructive in all interactions.
+- Ask questions if you need help—everyone is welcome!
+
+Thank you for helping make Status for Systems better
