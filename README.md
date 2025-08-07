@@ -2,8 +2,15 @@
 
 A full-stack system status monitoring application.
 
-- **web/**: Next.js 15 + Chakra UI + Tailwind CSS frontend dashboard
-- **server/**: NestJS backend API
+- **web/**: Flutter web app
+- **server/**: NestJS API
+- **docs/**: MKDocs documentation
+
+## Prerequisites
+- Docker
+- Flutter SDK
+- Node.js v20.0.0 or higher
+- MongoDB (local or Docker)
 
 ## Quick Start
 
