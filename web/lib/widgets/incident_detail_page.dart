@@ -71,7 +71,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
         backgroundColor: bgColor,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 120.0, vertical: 16.0),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16.0),
             child: Column(
               children: [
                 Card(
@@ -103,7 +103,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
       backgroundColor: bgColor,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 120.0, vertical: 16.0),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -523,5 +523,25 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
   String _capitalizeFirstLetter(String text) {
     if (text.isEmpty) return text;
     return text[0].toUpperCase() + text.substring(1);
+  }
+
+  /// Get responsive horizontal padding based on screen width
+  double _getResponsiveHorizontalPadding(double screenWidth) {
+    if (screenWidth < 600) {
+      // Mobile: 16px padding
+      return 16.0;
+    } else if (screenWidth < 900) {
+      // Small tablet: 24px padding
+      return 24.0;
+    } else if (screenWidth < 1200) {
+      // Large tablet: 40px padding
+      return 40.0;
+    } else if (screenWidth < 1600) {
+      // Desktop: 80px padding
+      return 80.0;
+    } else {
+      // Large desktop: 120px padding
+      return 120.0;
+    }
   }
 }
