@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
+import 'admin_create_incident_dialog.dart';
 
 class AdminIncidents extends StatefulWidget {
   const AdminIncidents({super.key});
@@ -596,15 +597,11 @@ class _AdminIncidentsState extends State<AdminIncidents> {
   void _showCreateIncidentDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Create New Incident'),
-        content: const Text('This feature is not yet implemented. In a real application, this would open a form to create a new incident.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
+      barrierDismissible: false,
+      builder: (context) => CreateIncidentDialog(
+        onIncidentCreated: () {
+          _refreshIncidents();
+        },
       ),
     );
   }
