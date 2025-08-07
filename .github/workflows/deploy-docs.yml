@@ -1,33 +1,53 @@
-name: Deploy Docs
+name: Deploy MkDocs to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: ["main"]
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          path: docs
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Install dependencies from requirements.txt
-        run: |
-          pip install -r docs/requirements.txt
-
-
-      - name: Deploy to gh-pages branch
+      - name: Install dependencies
         working-directory: docs
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Auth for git push
-          GIT_COMMITTER_NAME: github-actions
-          GIT_COMMITTER_EMAIL: github-actions@github.com
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          mkdocs gh-deploy --force --clean
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || true
+
+      - name: Build MkDocs site
+        working-directory: docs
+        run: mkdocs build --clean
+
+      - name: Upload site as artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages
+          path: docs/docs/site/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
