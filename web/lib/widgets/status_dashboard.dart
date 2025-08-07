@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
@@ -193,14 +195,17 @@ class StatusDashboard extends StatelessWidget {
 
         if (constraints.maxWidth > 1200) {
           // Large desktop: 2 columns for incidents
+          print("LArge desktop");
           crossAxisCount = 2;
-          childAspectRatio = 4.0;
+          childAspectRatio = 5.0;
           crossAxisSpacing = 16;
           mainAxisSpacing = 16;
         } else if (constraints.maxWidth > 900) {
-          // Desktop: 2 columns
+          print("Desktop");
+
+          // Desktop: 2 columns - cards will use vertical badge layout due to 480px threshold
           crossAxisCount = 2;
-          childAspectRatio = 3.5;
+          childAspectRatio = 2.8;
           crossAxisSpacing = 16;
           mainAxisSpacing = 16;
         } else if (constraints.maxWidth > 600) {
@@ -258,7 +263,7 @@ class StatusDashboard extends StatelessWidget {
               // Use Column layout on small screens to prevent overflow
               LayoutBuilder(
                 builder: (context, constraints) {
-                  final isSmallScreen = constraints.maxWidth < 500;
+                  final isSmallScreen = constraints.maxWidth < 480;
 
                   if (isSmallScreen) {
                     // Stack title and badges vertically on small screens
