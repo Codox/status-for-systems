@@ -23,13 +23,17 @@ class StatusDashboard extends StatelessWidget {
         ? Colors.grey[600]
         : Colors.grey[400];
 
+    // Get responsive horizontal padding based on screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = _getResponsiveHorizontalPadding(screenWidth);
+
     // If there's an error, render the error state
     if (error != null) {
       return Scaffold(
         backgroundColor: bgColor,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 120.0, vertical: 16.0),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16.0),
             child: ErrorState(
               message: error is Exception ? error.toString() : 'An unexpected error occurred',
             ),
@@ -44,7 +48,7 @@ class StatusDashboard extends StatelessWidget {
         backgroundColor: bgColor,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 120.0, vertical: 16.0),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16.0),
             child: LoadingState(),
           ),
         ),
@@ -55,7 +59,7 @@ class StatusDashboard extends StatelessWidget {
       backgroundColor: bgColor,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 120.0, vertical: 16.0),
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -92,7 +96,7 @@ class StatusDashboard extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 12),
-                ...activeIncidents!.map((incident) => _buildIncidentCard(context, incident)),
+                _buildActiveIncidentsGrid(context),
                 const SizedBox(height: 16),
               ],
 
@@ -178,6 +182,59 @@ class StatusDashboard extends StatelessWidget {
     );
   }
 
+  Widget _buildActiveIncidentsGrid(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Responsive grid for active incidents
+        int crossAxisCount;
+        double childAspectRatio;
+        double crossAxisSpacing;
+        double mainAxisSpacing;
+
+        if (constraints.maxWidth > 1200) {
+          // Large desktop: 2 columns for incidents
+          crossAxisCount = 2;
+          childAspectRatio = 4.0;
+          crossAxisSpacing = 16;
+          mainAxisSpacing = 16;
+        } else if (constraints.maxWidth > 900) {
+          // Desktop: 2 columns
+          crossAxisCount = 2;
+          childAspectRatio = 3.5;
+          crossAxisSpacing = 16;
+          mainAxisSpacing = 16;
+        } else if (constraints.maxWidth > 600) {
+          // Tablet: 1 column with good aspect ratio
+          crossAxisCount = 1;
+          childAspectRatio = 5.0;
+          crossAxisSpacing = 12;
+          mainAxisSpacing = 12;
+        } else {
+          // Mobile: 1 column with taller cards
+          crossAxisCount = 1;
+          childAspectRatio = 4.0;
+          crossAxisSpacing = 8;
+          mainAxisSpacing = 8;
+        }
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            crossAxisSpacing: crossAxisSpacing,
+            mainAxisSpacing: mainAxisSpacing,
+            childAspectRatio: childAspectRatio,
+          ),
+          itemCount: activeIncidents!.length,
+          itemBuilder: (context, index) {
+            return _buildIncidentCard(context, activeIncidents![index]);
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildIncidentCard(BuildContext context, Incident incident) {
     // Get status color and icon
     final statusColor = _getStatusColor(incident.status);
@@ -198,33 +255,73 @@ class StatusDashboard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      incident.title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
+              // Use Column layout on small screens to prevent overflow
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isSmallScreen = constraints.maxWidth < 500;
+                  
+                  if (isSmallScreen) {
+                    // Stack title and badges vertically on small screens
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          incident.title,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                              ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 4,
+                          runSpacing: 4,
+                          children: [
+                            _buildBadge(
+                              context,
+                              '$statusIcon ${_capitalizeFirstLetter(incident.status)}',
+                              statusColor,
+                            ),
+                            _buildBadge(
+                              context,
+                              _capitalizeFirstLetter(incident.impact),
+                              impactColor,
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  } else {
+                    // Use horizontal layout on larger screens
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            incident.title,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                ),
                           ),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      _buildBadge(
-                        context,
-                        '$statusIcon ${_capitalizeFirstLetter(incident.status)}',
-                        statusColor,
-                      ),
-                      const SizedBox(width: 4),
-                      _buildBadge(
-                        context,
-                        _capitalizeFirstLetter(incident.impact),
-                        impactColor,
-                      ),
-                    ],
-                  ),
-                ],
+                        ),
+                        Wrap(
+                          spacing: 4,
+                          children: [
+                            _buildBadge(
+                              context,
+                              '$statusIcon ${_capitalizeFirstLetter(incident.status)}',
+                              statusColor,
+                            ),
+                            _buildBadge(
+                              context,
+                              _capitalizeFirstLetter(incident.impact),
+                              impactColor,
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }
+                },
               ),
               const SizedBox(height: 8),
               Text(
@@ -316,22 +413,42 @@ class StatusDashboard extends StatelessWidget {
             // Components grid
             LayoutBuilder(
               builder: (context, constraints) {
-                // Improved responsive breakpoints
+                // Improved responsive breakpoints for better mobile experience
                 int crossAxisCount;
                 double childAspectRatio;
+                double crossAxisSpacing;
+                double mainAxisSpacing;
 
                 if (constraints.maxWidth > 1200) {
+                  // Large desktop: 4 columns
                   crossAxisCount = 4;
                   childAspectRatio = 3.5;
-                } else if (constraints.maxWidth > 800) {
+                  crossAxisSpacing = 16;
+                  mainAxisSpacing = 16;
+                } else if (constraints.maxWidth > 900) {
+                  // Desktop: 3 columns
                   crossAxisCount = 3;
                   childAspectRatio = 3.2;
+                  crossAxisSpacing = 16;
+                  mainAxisSpacing = 16;
                 } else if (constraints.maxWidth > 600) {
+                  // Tablet: 2 columns
                   crossAxisCount = 2;
                   childAspectRatio = 3.0;
-                } else {
+                  crossAxisSpacing = 12;
+                  mainAxisSpacing = 12;
+                } else if (constraints.maxWidth > 400) {
+                  // Large mobile: 1 column with better aspect ratio
                   crossAxisCount = 1;
-                  childAspectRatio = 4.5;
+                  childAspectRatio = 5.0;
+                  crossAxisSpacing = 8;
+                  mainAxisSpacing = 8;
+                } else {
+                  // Small mobile: 1 column with taller cards
+                  crossAxisCount = 1;
+                  childAspectRatio = 4.0;
+                  crossAxisSpacing = 8;
+                  mainAxisSpacing = 8;
                 }
 
                 return GridView.builder(
@@ -339,8 +456,8 @@ class StatusDashboard extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
+                    crossAxisSpacing: crossAxisSpacing,
+                    mainAxisSpacing: mainAxisSpacing,
                     childAspectRatio: childAspectRatio,
                   ),
                   itemCount: group.components.length,
@@ -694,6 +811,26 @@ class StatusDashboard extends StatelessWidget {
       return dateTimeStr;
     }
   }
+
+  /// Get responsive horizontal padding based on screen width
+  double _getResponsiveHorizontalPadding(double screenWidth) {
+    if (screenWidth < 600) {
+      // Mobile: 16-24px padding
+      return 16.0;
+    } else if (screenWidth < 900) {
+      // Small tablet: 24-40px padding
+      return 24.0;
+    } else if (screenWidth < 1200) {
+      // Large tablet: 40-80px padding
+      return 40.0;
+    } else if (screenWidth < 1600) {
+      // Desktop: 80-120px padding
+      return 80.0;
+    } else {
+      // Large desktop: 120px+ padding
+      return 120.0;
+    }
+  }
 }
 
 class ErrorState extends StatelessWidget {
@@ -754,11 +891,21 @@ class LoadingState extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Skeleton(height: 40, width: 200),
+        LayoutBuilder(
+          builder: (context, constraints) => Skeleton(
+            height: 40, 
+            width: constraints.maxWidth > 200 ? 200 : constraints.maxWidth * 0.8,
+          ),
+        ),
         const SizedBox(height: 16),
         const Skeleton(height: 80, width: double.infinity),
         const SizedBox(height: 24),
-        const Skeleton(height: 30, width: 150),
+        LayoutBuilder(
+          builder: (context, constraints) => Skeleton(
+            height: 30, 
+            width: constraints.maxWidth > 150 ? 150 : constraints.maxWidth * 0.6,
+          ),
+        ),
         const SizedBox(height: 16),
         for (int i = 0; i < 3; i++) ...[
           Card(
@@ -768,30 +915,50 @@ class LoadingState extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Skeleton(height: 24, width: 200),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: List.generate(
-                      2,
-                      (index) => Container(
-                        width: 300,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: bgColor,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Skeleton(height: 20, width: 150),
-                            SizedBox(height: 8),
-                            Skeleton(height: 16, width: 250),
-                          ],
-                        ),
-                      ),
+                  LayoutBuilder(
+                    builder: (context, constraints) => Skeleton(
+                      height: 24, 
+                      width: constraints.maxWidth > 200 ? 200 : constraints.maxWidth * 0.7,
                     ),
+                  ),
+                  const SizedBox(height: 16),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      // Make skeleton containers responsive
+                      final containerWidth = constraints.maxWidth > 600 
+                          ? (constraints.maxWidth - 16) / 2 // Two columns on larger screens
+                          : constraints.maxWidth; // Full width on mobile
+                      
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: List.generate(
+                          2,
+                          (index) => Container(
+                            width: containerWidth,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: bgColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Skeleton(
+                                  height: 20, 
+                                  width: containerWidth * 0.6, // 60% of container width
+                                ),
+                                const SizedBox(height: 8),
+                                Skeleton(
+                                  height: 16, 
+                                  width: containerWidth * 0.8, // 80% of container width
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

@@ -53,6 +53,10 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
         ? Colors.grey[600]
         : Colors.grey[400];
 
+    // Get responsive horizontal padding based on screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = _getResponsiveHorizontalPadding(screenWidth);
+
     if (isLoading) {
       return Scaffold(
         backgroundColor: bgColor,
