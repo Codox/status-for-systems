@@ -192,27 +192,27 @@ class StatusDashboard extends StatelessWidget {
         double mainAxisSpacing;
 
         if (constraints.maxWidth > 1200) {
-          // Large desktop: 2 columns for incidents
+          // Large desktop: 2 columns for incidents - further reduced aspect ratio
           crossAxisCount = 2;
-          childAspectRatio = 4.0;
+          childAspectRatio = 2.4;
           crossAxisSpacing = 16;
           mainAxisSpacing = 16;
         } else if (constraints.maxWidth > 900) {
-          // Desktop: 2 columns
+          // Desktop: 2 columns - aspect ratio provides sufficient height
           crossAxisCount = 2;
-          childAspectRatio = 3.5;
+          childAspectRatio = 2.4;
           crossAxisSpacing = 16;
           mainAxisSpacing = 16;
         } else if (constraints.maxWidth > 600) {
-          // Tablet: 1 column with good aspect ratio
+          // Tablet: 1 column with good aspect ratio for content
           crossAxisCount = 1;
-          childAspectRatio = 5.0;
+          childAspectRatio = 3.4;
           crossAxisSpacing = 12;
           mainAxisSpacing = 12;
         } else {
-          // Mobile: 1 column with taller cards
+          // Mobile: 1 column with taller cards to eliminate overflow
           crossAxisCount = 1;
-          childAspectRatio = 4.0;
+          childAspectRatio = 1.6;
           crossAxisSpacing = 8;
           mainAxisSpacing = 8;
         }
@@ -270,6 +270,8 @@ class StatusDashboard extends StatelessWidget {
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w500,
                               ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 8),
                         Wrap(
@@ -301,6 +303,8 @@ class StatusDashboard extends StatelessWidget {
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w500,
                                 ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Wrap(
@@ -324,17 +328,21 @@ class StatusDashboard extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 8),
-              Text(
-                incident.description,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? Colors.grey[600]
-                          : Colors.grey[400],
-                    ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              // Use Expanded to allow description to take available space
+              Expanded(
+                child: Text(
+                  incident.description,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey[600]
+                            : Colors.grey[400],
+                      ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               const SizedBox(height: 8),
+              // Timestamp at bottom
               Text(
                 'Updated: ${_formatDateTime(incident.updatedAt)}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
