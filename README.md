@@ -4,6 +4,8 @@ A full-stack system status monitoring application.
 
 **Warning:** This project is heavily in-inprogress and is not yet ready for production use.
 
+Website: https://statusfor.systems/
+
 Demo: https://demo.statusfor.systems/
 
 ## Prerequisites
