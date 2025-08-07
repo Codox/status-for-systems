@@ -21,20 +21,23 @@ jobs:
           python-version: '3.x'
       
       - name: Spit out directory
-        working-directory: docs
         run: |
+          cd docs
           pwd
           ls -la
 
       - name: Install dependencies
         working-directory: docs
         run: |
+          cd docs
           python -m pip install --upgrade pip
           pip install -r requirements.txt || true
 
       - name: Build MkDocs site
         working-directory: docs
-        run: mkdocs build --clean
+        run: | 
+          cd docs
+          mkdocs build --clean
 
       - name: Upload site as artifact
         uses: actions/upload-pages-artifact@v3
