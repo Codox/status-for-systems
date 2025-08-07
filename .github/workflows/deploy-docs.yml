@@ -20,6 +20,14 @@ jobs:
         run: |
           pip install -r docs/requirements.txt
 
-      - name: Deploy docs
+
+      - name: Deploy to gh-pages branch
         working-directory: docs
-        run: mkdocs gh-deploy --force 
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Auth for git push
+          GIT_COMMITTER_NAME: github-actions
+          GIT_COMMITTER_EMAIL: github-actions@github.com
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          mkdocs gh-deploy --force --clean
