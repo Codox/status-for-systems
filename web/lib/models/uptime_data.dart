@@ -522,6 +522,59 @@ class UptimeDataService {
     }
   }
 
+  static Future<Incident> createIncident({
+    required String title,
+    required String description,
+    required String status,
+    required String impact,
+    required List<Map<String, String>> affectedComponents,
+  }) async {
+    try {
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final requestBody = jsonEncode({
+        'title': title,
+        'description': description,
+        'status': status,
+        'impact': impact,
+        'affectedComponents': affectedComponents,
+      });
+
+      final response = await _fetchWithAuth(
+        '$apiUrl/admin/incidents',
+        method: 'POST',
+        body: requestBody,
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Failed to create incident: ${response.statusCode}');
+      }
+
+      final dynamic data = jsonDecode(response.body);
+      return Incident(
+        id: data['_id'],
+        title: data['title'],
+        description: data['description'],
+        status: data['status'],
+        impact: data['impact'],
+        affectedComponents: (data['affectedComponents'] as List<dynamic>).map((component) => AffectedComponent(
+          id: component['_id'],
+          name: component['name'],
+          status: component['status'],
+        )).toList(),
+        createdAt: data['createdAt'],
+        updatedAt: data['updatedAt'],
+        resolvedAt: data['resolvedAt'],
+      );
+    } catch (error) {
+      print('Error creating incident: $error');
+      rethrow;
+    }
+  }
+
   static Future<Incident> fetchAdminIncident(String incidentId) async {
     try {
       final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';

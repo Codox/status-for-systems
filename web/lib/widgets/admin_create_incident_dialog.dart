@@ -21,7 +21,7 @@ class _CreateIncidentDialogState extends State<CreateIncidentDialog> {
   String _selectedStatus = 'investigating';
   String _selectedImpact = 'minor';
   List<Component> _allComponents = [];
-  Set<String> _selectedComponentIds = {};
+  Map<String, String> _selectedComponentStatuses = {}; // componentId -> status
   bool _isLoading = false;
   bool _isCreating = false;
   String? _error;
@@ -37,6 +37,13 @@ class _CreateIncidentDialogState extends State<CreateIncidentDialog> {
     'major',
     'minor',
     'none',
+  ];
+
+  final List<String> _componentStatusOptions = [
+    'operational',
+    'degraded',
+    'partial',
+    'major',
   ];
 
   @override
@@ -77,7 +84,7 @@ class _CreateIncidentDialogState extends State<CreateIncidentDialog> {
       return;
     }
 
-    if (_selectedComponentIds.isEmpty) {
+    if (_selectedComponentStatuses.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select at least one affected component')),
       );
@@ -90,12 +97,17 @@ class _CreateIncidentDialogState extends State<CreateIncidentDialog> {
     });
 
     try {
+      // Convert component statuses to the format expected by the API
+      final componentUpdates = _selectedComponentStatuses.entries
+          .map((entry) => {'id': entry.key, 'status': entry.value})
+          .toList();
+
       await UptimeDataService.createIncident(
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
         status: _selectedStatus,
         impact: _selectedImpact,
-        affectedComponentIds: _selectedComponentIds.toList(),
+        affectedComponents: componentUpdates,
       );
 
       if (mounted) {
@@ -300,7 +312,7 @@ class _CreateIncidentDialogState extends State<CreateIncidentDialog> {
                         )
                       else
                         Container(
-                          height: 200,
+                          height: 300,
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey[300]!),
                             borderRadius: BorderRadius.circular(8),
@@ -309,21 +321,92 @@ class _CreateIncidentDialogState extends State<CreateIncidentDialog> {
                             itemCount: _allComponents.length,
                             itemBuilder: (context, index) {
                               final component = _allComponents[index];
-                              final isSelected = _selectedComponentIds.contains(component.id);
+                              final isSelected = _selectedComponentStatuses.containsKey(component.id);
+                              final currentStatus = _selectedComponentStatuses[component.id] ?? 'degraded';
                               
-                              return CheckboxListTile(
-                                title: Text(component.name),
-                                subtitle: Text(component.description),
-                                value: isSelected,
-                                onChanged: _isCreating ? null : (bool? value) {
-                                  setState(() {
-                                    if (value == true) {
-                                      _selectedComponentIds.add(component.id);
-                                    } else {
-                                      _selectedComponentIds.remove(component.id);
-                                    }
-                                  });
-                                },
+                              return Card(
+                                margin: const EdgeInsets.all(8),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Component selection checkbox
+                                      Row(
+                                        children: [
+                                          Checkbox(
+                                            value: isSelected,
+                                            onChanged: _isCreating ? null : (bool? value) {
+                                              setState(() {
+                                                if (value == true) {
+                                                  _selectedComponentStatuses[component.id] = 'degraded';
+                                                } else {
+                                                  _selectedComponentStatuses.remove(component.id);
+                                                }
+                                              });
+                                            },
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  component.name,
+                                                  style: theme.textTheme.titleSmall?.copyWith(
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  component.description,
+                                                  style: theme.textTheme.bodySmall?.copyWith(
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      
+                                      // Status dropdown (only shown when component is selected)
+                                      if (isSelected) ...[
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            const SizedBox(width: 40), // Align with checkbox
+                                            Expanded(
+                                              child: DropdownButtonFormField<String>(
+                                                value: currentStatus,
+                                                decoration: const InputDecoration(
+                                                  labelText: 'Component Status',
+                                                  border: OutlineInputBorder(),
+                                                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                ),
+                                                items: _componentStatusOptions.map((status) {
+                                                  return DropdownMenuItem(
+                                                    value: status,
+                                                    child: Row(
+                                                      children: [
+                                                        _buildComponentStatusBadge(status),
+                                                        const SizedBox(width: 8),
+                                                        Text(status),
+                                                      ],
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                onChanged: _isCreating ? null : (value) {
+                                                  setState(() {
+                                                    _selectedComponentStatuses[component.id] = value!;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
                               );
                             },
                           ),
@@ -373,6 +456,44 @@ class _CreateIncidentDialogState extends State<CreateIncidentDialog> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildComponentStatusBadge(String status) {
+    Color color;
+
+    switch (status) {
+      case 'operational':
+        color = Colors.green;
+        break;
+      case 'degraded':
+        color = Colors.yellow.shade700;
+        break;
+      case 'partial':
+        color = Colors.orange;
+        break;
+      case 'major':
+        color = Colors.red;
+        break;
+      default:
+        color = Colors.purple;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Text(
+        status,
+        style: TextStyle(
+          color: color,
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
