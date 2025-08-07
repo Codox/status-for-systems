@@ -2,9 +2,9 @@
 
 A full-stack system status monitoring application.
 
-- **web/**: Flutter web app
-- **server/**: NestJS API
-- **docs/**: MKDocs documentation
+**Warning:** This project is heavily in-inprogress and is not yet ready for production use.
+
+Demo: https://demo.statusfor.systems/
 
 ## Prerequisites
 - Docker
@@ -17,25 +17,11 @@ A full-stack system status monitoring application.
 1. See [`web/README.md`](./web/README.md) for frontend setup, dependencies, and usage.
 2. See [`server/README.md`](./server/README.md) for backend setup, dependencies, and usage.
 
----
-
 ## Project Structure
 
-```
-status-for-systems/
-├── web/      # Next.js 15 app (frontend)
-└── server/   # NestJS app (backend API)
-```
-
----
-
-## Main Technologies
-
-- **Frontend:** Next.js, React 19, Chakra UI, Tailwind CSS
-- **Backend:** NestJS, Mongoose, Passport, JWT, TypeScript
-
----
+- **web/**: Flutter web app
+- **server/**: NestJS API
+- **docs/**: MKDocs documentation
 
 ## License
-
-MIT 
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
