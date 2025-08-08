@@ -101,7 +101,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
         children: [
           // Header
           Text(
-            'Admin Dashboard',
+            'Dashboard',
             style: theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),

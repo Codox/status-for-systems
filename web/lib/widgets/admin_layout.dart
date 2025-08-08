@@ -91,7 +91,7 @@ class _AdminLayoutState extends State<AdminLayout> {
   PreferredSizeWidget _buildMobileAppBar(Color headerBgColor) {
     return AppBar(
       title: const Text(
-        'Admin Dashboard',
+        'Dashboard',
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
@@ -127,7 +127,7 @@ class _AdminLayoutState extends State<AdminLayout> {
           color: headerBgColor,
           child: const Center(
             child: Text(
-              'Admin Dashboard',
+              'Dashboard',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
