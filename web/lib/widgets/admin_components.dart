@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
 import 'admin_create_component_dialog.dart';
+import 'admin_create_group_dialog.dart';
 
 class AdminComponents extends StatefulWidget {
   const AdminComponents({super.key});
@@ -14,6 +15,7 @@ class _AdminComponentsState extends State<AdminComponents> {
   List<Group>? groups;
   bool isLoading = true;
   String? error;
+  bool _isFABOpen = false;
 
   @override
   void initState() {
@@ -62,6 +64,15 @@ class _AdminComponentsState extends State<AdminComponents> {
     );
   }
 
+  void _showCreateGroupDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => CreateGroupDialog(
+        onGroupCreated: _refreshComponents,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -104,67 +115,41 @@ class _AdminComponentsState extends State<AdminComponents> {
       );
     }
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Components',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header (simplified - no buttons)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Components',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Manage system components and assign them to groups',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: isLightMode ? Colors.grey[600] : Colors.grey[400],
-                    ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Manage system components and assign them to groups',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: isLightMode ? Colors.grey[600] : Colors.grey[400],
                   ),
-                ],
-              ),
-              Row(
-                children: [
-                  OutlinedButton(
-                    onPressed: isLoading ? null : _refreshComponents,
-                    child: isLoading 
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Refresh'),
-                  ),
-                  const SizedBox(width: 12),
-                  ElevatedButton.icon(
-                    onPressed: _showCreateComponentDialog,
-                    icon: const Icon(Icons.add),
-                    label: const Text('New Component'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[600],
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
 
-          // Components Table
-          Expanded(
-            child: _buildComponentsTable(),
-          ),
-        ],
+            // Components Table
+            Expanded(
+              child: _buildComponentsTable(),
+            ),
+          ],
+        ),
       ),
+      floatingActionButton: _buildFAB(),
     );
   }
 
@@ -435,5 +420,125 @@ class _AdminComponentsState extends State<AdminComponents> {
       default:
         return Icons.help;
     }
+  }
+
+  Widget _buildFAB() {
+    return Stack(
+      children: [
+        // Backdrop overlay when menu is open
+        if (_isFABOpen)
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () => setState(() => _isFABOpen = false),
+              child: Container(
+                color: Colors.black.withOpacity(0.3),
+              ),
+            ),
+          ),
+        
+        // FAB Menu List (shown when open)
+        if (_isFABOpen)
+          Positioned(
+            bottom: 80, // Position above the main FAB
+            right: 0,
+            child: Material(
+              elevation: 8,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Theme.of(context).cardColor,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Create Group Option
+                    ListTile(
+                      leading: Icon(
+                        Icons.folder_outlined,
+                        color: Colors.green[600],
+                      ),
+                      title: const Text('Create Group'),
+                      subtitle: const Text('New component group'),
+                      onTap: () {
+                        setState(() => _isFABOpen = false);
+                        _showCreateGroupDialog();
+                      },
+                    ),
+                    const Divider(height: 1),
+                    
+                    // Create Component Option
+                    ListTile(
+                      leading: Icon(
+                        Icons.dns,
+                        color: Colors.blue[600],
+                      ),
+                      title: const Text('Create Component'),
+                      subtitle: const Text('New system component'),
+                      onTap: () {
+                        setState(() => _isFABOpen = false);
+                        _showCreateComponentDialog();
+                      },
+                    ),
+                    const Divider(height: 1),
+                    
+                    // Refresh Option
+                    ListTile(
+                      leading: Icon(
+                        Icons.refresh,
+                        color: Colors.grey[600],
+                      ),
+                      title: const Text('Refresh'),
+                      subtitle: const Text('Reload components'),
+                      enabled: !isLoading,
+                      onTap: isLoading ? null : () {
+                        setState(() => _isFABOpen = false);
+                        _refreshComponents();
+                      },
+                      trailing: isLoading 
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        
+        // Main FAB
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: FloatingActionButton(
+            heroTag: "primary",
+            onPressed: () {
+              setState(() => _isFABOpen = !_isFABOpen);
+            },
+            backgroundColor: Colors.blue[600],
+            child: AnimatedRotation(
+              turns: _isFABOpen ? 0.125 : 0, // 45 degree rotation when open
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                _isFABOpen ? Icons.close : Icons.add,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Add method to handle primary action (New Component)
+  void _handlePrimaryFABAction() {
+    if (_isFABOpen) {
+      setState(() => _isFABOpen = false);
+    }
+    _showCreateComponentDialog();
   }
 }

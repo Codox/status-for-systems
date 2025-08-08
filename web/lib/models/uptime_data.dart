@@ -724,4 +724,44 @@ class UptimeDataService {
     }
   }
 
+  static Future<Group> createGroup({
+    required String name,
+    required String description,
+  }) async {
+    try {
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final requestBody = jsonEncode({
+        'name': name,
+        'description': description,
+      });
+
+      final response = await _fetchWithAuth(
+        '$apiUrl/admin/groups',
+        method: 'POST',
+        body: requestBody,
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Failed to create group: ${response.statusCode}');
+      }
+
+      final dynamic data = jsonDecode(response.body);
+      return Group(
+        id: data['_id'],
+        name: data['name'],
+        description: data['description'],
+        components: [], // New groups start with no components
+        createdAt: data['createdAt'],
+        updatedAt: data['updatedAt'],
+      );
+    } catch (error) {
+      print('Error creating group: $error');
+      rethrow;
+    }
+  }
+
 }

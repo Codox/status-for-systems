@@ -14,6 +14,7 @@ class _AdminIncidentsState extends State<AdminIncidents> {
   List<Incident>? incidents;
   bool isLoading = true;
   String? error;
+  bool _isFABOpen = false;
 
   @override
   void initState() {
@@ -86,67 +87,41 @@ class _AdminIncidentsState extends State<AdminIncidents> {
       );
     }
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Incidents',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header (simplified - no buttons)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Incidents',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Manage and track system incidents',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: isLightMode ? Colors.grey[600] : Colors.grey[400],
-                    ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Manage and track system incidents',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: isLightMode ? Colors.grey[600] : Colors.grey[400],
                   ),
-                ],
-              ),
-              Row(
-                children: [
-                  OutlinedButton(
-                    onPressed: isLoading ? null : _refreshIncidents,
-                    child: isLoading 
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Refresh'),
-                  ),
-                  const SizedBox(width: 12),
-                  ElevatedButton.icon(
-                    onPressed: _showCreateIncidentDialog,
-                    icon: const Icon(Icons.add),
-                    label: const Text('New Incident'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[600],
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
 
-          // Incidents Table
-          Expanded(
-            child: _buildIncidentsTable(),
-          ),
-        ],
+            // Incidents Table
+            Expanded(
+              child: _buildIncidentsTable(),
+            ),
+          ],
+        ),
       ),
+      floatingActionButton: _buildFAB(),
     );
   }
 
@@ -603,6 +578,67 @@ class _AdminIncidentsState extends State<AdminIncidents> {
           _refreshIncidents();
         },
       ),
+    );
+  }
+
+  Widget _buildFAB() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Secondary FAB (Refresh - shown when speed dial is open)
+        if (_isFABOpen) ...[
+          FloatingActionButton(
+            heroTag: "refresh",
+            mini: true,
+            onPressed: isLoading ? null : () {
+              setState(() => _isFABOpen = false);
+              _refreshIncidents();
+            },
+            backgroundColor: Colors.grey[600],
+            child: isLoading 
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Icon(Icons.refresh, color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+        ],
+        
+        // Primary FAB (New Incident)
+        GestureDetector(
+          onLongPress: () {
+            // Long press toggles the speed dial for secondary actions
+            setState(() => _isFABOpen = !_isFABOpen);
+          },
+          child: FloatingActionButton(
+            heroTag: "primary",
+            onPressed: () {
+              if (_isFABOpen) {
+                // If speed dial is open, close it and create incident
+                setState(() => _isFABOpen = false);
+                _showCreateIncidentDialog();
+              } else {
+                // If closed, directly create incident (most common action)
+                _showCreateIncidentDialog();
+              }
+            },
+            backgroundColor: Colors.red[600],
+            child: AnimatedRotation(
+              turns: _isFABOpen ? 0.125 : 0, // 45 degree rotation when open
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                _isFABOpen ? Icons.close : Icons.add,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
