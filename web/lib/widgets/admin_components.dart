@@ -14,6 +14,8 @@ class AdminComponents extends StatefulWidget {
 
 class _AdminComponentsState extends State<AdminComponents> {
   List<Group>? groups;
+  List<Component>? allComponents;
+  List<Component>? ungroupedComponents;
   bool isLoading = true;
   String? error;
   bool _isFABOpen = false;
@@ -26,9 +28,27 @@ class _AdminComponentsState extends State<AdminComponents> {
 
   Future<void> _loadComponents() async {
     try {
+      // Always fetch all components and groups to show both grouped and ungrouped
+      final fetchedAllComponents = await UptimeDataService.fetchAllComponents();
       final fetchedGroups = await UptimeDataService.fetchGroups();
+      
+      // Get all component IDs that are in groups
+      final groupedComponentIds = <String>{};
+      for (final group in fetchedGroups) {
+        for (final component in group.components) {
+          groupedComponentIds.add(component.id);
+        }
+      }
+      
+      // Filter out components that are already in groups
+      final fetchedUngroupedComponents = fetchedAllComponents
+          .where((component) => !groupedComponentIds.contains(component.id))
+          .toList();
+      
       setState(() {
+        allComponents = fetchedAllComponents;
         groups = fetchedGroups;
+        ungroupedComponents = fetchedUngroupedComponents;
         isLoading = false;
       });
     } catch (e) {
@@ -137,7 +157,7 @@ class _AdminComponentsState extends State<AdminComponents> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header (simplified - no buttons)
+            // Header
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -158,9 +178,11 @@ class _AdminComponentsState extends State<AdminComponents> {
             ),
             const SizedBox(height: 24),
 
-            // Components Table
+            // Components Content
             Expanded(
-              child: _buildComponentsTable(),
+              child: isLoading
+                  ? _buildLoadingState()
+                  : _buildComponentsContent(),
             ),
           ],
         ),
@@ -169,17 +191,31 @@ class _AdminComponentsState extends State<AdminComponents> {
     );
   }
 
-  Widget _buildComponentsTable() {
+  Widget _buildComponentsContent() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Groups Section
+          _buildGroupsSection(),
+          const SizedBox(height: 24),
+          // Ungrouped Components Section
+          _buildUngroupedSection(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGroupsSection() {
     final theme = Theme.of(context);
     final isLightMode = theme.brightness == Brightness.light;
-
-    final totalComponents = groups?.fold<int>(0, (sum, group) => sum + group.components.length) ?? 0;
+    final totalGroupedComponents = groups?.fold<int>(0, (sum, group) => sum + group.components.length) ?? 0;
 
     return Card(
       elevation: 2,
       child: Column(
         children: [
-          // Table Header
+          // Groups Header
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -193,7 +229,7 @@ class _AdminComponentsState extends State<AdminComponents> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'All Components ($totalComponents)',
+                  'Grouped Components ($totalGroupedComponents)',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -208,14 +244,57 @@ class _AdminComponentsState extends State<AdminComponents> {
             ),
           ),
 
-          // Table Content
-          Expanded(
-            child: isLoading
-                ? _buildLoadingState()
-                : groups == null || groups!.isEmpty
-                    ? _buildEmptyState()
-                    : _buildTableContent(),
+          // Groups Content
+          groups == null || groups!.isEmpty
+              ? _buildEmptyState()
+              : _buildGroupsContent(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUngroupedSection() {
+    final theme = Theme.of(context);
+    final isLightMode = theme.brightness == Brightness.light;
+    final ungroupedCount = ungroupedComponents?.length ?? 0;
+
+    return Card(
+      elevation: 2,
+      child: Column(
+        children: [
+          // Ungrouped Header
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isLightMode ? Colors.grey[50] : Colors.grey[800],
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Ungrouped Components ($ungroupedCount)',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Not assigned to any group',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: isLightMode ? Colors.grey[600] : Colors.grey[400],
+                  ),
+                ),
+              ],
+            ),
           ),
+
+          // Ungrouped Content
+          ungroupedComponents == null || ungroupedComponents!.isEmpty
+              ? _buildEmptyUngroupedState()
+              : _buildUngroupedContent(),
         ],
       ),
     );
@@ -318,13 +397,83 @@ class _AdminComponentsState extends State<AdminComponents> {
     );
   }
 
-  Widget _buildTableContent() {
-    return ListView.builder(
-      itemCount: groups!.length,
-      itemBuilder: (context, index) {
-        final group = groups![index];
-        return _buildGroupCard(group);
-      },
+  Widget _buildEmptyUngroupedState() {
+    final theme = Theme.of(context);
+    
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.check_circle_outline,
+              size: 64,
+              color: Colors.green[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'All components are grouped',
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Every component has been assigned to a group',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[500],
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _showCreateComponentDialog,
+              icon: const Icon(Icons.add),
+              label: const Text('Create Component'),
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUngroupedContent() {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: 400, // Limit height so it doesn't take up too much space
+      ),
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: ungroupedComponents!.length,
+        itemBuilder: (context, index) {
+          final component = ungroupedComponents![index];
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: _buildComponentTile(component),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildGroupsContent() {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: 600, // Limit height so ungrouped section is visible
+      ),
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: groups!.length,
+        itemBuilder: (context, index) {
+          final group = groups![index];
+          return _buildGroupCard(group);
+        },
+      ),
     );
   }
 
