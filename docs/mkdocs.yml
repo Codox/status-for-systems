@@ -5,4 +5,4 @@ theme:
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
+  - Getting Started (End Users): getting-started-end-users.md
