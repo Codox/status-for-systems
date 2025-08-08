@@ -22,18 +22,6 @@ export class GroupsService {
   }
 
   async create(createGroupRequest: CreateGroupRequest): Promise<Group> {
-    // Verify that all component IDs exist
-    const componentIds = createGroupRequest.components;
-    const existingComponents = await this.componentModel
-      .find({
-        _id: { $in: componentIds },
-      })
-      .exec();
-
-    if (existingComponents.length !== componentIds.length) {
-      throw new NotFoundException('One or more component IDs do not exist');
-    }
-
     const group = new this.groupModel(createGroupRequest);
     return group.save();
   }

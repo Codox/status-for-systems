@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import {
   Component,
-  ComponentStatus,
 } from '../../components/entities/component.entity';
 
 export enum IncidentStatus {
