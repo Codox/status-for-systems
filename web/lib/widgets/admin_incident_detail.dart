@@ -981,6 +981,8 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
         return 'Impact Changed';
       case 'component_updated':
         return 'Component Updated';
+        case 'resolved':
+        return 'Incident Resolved';
       default:
         return type.replaceAll('_', ' ').split(' ')
             .map((word) => word.isNotEmpty ? word[0].toUpperCase() + word.substring(1) : '')
