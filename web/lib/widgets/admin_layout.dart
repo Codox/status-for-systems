@@ -31,6 +31,11 @@ class _AdminLayoutState extends State<AdminLayout> {
       route: '/admin/incidents',
       icon: Icons.warning,
     ),
+    NavigationItem(
+      name: 'Components',
+      route: '/admin/components',
+      icon: Icons.dns,
+    ),
   ];
 
   @override

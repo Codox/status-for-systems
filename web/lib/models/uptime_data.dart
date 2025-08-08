@@ -680,4 +680,48 @@ class UptimeDataService {
     }
   }
 
+  static Future<Component> createComponent({
+    required String name,
+    required String description,
+    required String status,
+    required List<String> groupIds,
+  }) async {
+    try {
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final requestBody = jsonEncode({
+        'name': name,
+        'description': description,
+        'status': status,
+        'groupIds': groupIds,
+      });
+
+      final response = await _fetchWithAuth(
+        '$apiUrl/admin/components',
+        method: 'POST',
+        body: requestBody,
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Failed to create component: ${response.statusCode}');
+      }
+
+      final dynamic data = jsonDecode(response.body);
+      return Component(
+        id: data['_id'],
+        name: data['name'],
+        description: data['description'],
+        status: data['status'],
+        createdAt: data['createdAt'],
+        updatedAt: data['updatedAt'],
+      );
+    } catch (error) {
+      print('Error creating component: $error');
+      rethrow;
+    }
+  }
+
 }

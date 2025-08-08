@@ -8,6 +8,7 @@ import 'widgets/incident_detail_page.dart';
 import 'widgets/admin_layout.dart';
 import 'widgets/admin_dashboard.dart';
 import 'widgets/admin_incidents.dart';
+import 'widgets/admin_components.dart';
 import 'widgets/admin_incident_detail.dart';
 import 'widgets/login_page.dart';
 import 'widgets/auth_guard.dart';
@@ -122,6 +123,13 @@ class MyApp extends StatelessWidget {
               child: const AdminLayout(
                 child: AdminIncidents(),
                 currentRoute: '/admin/incidents',
+              ),
+            ),
+        '/admin/components': (context) => AuthGuard(
+              currentRoute: '/admin/components',
+              child: const AdminLayout(
+                child: AdminComponents(),
+                currentRoute: '/admin/components',
               ),
             ),
       },
