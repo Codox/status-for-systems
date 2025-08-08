@@ -128,11 +128,11 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
+          content: const Row(
             children: [
               Icon(Icons.check_circle, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
-              const Text('Incident updated successfully! Page data refreshed.'),
+              SizedBox(width: 8),
+              Text('Incident updated successfully! Page data refreshed.'),
             ],
           ),
           backgroundColor: Colors.green[600],
@@ -189,11 +189,11 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
+          content: const Row(
             children: [
               Icon(Icons.check_circle, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
-              const Text('Incident resolved successfully! Page data refreshed.'),
+              SizedBox(width: 8),
+              Text('Incident resolved successfully! Page data refreshed.'),
             ],
           ),
           backgroundColor: Colors.green[600],

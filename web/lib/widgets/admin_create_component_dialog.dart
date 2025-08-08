@@ -88,7 +88,7 @@ class _CreateComponentDialogState extends State<CreateComponentDialog> {
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim(),
         status: _selectedStatus,
-        groupIds: _selectedGroupIds.toList(),
+        groups: _selectedGroupIds.toList(),
       );
 
       if (mounted) {

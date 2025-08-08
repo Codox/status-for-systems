@@ -684,7 +684,7 @@ class UptimeDataService {
     required String name,
     required String description,
     required String status,
-    required List<String> groupIds,
+    required List<String> groups,
   }) async {
     try {
       final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
@@ -696,7 +696,7 @@ class UptimeDataService {
         'name': name,
         'description': description,
         'status': status,
-        'groupIds': groupIds,
+        'groups': groups,
       });
 
       final response = await _fetchWithAuth(
