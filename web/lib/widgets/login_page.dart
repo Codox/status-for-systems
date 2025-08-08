@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Card(
               elevation: 8,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(32.0),
@@ -120,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                           labelText: 'Username',
                           prefixIcon: const Icon(Icons.person),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           filled: true,
                           fillColor: isLightMode 
@@ -158,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           filled: true,
                           fillColor: isLightMode 
@@ -212,7 +212,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           backgroundColor: theme.colorScheme.primary,
                           foregroundColor: theme.colorScheme.onPrimary,

@@ -91,6 +91,11 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.arrow_back),
                   label: const Text('Back to Dashboard'),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -116,6 +121,9 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
                   backgroundColor: Colors.transparent,
                   foregroundColor: textColor,
                   elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -210,7 +218,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.grey.shade300),
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -308,7 +316,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
@@ -353,7 +361,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Text(
@@ -391,7 +399,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Text(
@@ -415,7 +423,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         border: Border.all(color: borderColor),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

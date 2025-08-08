@@ -180,9 +180,9 @@ class _AdminLayoutState extends State<AdminLayout> {
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
       child: Material(
         color: isActive ? activeBgColor : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
         child: InkWell(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           onTap: () {
             if (isMobile) {
               Navigator.of(context).pop(); // Close drawer
@@ -227,9 +227,9 @@ class _AdminLayoutState extends State<AdminLayout> {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
         child: InkWell(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           onTap: () {
             if (isMobile) {
               Navigator.of(context).pop(); // Close drawer
@@ -266,9 +266,9 @@ class _AdminLayoutState extends State<AdminLayout> {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
         child: InkWell(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           onTap: () async {
             if (isMobile) {
               Navigator.of(context).pop(); // Close drawer

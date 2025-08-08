@@ -440,6 +440,9 @@ class _CreateIncidentDialogState extends State<CreateIncidentDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red[600],
                       foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                     child: _isCreating
                         ? const SizedBox(
@@ -485,7 +488,7 @@ class _CreateIncidentDialogState extends State<CreateIncidentDialog> {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Text(

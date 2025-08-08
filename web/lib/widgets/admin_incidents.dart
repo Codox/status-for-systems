@@ -78,6 +78,11 @@ class _AdminIncidentsState extends State<AdminIncidents> {
                 ),
                 ElevatedButton(
                   onPressed: _refreshIncidents,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
                   child: const Text('Retry'),
                 ),
               ],
@@ -256,6 +261,9 @@ class _AdminIncidentsState extends State<AdminIncidents> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red[600],
                 foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
               ),
             ),
           ],

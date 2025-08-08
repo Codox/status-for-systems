@@ -185,7 +185,7 @@ class _CreateComponentDialogState extends State<CreateComponentDialog> {
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color: Colors.red[50],
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(color: Colors.red[200]!),
                                 ),
                                 child: Row(
@@ -289,7 +289,7 @@ class _CreateComponentDialogState extends State<CreateComponentDialog> {
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   color: Colors.orange[50],
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(color: Colors.orange[200]!),
                                 ),
                                 child: Row(
@@ -306,7 +306,7 @@ class _CreateComponentDialogState extends State<CreateComponentDialog> {
                               Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.grey[300]!),
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Column(
                                   children: _allGroups.map((group) {
@@ -357,6 +357,9 @@ class _CreateComponentDialogState extends State<CreateComponentDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[600],
                       foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                     child: _isCreating
                         ? const SizedBox(

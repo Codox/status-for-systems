@@ -88,6 +88,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 });
                 _loadData();
               },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
               child: const Text('Retry'),
             ),
           ],

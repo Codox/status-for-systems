@@ -106,6 +106,11 @@ class _AdminComponentsState extends State<AdminComponents> {
                 ),
                 ElevatedButton(
                   onPressed: _refreshComponents,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
                   child: const Text('Retry'),
                 ),
               ],
@@ -290,6 +295,11 @@ class _AdminComponentsState extends State<AdminComponents> {
               onPressed: _showCreateComponentDialog,
               icon: const Icon(Icons.add),
               label: const Text('Create Component'),
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
             ),
           ],
         ),
@@ -443,11 +453,11 @@ class _AdminComponentsState extends State<AdminComponents> {
             right: 0,
             child: Material(
               elevation: 8,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
               child: Container(
-                width: 200,
+                width: 250,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(4),
                   color: Theme.of(context).cardColor,
                 ),
                 child: Column(

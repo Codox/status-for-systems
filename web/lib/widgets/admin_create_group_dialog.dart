@@ -136,7 +136,7 @@ class _CreateGroupDialogState extends State<CreateGroupDialog> {
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: Colors.red[50],
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(color: Colors.red[200]!),
                           ),
                           child: Row(
@@ -215,6 +215,9 @@ class _CreateGroupDialogState extends State<CreateGroupDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green[600],
                       foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                     child: _isCreating
                         ? const SizedBox(

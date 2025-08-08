@@ -372,7 +372,7 @@ class StatusDashboard extends StatelessWidget {
                 color: isDarkMode
                     ? _getColorFromName(groupStatus['bgColorDark']).withOpacity(0.2)
                     : _getColorFromName(groupStatus['bgColor']).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -474,7 +474,7 @@ class StatusDashboard extends StatelessWidget {
                         color: Theme.of(context).brightness == Brightness.light
                             ? Colors.grey[50]
                             : Colors.grey[800],
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                           color: Theme.of(context).brightness == Brightness.light
                               ? Colors.grey[200]!
@@ -942,7 +942,7 @@ class LoadingState extends StatelessWidget {
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: bgColor,
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
