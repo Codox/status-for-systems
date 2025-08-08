@@ -6,3 +6,7 @@ theme:
 nav:
   - Home: index.md
   - Getting Started (End Users): getting-started-end-users.md
+
+markdown_extensions:
+  - codehilite
+  - pymdownx.superfences

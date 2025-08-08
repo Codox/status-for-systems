@@ -19,7 +19,7 @@ These instructions can also be found at: https://github.com/Codox/status-for-sys
 2. Pull the Docker image (Replace `<VERSION>` with the desired version tag):
 
     ```bash
-    docker pull ghcr.io/codox/status-for-systems:&lt;VERSION&gt;
+    docker pull ghcr.io/codox/status-for-systems:<VERSION>
     ```
 
 3. Run the Docker container:
@@ -31,8 +31,8 @@ These instructions can also be found at: https://github.com/Codox/status-for-sys
     -e MONGODB_PASSWORD=admin \
     -e BASIC_AUTH_USERNAME=admin \
     -e BASIC_AUTH_PASSWORD=admin \
-    -e JWT_SECRET=&lt;YOUR_JWT_SECRET&gt; \
-    ghcr.io/codox/status-for-systems:&lt;VERSION&gt;
+    -e JWT_SECRET=<YOUR_JWT_SECRET> \
+    ghcr.io/codox/status-for-systems:<VERSION>
     ```
 
 4. Access the status page at
