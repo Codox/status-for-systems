@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { map, flatMap, pipe } from 'remeda';
 import { Component } from './entities/component.entity';
 import { Group } from '../groups/entities/group.entity';
+import { CreateComponentRequest } from './requests/create-component.request';
 
 @Injectable()
 export class ComponentsService {
@@ -31,5 +32,31 @@ export class ComponentsService {
     return this.componentModel
       .find({ _id: { $nin: assignedComponentIds } })
       .exec();
+  }
+
+  async create(
+    createComponentRequest: CreateComponentRequest,
+  ): Promise<Component> {
+    // Create the component
+    const component = new this.componentModel({
+      name: createComponentRequest.name,
+      description: createComponentRequest.description,
+      status: createComponentRequest.status,
+    });
+
+    const savedComponent = await component.save();
+
+    // If groups are specified, add the component to those groups
+    if (
+      createComponentRequest.groups &&
+      createComponentRequest.groups.length > 0
+    ) {
+      await this.groupModel.updateMany(
+        { _id: { $in: createComponentRequest.groups } },
+        { $addToSet: { components: savedComponent._id } },
+      );
+    }
+
+    return savedComponent;
   }
 }

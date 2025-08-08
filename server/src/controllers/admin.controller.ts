@@ -78,8 +78,7 @@ export class AdminController {
   async createComponent(
     @Body() createComponentRequest: CreateComponentRequest,
   ): Promise<Component> {
-    // TODO: Implement create
-    return null;
+    return this.componentsService.create(createComponentRequest);
   }
 
   @Put('components/:id')

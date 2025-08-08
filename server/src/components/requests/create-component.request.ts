@@ -1,4 +1,10 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ComponentStatus } from '../entities/component.entity';
 
 export class CreateComponentRequest {
@@ -12,4 +18,9 @@ export class CreateComponentRequest {
 
   @IsEnum(ComponentStatus)
   status: ComponentStatus;
-} 
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  groups?: string[];
+}
