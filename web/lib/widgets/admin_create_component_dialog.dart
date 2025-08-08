@@ -18,20 +18,11 @@ class _CreateComponentDialogState extends State<CreateComponentDialog> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   
-  String _selectedStatus = 'operational';
   List<Group> _allGroups = [];
   Set<String> _selectedGroupIds = {}; // Set of group IDs
   bool _isLoading = false;
   bool _isCreating = false;
   String? _error;
-
-  final List<String> _statusOptions = [
-    'operational',
-    'degraded',
-    'partial',
-    'major',
-    'under_maintenance',
-  ];
 
   @override
   void initState() {
@@ -87,7 +78,7 @@ class _CreateComponentDialogState extends State<CreateComponentDialog> {
       await UptimeDataService.createComponent(
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim(),
-        status: _selectedStatus,
+        status: 'operational',
         groups: _selectedGroupIds.toList(),
       );
 
@@ -235,37 +226,6 @@ class _CreateComponentDialogState extends State<CreateComponentDialog> {
                                 return null;
                               },
                             ),
-                            const SizedBox(height: 16),
-
-                            // Status Selection
-                            DropdownButtonFormField<String>(
-                              value: _selectedStatus,
-                              decoration: const InputDecoration(
-                                labelText: 'Initial Status',
-                                border: OutlineInputBorder(),
-                              ),
-                              items: _statusOptions.map((status) {
-                                return DropdownMenuItem(
-                                  value: status,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        _getStatusIcon(status),
-                                        color: _getStatusColor(status),
-                                        size: 16,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(_formatStatusText(status)),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedStatus = value!;
-                                });
-                              },
-                            ),
                             const SizedBox(height: 24),
 
                             // Group Selection
@@ -381,54 +341,4 @@ class _CreateComponentDialogState extends State<CreateComponentDialog> {
     );
   }
 
-  String _formatStatusText(String status) {
-    switch (status) {
-      case 'operational':
-        return 'Operational';
-      case 'degraded':
-        return 'Degraded Performance';
-      case 'partial':
-        return 'Partial Outage';
-      case 'major':
-        return 'Major Outage';
-      case 'under_maintenance':
-        return 'Under Maintenance';
-      default:
-        return status.toUpperCase();
-    }
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'operational':
-        return Colors.green;
-      case 'degraded':
-        return Colors.yellow[700]!;
-      case 'partial':
-        return Colors.orange;
-      case 'major':
-        return Colors.red;
-      case 'under_maintenance':
-        return Colors.blue;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  IconData _getStatusIcon(String status) {
-    switch (status.toLowerCase()) {
-      case 'operational':
-        return Icons.check_circle;
-      case 'degraded':
-        return Icons.warning;
-      case 'partial':
-        return Icons.error;
-      case 'major':
-        return Icons.cancel;
-      case 'under_maintenance':
-        return Icons.build;
-      default:
-        return Icons.help;
-    }
-  }
 }
