@@ -12,6 +12,9 @@ I decided to start on this project to fill that gap.
 
 If you're a startup or a small business, this is probably for you once it's done. If you're an enterprise, I'd recommend waiting.
 
+## Demo
+A demo of the project is available at [https://demo.statusfor.systems/](https://demo.statusfor.systems/).
+
 ## Features
 - Incident management
 
