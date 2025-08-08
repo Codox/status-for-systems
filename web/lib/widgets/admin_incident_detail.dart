@@ -224,7 +224,7 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
     final isLightMode = theme.brightness == Brightness.light;
     final textColor = isLightMode ? Colors.grey[600] : Colors.grey[400];
     final cardBg = isLightMode ? Colors.white : Colors.grey[800];
-    final borderColor = isLightMode ? Colors.grey[200] : Colors.grey[700];
+    final borderColor = isLightMode ? Colors.grey.shade200 : Colors.grey.shade700;
     final headerBg = isLightMode ? Colors.grey[50] : Colors.grey[700];
 
     if (isLoading) {
@@ -480,232 +480,234 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Update Form
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: borderColor!),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Add Update',
-                                    style: theme.textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
+                            // Update Form - only show if incident is not resolved
+                            if (incident!.status != 'resolved') ...[
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: borderColor!),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Add Update',
+                                      style: theme.textTheme.titleSmall?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 16),
+                                    const SizedBox(height: 16),
 
-                                  // Status and Impact dropdowns
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Status',
-                                              style: theme.textTheme.labelMedium?.copyWith(
-                                                fontWeight: FontWeight.w500,
+                                    // Status and Impact dropdowns
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Status',
+                                                style: theme.textTheme.labelMedium?.copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            DropdownButtonFormField<String>(
-                                              value: _selectedStatus,
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                              const SizedBox(height: 4),
+                                              DropdownButtonFormField<String>(
+                                                value: _selectedStatus,
+                                                decoration: const InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                ),
+                                                items: const [
+                                                  DropdownMenuItem(value: 'investigating', child: Text('Investigating')),
+                                                  DropdownMenuItem(value: 'identified', child: Text('Identified')),
+                                                  DropdownMenuItem(value: 'monitoring', child: Text('Monitoring')),
+                                                  DropdownMenuItem(value: 'resolved', child: Text('Resolved')),
+                                                ],
+                                                onChanged: (value) {
+                                                  if (value != null) {
+                                                    setState(() {
+                                                      _selectedStatus = value;
+                                                    });
+                                                  }
+                                                },
                                               ),
-                                              items: const [
-                                                DropdownMenuItem(value: 'investigating', child: Text('Investigating')),
-                                                DropdownMenuItem(value: 'identified', child: Text('Identified')),
-                                                DropdownMenuItem(value: 'monitoring', child: Text('Monitoring')),
-                                                DropdownMenuItem(value: 'resolved', child: Text('Resolved')),
-                                              ],
-                                              onChanged: (value) {
-                                                if (value != null) {
-                                                  setState(() {
-                                                    _selectedStatus = value;
-                                                  });
-                                                }
-                                              },
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Impact',
-                                              style: theme.textTheme.labelMedium?.copyWith(
-                                                fontWeight: FontWeight.w500,
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Impact',
+                                                style: theme.textTheme.labelMedium?.copyWith(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            DropdownButtonFormField<String>(
-                                              value: _selectedImpact,
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                              const SizedBox(height: 4),
+                                              DropdownButtonFormField<String>(
+                                                value: _selectedImpact,
+                                                decoration: const InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                                ),
+                                                items: const [
+                                                  DropdownMenuItem(value: 'none', child: Text('None')),
+                                                  DropdownMenuItem(value: 'minor', child: Text('Minor')),
+                                                  DropdownMenuItem(value: 'major', child: Text('Major')),
+                                                  DropdownMenuItem(value: 'critical', child: Text('Critical')),
+                                                ],
+                                                onChanged: (value) {
+                                                  if (value != null) {
+                                                    setState(() {
+                                                      _selectedImpact = value;
+                                                    });
+                                                  }
+                                                },
                                               ),
-                                              items: const [
-                                                DropdownMenuItem(value: 'none', child: Text('None')),
-                                                DropdownMenuItem(value: 'minor', child: Text('Minor')),
-                                                DropdownMenuItem(value: 'major', child: Text('Major')),
-                                                DropdownMenuItem(value: 'critical', child: Text('Critical')),
-                                              ],
-                                              onChanged: (value) {
-                                                if (value != null) {
-                                                  setState(() {
-                                                    _selectedImpact = value;
-                                                  });
-                                                }
-                                              },
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
 
-                                  // Description
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
+                                    // Description
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Description',
+                                          style: theme.textTheme.labelMedium?.copyWith(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        TextField(
+                                          controller: _descriptionController,
+                                          decoration: const InputDecoration(
+                                            border: OutlineInputBorder(),
+                                            hintText: 'Provide details about this update',
+                                            contentPadding: EdgeInsets.all(12),
+                                          ),
+                                          maxLines: 3,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+
+                                    // Component Statuses
+                                    if (incident!.affectedComponents.isNotEmpty) ...[
                                       Text(
-                                        'Description',
+                                        'Component Statuses',
                                         style: theme.textTheme.labelMedium?.copyWith(
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      const SizedBox(height: 4),
-                                      TextField(
-                                        controller: _descriptionController,
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          hintText: 'Provide details about this update',
-                                          contentPadding: EdgeInsets.all(12),
-                                        ),
-                                        maxLines: 3,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
+                                      const SizedBox(height: 8),
+                                      ...incident!.affectedComponents.map((affectedComponent) {
+                                        final component = allComponents?.firstWhere(
+                                          (c) => c.id == affectedComponent.id,
+                                          orElse: () => Component(
+                                            id: affectedComponent.id,
+                                            name: affectedComponent.name,
+                                            description: '',
+                                            status: affectedComponent.status,
+                                            createdAt: '',
+                                            updatedAt: '',
+                                          ),
+                                        );
 
-                                  // Component Statuses
-                                  if (incident!.affectedComponents.isNotEmpty) ...[
-                                    Text(
-                                      'Component Statuses',
-                                      style: theme.textTheme.labelMedium?.copyWith(
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    ...incident!.affectedComponents.map((affectedComponent) {
-                                      final component = allComponents?.firstWhere(
-                                        (c) => c.id == affectedComponent.id,
-                                        orElse: () => Component(
-                                          id: affectedComponent.id,
-                                          name: affectedComponent.name,
-                                          description: '',
-                                          status: affectedComponent.status,
-                                          createdAt: '',
-                                          updatedAt: '',
-                                        ),
-                                      );
+                                        if (component == null) return const SizedBox.shrink();
 
-                                      if (component == null) return const SizedBox.shrink();
-
-                                      return Container(
-                                        margin: const EdgeInsets.only(bottom: 8),
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: borderColor),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              component.name,
-                                              style: const TextStyle(fontWeight: FontWeight.w500),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            DropdownButtonFormField<String>(
-                                              value: _componentUpdates[affectedComponent.id] ?? affectedComponent.status,
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        return Container(
+                                          margin: const EdgeInsets.only(bottom: 8),
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: borderColor),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                component.name,
+                                                style: const TextStyle(fontWeight: FontWeight.w500),
                                               ),
-                                              items: const [
-                                                DropdownMenuItem(value: 'operational', child: Text('Operational')),
-                                                DropdownMenuItem(value: 'degraded', child: Text('Degraded')),
-                                                DropdownMenuItem(value: 'partial', child: Text('Partial Outage')),
-                                                DropdownMenuItem(value: 'major', child: Text('Major Outage')),
-                                                DropdownMenuItem(value: 'under_maintenance', child: Text('Under Maintenance')),
-                                              ],
-                                              onChanged: (value) {
-                                                if (value != null) {
-                                                  setState(() {
-                                                    _componentUpdates[affectedComponent.id] = value;
-                                                  });
-                                                }
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                                    const SizedBox(height: 16),
-                                  ],
-
-                                  // Save button
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: ElevatedButton(
-                                      onPressed: isSaving ? null : _updateIncident,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue[600],
-                                        foregroundColor: Colors.white,
-                                      ),
-                                      child: isSaving
-                                          ? const Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SizedBox(
-                                                  width: 16,
-                                                  height: 16,
-                                                  child: CircularProgressIndicator(
-                                                    strokeWidth: 2,
-                                                    color: Colors.white,
-                                                  ),
+                                              const SizedBox(height: 8),
+                                              DropdownButtonFormField<String>(
+                                                value: _componentUpdates[affectedComponent.id] ?? affectedComponent.status,
+                                                decoration: const InputDecoration(
+                                                  border: OutlineInputBorder(),
+                                                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                                 ),
-                                                SizedBox(width: 8),
-                                                Text('Updating...'),
-                                              ],
-                                            )
-                                          : const Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(Icons.save, size: 16),
-                                                SizedBox(width: 6),
-                                                Text('Add Update'),
-                                              ],
-                                            ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 16),
+                                                items: const [
+                                                  DropdownMenuItem(value: 'operational', child: Text('Operational')),
+                                                  DropdownMenuItem(value: 'degraded', child: Text('Degraded')),
+                                                  DropdownMenuItem(value: 'partial', child: Text('Partial Outage')),
+                                                  DropdownMenuItem(value: 'major', child: Text('Major Outage')),
+                                                  DropdownMenuItem(value: 'under_maintenance', child: Text('Under Maintenance')),
+                                                ],
+                                                onChanged: (value) {
+                                                  if (value != null) {
+                                                    setState(() {
+                                                      _componentUpdates[affectedComponent.id] = value;
+                                                    });
+                                                  }
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                      const SizedBox(height: 16),
+                                    ],
 
-                            const Divider(),
+                                    // Save button
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: ElevatedButton(
+                                        onPressed: isSaving ? null : _updateIncident,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue[600],
+                                          foregroundColor: Colors.white,
+                                        ),
+                                        child: isSaving
+                                            ? const Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 16,
+                                                    height: 16,
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 8),
+                                                  Text('Updating...'),
+                                                ],
+                                              )
+                                            : const Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(Icons.save, size: 16),
+                                                  SizedBox(width: 6),
+                                                  Text('Add Update'),
+                                                ],
+                                              ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              const Divider(),
+                            ],
+
                             const SizedBox(height: 16),
 
                             // Updates List
