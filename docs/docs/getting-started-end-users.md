@@ -12,17 +12,15 @@ These instructions can also be found at: https://github.com/Codox/status-for-sys
 
 1. Generate a JWT secret by running:
 
-    ```
+    ```bash
     openssl rand -base64 32
     ```
 
-2. Pull the Docker image:
+2. Pull the Docker image (Replace `<VERSION>` with the desired version tag):
 
+    ```bash
+    docker pull ghcr.io/codox/status-for-systems:&lt;VERSION&gt;
     ```
-    docker pull ghcr.io/codox/status-for-systems:<VERSION>
-    ```
-
-    Replace `<VERSION>` with the desired version tag.
 
 3. Run the Docker container:
 
