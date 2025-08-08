@@ -764,4 +764,33 @@ class UptimeDataService {
     }
   }
 
+  static Future<void> updateGroupComponents({
+    required String groupId,
+    required List<String> componentIds,
+  }) async {
+    try {
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final requestBody = jsonEncode({
+        'componentIds': componentIds,
+      });
+
+      final response = await _fetchWithAuth(
+        '$apiUrl/admin/groups/$groupId/components',
+        method: 'PUT',
+        body: requestBody,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update group components: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error updating group components: $error');
+      rethrow;
+    }
+  }
+
 }

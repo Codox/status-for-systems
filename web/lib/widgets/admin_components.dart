@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
 import 'admin_create_component_dialog.dart';
 import 'admin_create_group_dialog.dart';
+import 'admin_edit_group_components_dialog.dart';
 
 class AdminComponents extends StatefulWidget {
   const AdminComponents({super.key});
@@ -69,6 +70,16 @@ class _AdminComponentsState extends State<AdminComponents> {
       context: context,
       builder: (context) => CreateGroupDialog(
         onGroupCreated: _refreshComponents,
+      ),
+    );
+  }
+
+  void _showEditGroupComponentsDialog(Group group) {
+    showDialog(
+      context: context,
+      builder: (context) => EditGroupComponentsDialog(
+        group: group,
+        onComponentsUpdated: _refreshComponents,
       ),
     );
   }
@@ -347,19 +358,30 @@ class _AdminComponentsState extends State<AdminComponents> {
             ),
           ],
         ),
-        children: group.components.isEmpty
-            ? [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    'No components in this group',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[500],
+        trailing: IconButton(
+          onPressed: () => _showEditGroupComponentsDialog(group),
+          icon: Icon(
+            Icons.edit,
+            color: Colors.green[600],
+          ),
+          tooltip: 'Edit Components',
+        ),
+        children: [
+          // Components list
+          ...group.components.isEmpty
+              ? [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      'No components in this group',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[500],
+                      ),
                     ),
                   ),
-                ),
-              ]
-            : group.components.map((component) => _buildComponentTile(component)).toList(),
+                ]
+              : group.components.map((component) => _buildComponentTile(component)).toList(),
+        ],
       ),
     );
   }
