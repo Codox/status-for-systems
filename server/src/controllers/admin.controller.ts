@@ -63,6 +63,11 @@ export class AdminController {
     return this.componentsService.findAll();
   }
 
+  @Get('components/ungrouped')
+  async findUngroupedComponents(): Promise<Component[]> {
+    return this.componentsService.findUngrouped();
+  }
+
   @Get('components/:id')
   async findOneComponent(@Param('id') id: string): Promise<Component> {
     // TODO: Implement findOne
