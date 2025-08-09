@@ -16,6 +16,7 @@ import { IncidentUpdate } from '../incidents/entities/incident-update.entity';
 import { CreateComponentRequest } from '../components/requests/create-component.request';
 import { UpdateComponentRequest } from '../components/requests/update-component.request';
 import { CreateGroupRequest } from '../groups/requests/create-group.request';
+import { UpdateGroupRequest } from '../groups/requests/update-group.request';
 import { CreateIncidentRequest } from '../incidents/requests/create-incident.request';
 import { UpdateIncidentRequest } from '../incidents/requests/update-incident.request';
 import { CreateIncidentUpdateRequest } from '../incidents/requests/create-incident-update.request';
@@ -114,13 +115,12 @@ export class AdminController {
     return this.groupsService.create(createGroupRequest);
   }
 
-  @Put('groups/:id')
+  @Patch('groups/:id')
   async updateGroup(
     @Param('id') id: string,
-    @Body() updateGroupRequest: CreateGroupRequest,
+    @Body() updateGroupRequest: UpdateGroupRequest,
   ): Promise<Group> {
-    // TODO: Implement update
-    return null;
+    return this.groupsService.update(id, updateGroupRequest);
   }
 
   @Delete('groups/:id')
