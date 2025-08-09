@@ -104,7 +104,7 @@ class _EditComponentDialogState extends State<EditComponentDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Component updated successfully'),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.blue,
           ),
         );
         widget.onComponentUpdated();
@@ -134,7 +134,7 @@ class _EditComponentDialogState extends State<EditComponentDialog> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isLightMode ? Colors.green[50] : Colors.green[900],
+                color: isLightMode ? Colors.blue[50] : Colors.blue[900],
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(8),
                   topRight: Radius.circular(8),
@@ -144,7 +144,7 @@ class _EditComponentDialogState extends State<EditComponentDialog> {
                 children: [
                   Icon(
                     Icons.edit,
-                    color: Colors.green[600],
+                    color: Colors.blue[600],
                     size: 28,
                   ),
                   const SizedBox(width: 12),
@@ -156,7 +156,7 @@ class _EditComponentDialogState extends State<EditComponentDialog> {
                           'Edit Component',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: Colors.green[600],
+                            color: Colors.blue[600],
                           ),
                         ),
                         Text(
@@ -333,7 +333,7 @@ class _EditComponentDialogState extends State<EditComponentDialog> {
                   ElevatedButton(
                     onPressed: _isUpdating ? null : _updateComponent,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[600],
+                      backgroundColor: Colors.blue[600],
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),

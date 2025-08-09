@@ -576,7 +576,7 @@ class _AdminComponentsState extends State<AdminComponents> {
             onPressed: () => _showEditComponentDialog(component),
             icon: Icon(
               Icons.edit,
-              color: Colors.green[600],
+              color: Colors.blue[600],
               size: 20,
             ),
             tooltip: 'Edit Component',
