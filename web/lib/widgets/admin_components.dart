@@ -4,6 +4,7 @@ import '../models/uptime_data.dart';
 import 'admin_create_component_dialog.dart';
 import 'admin_create_group_dialog.dart';
 import 'admin_edit_group_components_dialog.dart';
+import 'admin_edit_component_dialog.dart';
 
 class AdminComponents extends StatefulWidget {
   const AdminComponents({super.key});
@@ -100,6 +101,16 @@ class _AdminComponentsState extends State<AdminComponents> {
       builder: (context) => EditGroupComponentsDialog(
         group: group,
         onComponentsUpdated: _refreshComponents,
+      ),
+    );
+  }
+
+  void _showEditComponentDialog(Component component) {
+    showDialog(
+      context: context,
+      builder: (context) => EditComponentDialog(
+        component: component,
+        onComponentUpdated: _refreshComponents,
       ),
     );
   }
@@ -550,12 +561,32 @@ class _AdminComponentsState extends State<AdminComponents> {
           ),
         ],
       ),
-      trailing: Chip(
-        label: Text(
-          component.status.toUpperCase(),
-          style: const TextStyle(fontSize: 10),
-        ),
-        backgroundColor: _getStatusColor(component.status).withOpacity(0.1),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Chip(
+            label: Text(
+              component.status.toUpperCase(),
+              style: const TextStyle(fontSize: 10),
+            ),
+            backgroundColor: _getStatusColor(component.status).withOpacity(0.1),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            onPressed: () => _showEditComponentDialog(component),
+            icon: Icon(
+              Icons.edit,
+              color: Colors.green[600],
+              size: 20,
+            ),
+            tooltip: 'Edit Component',
+            constraints: const BoxConstraints(
+              minWidth: 32,
+              minHeight: 32,
+            ),
+            padding: const EdgeInsets.all(4),
+          ),
+        ],
       ),
     );
   }
