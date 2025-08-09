@@ -444,8 +444,8 @@ class _AdminComponentsState extends State<AdminComponents> {
 
   Widget _buildUngroupedContent() {
     return Container(
-      constraints: BoxConstraints(
-        maxHeight: 400, // Limit height so it doesn't take up too much space
+      constraints: const BoxConstraints(
+        maxHeight: 400,
       ),
       child: ListView.builder(
         shrinkWrap: true,

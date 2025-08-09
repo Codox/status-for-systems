@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   UseGuards,
@@ -13,6 +14,7 @@ import { Group } from '../groups/entities/group.entity';
 import { Incident } from '../incidents/entities/incident.entity';
 import { IncidentUpdate } from '../incidents/entities/incident-update.entity';
 import { CreateComponentRequest } from '../components/requests/create-component.request';
+import { UpdateComponentRequest } from '../components/requests/update-component.request';
 import { CreateGroupRequest } from '../groups/requests/create-group.request';
 import { CreateIncidentRequest } from '../incidents/requests/create-incident.request';
 import { UpdateIncidentRequest } from '../incidents/requests/update-incident.request';
@@ -81,13 +83,12 @@ export class AdminController {
     return this.componentsService.create(createComponentRequest);
   }
 
-  @Put('components/:id')
+  @Patch('components/:id')
   async updateComponent(
     @Param('id') id: string,
-    @Body() updateComponentRequest: CreateComponentRequest,
+    @Body() updateComponentRequest: UpdateComponentRequest,
   ): Promise<Component> {
-    // TODO: Implement update
-    return null;
+    return this.componentsService.update(id, updateComponentRequest);
   }
 
   @Delete('components/:id')
