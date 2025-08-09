@@ -21,11 +21,24 @@ class _EditGroupComponentsDialogState extends State<EditGroupComponentsDialog> {
   bool _isLoading = false;
   bool _isUpdating = false;
   String? _error;
+  
+  // Controllers for editing group details
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
 
   @override
   void initState() {
     super.initState();
+    _nameController = TextEditingController(text: widget.group.name);
+    _descriptionController = TextEditingController(text: widget.group.description);
     _loadComponents();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadComponents() async {
@@ -50,23 +63,25 @@ class _EditGroupComponentsDialogState extends State<EditGroupComponentsDialog> {
     }
   }
 
-  Future<void> _updateGroupComponents() async {
+  Future<void> _updateGroup() async {
     setState(() {
       _isUpdating = true;
       _error = null;
     });
 
     try {
-      await UptimeDataService.updateGroupComponents(
+      await UptimeDataService.updateGroup(
         groupId: widget.group.id,
-        componentIds: _selectedComponentIds.toList(),
+        name: _nameController.text.trim(),
+        description: _descriptionController.text.trim(),
+        components: _selectedComponentIds.toList(),
       );
 
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Group components updated successfully'),
+            content: Text('Group updated successfully'),
             backgroundColor: Colors.green,
           ),
         );
@@ -74,7 +89,7 @@ class _EditGroupComponentsDialogState extends State<EditGroupComponentsDialog> {
       }
     } catch (e) {
       setState(() {
-        _error = 'Failed to update group components: $e';
+        _error = 'Failed to update group: $e';
         _isUpdating = false;
       });
     }
@@ -171,7 +186,7 @@ class _EditGroupComponentsDialogState extends State<EditGroupComponentsDialog> {
                               ),
                             ),
 
-                          // Group Info
+                          // Group Details Form
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
@@ -179,32 +194,41 @@ class _EditGroupComponentsDialogState extends State<EditGroupComponentsDialog> {
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(color: Colors.grey[300]!),
                             ),
-                            child: Row(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(
-                                  Icons.folder,
-                                  color: theme.primaryColor,
-                                  size: 24,
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.folder,
+                                      color: theme.primaryColor,
+                                      size: 24,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      'Group Details',
+                                      style: theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        widget.group.name,
-                                        style: theme.textTheme.titleMedium?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        widget.group.description,
-                                        style: theme.textTheme.bodyMedium?.copyWith(
-                                          color: isLightMode ? Colors.grey[600] : Colors.grey[400],
-                                        ),
-                                      ),
-                                    ],
+                                const SizedBox(height: 16),
+                                TextField(
+                                  controller: _nameController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Group Name',
+                                    border: OutlineInputBorder(),
                                   ),
+                                ),
+                                const SizedBox(height: 12),
+                                TextField(
+                                  controller: _descriptionController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Description',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  maxLines: 2,
                                 ),
                               ],
                             ),
@@ -327,7 +351,7 @@ class _EditGroupComponentsDialogState extends State<EditGroupComponentsDialog> {
                       ),
                       const SizedBox(width: 12),
                       ElevatedButton(
-                        onPressed: _isUpdating ? null : _updateGroupComponents,
+                        onPressed: _isUpdating ? null : _updateGroup,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green[600],
                           foregroundColor: Colors.white,

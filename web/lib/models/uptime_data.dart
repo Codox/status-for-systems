@@ -187,6 +187,9 @@ class UptimeDataService {
         case 'PUT':
           response = await http.put(Uri.parse(url), headers: finalHeaders, body: body);
           break;
+        case 'PATCH':
+          response = await http.patch(Uri.parse(url), headers: finalHeaders, body: body);
+          break;
         case 'DELETE':
           response = await http.delete(Uri.parse(url), headers: finalHeaders);
           break;
@@ -789,6 +792,57 @@ class UptimeDataService {
       }
     } catch (error) {
       print('Error updating group components: $error');
+      rethrow;
+    }
+  }
+
+  static Future<Group> updateGroup({
+    required String groupId,
+    String? name,
+    String? description,
+    List<String>? components,
+  }) async {
+    try {
+      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+
+      final Map<String, dynamic> requestData = {};
+      if (name != null) requestData['name'] = name;
+      if (description != null) requestData['description'] = description;
+      if (components != null) requestData['components'] = components;
+
+      final requestBody = jsonEncode(requestData);
+
+      final response = await _fetchWithAuth(
+        '$apiUrl/admin/groups/$groupId',
+        method: 'PATCH',
+        body: requestBody,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update group: ${response.statusCode}');
+      }
+
+      final dynamic data = jsonDecode(response.body);
+      return Group(
+        id: data['_id'],
+        name: data['name'],
+        description: data['description'],
+        components: (data['components'] as List<dynamic>).map((component) => Component(
+          id: component['_id'],
+          name: component['name'],
+          description: component['description'],
+          status: component['status'],
+          createdAt: component['createdAt'],
+          updatedAt: component['updatedAt'],
+        )).toList(),
+        createdAt: data['createdAt'],
+        updatedAt: data['updatedAt'],
+      );
+    } catch (error) {
+      print('Error updating group: $error');
       rethrow;
     }
   }
