@@ -474,6 +474,7 @@ class _AdminComponentsState extends State<AdminComponents> {
     return Card(
       margin: const EdgeInsets.all(8),
       child: ExpansionTile(
+        shape: const Border(),
         leading: Icon(
           Icons.folder,
           color: theme.primaryColor,

@@ -323,6 +323,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ...groups!.map((group) => Card(
             margin: const EdgeInsets.only(bottom: 8),
             child: ExpansionTile(
+              shape: const Border(),
               leading: Icon(
                 Icons.folder,
                 color: theme.primaryColor,
