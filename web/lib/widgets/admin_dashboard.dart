@@ -120,10 +120,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ),
           const SizedBox(height: 24),
 
-          // Stats Cards
-          _buildStatsCards(),
-          const SizedBox(height: 24),
-
           // Recent Incidents
           _buildRecentIncidents(),
           const SizedBox(height: 24),
@@ -135,89 +131,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  Widget _buildStatsCards() {
-    final theme = Theme.of(context);
-    final isLightMode = theme.brightness == Brightness.light;
-
-    final totalServices = groups?.fold<int>(0, (sum, group) => sum + group.components.length) ?? 0;
-    final operationalServices = groups?.fold<int>(0, (sum, group) => 
-      sum + group.components.where((c) => c.status == 'operational').length) ?? 0;
-    final activeIncidents = incidents?.length ?? 0;
-
-    final stats = [
-      _StatCard(
-        title: 'Total Services',
-        value: totalServices.toString(),
-        icon: Icons.dns,
-        color: Colors.blue,
-      ),
-      _StatCard(
-        title: 'Operational',
-        value: operationalServices.toString(),
-        icon: Icons.check_circle,
-        color: Colors.green,
-      ),
-      _StatCard(
-        title: 'Active Incidents',
-        value: activeIncidents.toString(),
-        icon: Icons.warning,
-        color: activeIncidents > 0 ? Colors.red : Colors.green,
-      ),
-      _StatCard(
-        title: 'Uptime',
-        value: totalServices > 0 ? '${((operationalServices / totalServices) * 100).toStringAsFixed(1)}%' : '0%',
-        icon: Icons.trending_up,
-        color: Colors.purple,
-      ),
-    ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: MediaQuery.of(context).size.width > 768 ? 4 : 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 1.5,
-      ),
-      itemCount: stats.length,
-      itemBuilder: (context, index) {
-        final stat = stats[index];
-        return Card(
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  stat.icon,
-                  size: 32,
-                  color: stat.color,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  stat.value,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: stat.color,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  stat.title,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: isLightMode ? Colors.grey[600] : Colors.grey[400],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   Widget _buildRecentIncidents() {
     final theme = Theme.of(context);
@@ -400,16 +313,3 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 }
 
-class _StatCard {
-  final String title;
-  final String value;
-  final IconData icon;
-  final Color color;
-
-  _StatCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-    required this.color,
-  });
-}
