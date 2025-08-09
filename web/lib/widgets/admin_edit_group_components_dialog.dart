@@ -115,7 +115,7 @@ class _EditGroupComponentsDialogState extends State<EditGroupComponentsDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Edit Components',
+                          'Edit Group',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.green[600],

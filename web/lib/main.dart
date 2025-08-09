@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart';
 import 'models/uptime_data.dart';
-import 'widgets/status_card.dart';
 import 'widgets/status_dashboard.dart';
 import 'widgets/incident_detail_page.dart';
 import 'widgets/admin_layout.dart';
@@ -111,23 +110,23 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const StatusPage(),
         '/admin/login': (context) => const LoginPage(),
-        '/admin': (context) => AuthGuard(
+        '/admin': (context) => const AuthGuard(
               currentRoute: '/admin',
-              child: const AdminLayout(
+              child: AdminLayout(
                 currentRoute: '/admin',
                 child: AdminDashboard(),
               ),
             ),
-        '/admin/incidents': (context) => AuthGuard(
+        '/admin/incidents': (context) => const AuthGuard(
               currentRoute: '/admin/incidents',
-              child: const AdminLayout(
+              child: AdminLayout(
                 child: AdminIncidents(),
                 currentRoute: '/admin/incidents',
               ),
             ),
-        '/admin/components': (context) => AuthGuard(
+        '/admin/components': (context) => const AuthGuard(
               currentRoute: '/admin/components',
-              child: const AdminLayout(
+              child: AdminLayout(
                 child: AdminComponents(),
                 currentRoute: '/admin/components',
               ),
