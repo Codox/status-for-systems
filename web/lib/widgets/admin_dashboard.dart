@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/uptime_data.dart';
+import 'components/incident_update_card.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -185,26 +186,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
           )
         else
-          ...incidents!.take(3).map((incident) => Card(
-            margin: const EdgeInsets.only(bottom: 8),
-            child: ListTile(
-              leading: Icon(
-                Icons.warning,
-                color: _getIncidentColor(incident.impact),
-              ),
-              title: Text(incident.title),
-              subtitle: Text(incident.description),
-              trailing: Chip(
-                label: Text(
-                  incident.status.toUpperCase(),
-                  style: const TextStyle(fontSize: 12),
-                ),
-                backgroundColor: _getIncidentColor(incident.impact).withOpacity(0.1),
-              ),
-              onTap: () {
-                Navigator.of(context).pushNamed('/admin/incident/${incident.id}');
-              },
-            ),
+          ...incidents!.take(3).map((incident) => IncidentUpdateCard(
+            incident: incident,
+            style: IncidentCardStyle.listTile,
+            showUpdatedTime: false,
+            onTap: () {
+              Navigator.of(context).pushNamed('/admin/incident/${incident.id}');
+            },
           )),
       ],
     );
@@ -265,18 +253,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  Color _getIncidentColor(String impact) {
-    switch (impact.toLowerCase()) {
-      case 'critical':
-        return Colors.red;
-      case 'major':
-        return Colors.orange;
-      case 'minor':
-        return Colors.yellow[700]!;
-      default:
-        return Colors.grey;
-    }
-  }
 
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
+import 'components/incident_update_card.dart';
 
 class StatusDashboard extends StatelessWidget {
   final List<Group>? groups;
@@ -231,127 +232,19 @@ class StatusDashboard extends StatelessWidget {
           ),
           itemCount: activeIncidents!.length,
           itemBuilder: (context, index) {
-            return _buildIncidentCard(context, activeIncidents![index]);
+            return IncidentUpdateCard(
+              incident: activeIncidents![index],
+              style: IncidentCardStyle.card,
+              onTap: () {
+                Navigator.of(context).pushNamed('/incident/${activeIncidents![index].id}');
+              },
+            );
           },
         );
       },
     );
   }
 
-  Widget _buildIncidentCard(BuildContext context, Incident incident) {
-    // Get status color and icon
-    final statusColor = _getStatusColor(incident.status);
-    final statusIcon = _getStatusIcon(incident.status);
-
-    // Get impact color
-    final impactColor = _getImpactColor(incident.impact);
-
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.only(bottom: 8),
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).pushNamed('/incident/${incident.id}');
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Use Column layout on small screens to prevent overflow
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final isSmallScreen = constraints.maxWidth < 480;
-
-                  if (isSmallScreen) {
-                    // Stack title and badges vertically on small screens
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          incident.title,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 4,
-                          runSpacing: 4,
-                          children: [
-                            _buildBadge(
-                              context,
-                              '$statusIcon ${_capitalizeFirstLetter(incident.status)}',
-                              statusColor,
-                            ),
-                            _buildBadge(
-                              context,
-                              _capitalizeFirstLetter(incident.impact),
-                              impactColor,
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  } else {
-                    // Use horizontal layout on larger screens
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            incident.title,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Wrap(
-                          spacing: 4,
-                          children: [
-                            _buildBadge(
-                              context,
-                              '$statusIcon ${_capitalizeFirstLetter(incident.status)}',
-                              statusColor,
-                            ),
-                            _buildBadge(
-                              context,
-                              _capitalizeFirstLetter(incident.impact),
-                              impactColor,
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 8),
-              Text(
-                incident.description,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? Colors.grey[600]
-                      : Colors.grey[400],
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Updated: ${_formatDateTime(incident.updatedAt)}',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? Colors.grey[600]
-                      : Colors.grey[400],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildGroupCard(BuildContext context, Group group) {
     final groupStatus = _getHighestSeverityStatus(group.components);
@@ -728,50 +621,6 @@ class StatusDashboard extends StatelessWidget {
     return components.every((c) => c.status == 'operational');
   }
 
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'investigating':
-        return Colors.orange;
-      case 'identified':
-        return Colors.blue;
-      case 'monitoring':
-        return Colors.purple;
-      case 'resolved':
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  String _getStatusIcon(String status) {
-    switch (status) {
-      case 'investigating':
-        return '⚠️';
-      case 'identified':
-        return 'ℹ️';
-      case 'monitoring':
-        return '⏱️';
-      case 'resolved':
-        return '✓';
-      default:
-        return '?';
-    }
-  }
-
-  Color _getImpactColor(String impact) {
-    switch (impact) {
-      case 'critical':
-        return Colors.red;
-      case 'major':
-        return Colors.orange;
-      case 'minor':
-        return Colors.yellow;
-      case 'none':
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
-  }
 
   Color _getColorFromName(String colorName) {
     final parts = colorName.split('.');
@@ -801,19 +650,6 @@ class StatusDashboard extends StatelessWidget {
     }
   }
 
-  String _capitalizeFirstLetter(String text) {
-    if (text.isEmpty) return text;
-    return text[0].toUpperCase() + text.substring(1);
-  }
-
-  String _formatDateTime(String dateTimeStr) {
-    try {
-      final dateTime = DateTime.parse(dateTimeStr);
-      return DateFormat('MMM dd, yyyy HH:mm').format(dateTime);
-    } catch (e) {
-      return dateTimeStr;
-    }
-  }
 
   /// Get responsive horizontal padding based on screen width
   double _getResponsiveHorizontalPadding(double screenWidth) {
