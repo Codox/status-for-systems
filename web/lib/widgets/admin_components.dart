@@ -462,18 +462,8 @@ class _AdminComponentsState extends State<AdminComponents> {
   }
 
   Widget _buildGroupsContent() {
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: 600, // Limit height so ungrouped section is visible
-      ),
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: groups!.length,
-        itemBuilder: (context, index) {
-          final group = groups![index];
-          return _buildGroupCard(group);
-        },
-      ),
+    return Column(
+      children: groups!.map((group) => _buildGroupCard(group)).toList(),
     );
   }
 
