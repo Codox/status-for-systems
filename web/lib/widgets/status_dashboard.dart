@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
-import 'components/incident_update_card.dart';
+import 'components/update_card.dart';
 
 class StatusDashboard extends StatelessWidget {
   final List<Group>? groups;
@@ -232,9 +232,9 @@ class StatusDashboard extends StatelessWidget {
           ),
           itemCount: activeIncidents!.length,
           itemBuilder: (context, index) {
-            return IncidentUpdateCard(
+            return UnifiedCard(
               incident: activeIncidents![index],
-              style: IncidentCardStyle.card,
+              style: UnifiedCardStyle.incidentCard,
               onTap: () {
                 Navigator.of(context).pushNamed('/incident/${activeIncidents![index].id}');
               },

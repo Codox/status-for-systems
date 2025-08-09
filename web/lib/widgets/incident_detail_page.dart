@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
+import 'components/update_card.dart';
 
 class IncidentDetailPage extends StatefulWidget {
   final String incidentId;
@@ -273,7 +274,11 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
                               style: TextStyle(color: textColor),
                             )
                           : Column(
-                              children: updates!.map((update) => _buildUpdateCard(update)).toList(),
+                              children: updates!.map((update) => UnifiedCard(
+                                update: update,
+                                style: UnifiedCardStyle.standard,
+                                affectedComponents: incident?.affectedComponents,
+                              )).toList(),
                             ),
                     ),
                   ],
@@ -413,115 +418,6 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
     );
   }
 
-  Widget _buildUpdateCard(Update update) {
-    final borderColor = Theme.of(context).brightness == Brightness.light
-        ? Colors.grey.shade300
-        : Colors.grey.shade700;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: borderColor),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _formatUpdateType(update.type),
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                _formatDate(update.createdAt),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? Colors.grey[600]
-                      : Colors.grey[400],
-                ),
-              ),
-            ],
-          ),
-          if (update.description != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              'Description:',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
-            ),
-            const SizedBox(height: 4),
-            Text(update.description!),
-          ],
-          if (update.statusUpdate != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              'Status Change:',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                _buildStatusBadge(update.statusUpdate!.from ?? 'unknown'),
-                const SizedBox(width: 8),
-                const Text('→'),
-                const SizedBox(width: 8),
-                _buildStatusBadge(update.statusUpdate!.to),
-              ],
-            ),
-          ],
-          if (update.componentStatusUpdates != null && update.componentStatusUpdates!.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              'Component Updates:',
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
-            ),
-            const SizedBox(height: 4),
-            ...update.componentStatusUpdates!.map((compUpdate) {
-              final component = incident!.affectedComponents.firstWhere(
-                (c) => c.id == compUpdate.id,
-                orElse: () => AffectedComponent(id: compUpdate.id, name: 'Unknown Component', status: 'unknown'),
-              );
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  children: [
-                    Text('${component.name}: ', style: const TextStyle(fontSize: 12)),
-                    _buildComponentStatusBadge(compUpdate.from),
-                    const SizedBox(width: 8),
-                    const Text('→', style: TextStyle(fontSize: 12)),
-                    const SizedBox(width: 8),
-                    _buildComponentStatusBadge(compUpdate.to),
-                  ],
-                ),
-              );
-            }),
-          ],
-        ],
-      ),
-    );
-  }
-
-  String _formatUpdateType(String type) {
-    switch (type) {
-      case 'created':
-        return 'Incident Created';
-      case 'updated':
-        return 'Incident Updated';
-      case 'status_changed':
-        return 'Status Changed';
-      case 'impact_changed':
-        return 'Impact Changed';
-      case 'component_updated':
-        return 'Component Updated';
-      default:
-        return type.replaceAll('_', ' ').split(' ')
-            .map((word) => word.isNotEmpty ? word[0].toUpperCase() + word.substring(1) : '')
-            .join(' ');
-    }
-  }
 
   String _formatDate(String dateString) {
     final date = DateTime.parse(dateString);

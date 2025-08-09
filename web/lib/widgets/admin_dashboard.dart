@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/uptime_data.dart';
-import 'components/incident_update_card.dart';
+import 'components/update_card.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -186,9 +186,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
           )
         else
-          ...incidents!.take(3).map((incident) => IncidentUpdateCard(
+          ...incidents!.take(3).map((incident) => UnifiedCard(
             incident: incident,
-            style: IncidentCardStyle.listTile,
+            style: UnifiedCardStyle.incidentList,
             showUpdatedTime: false,
             onTap: () {
               Navigator.of(context).pushNamed('/admin/incident/${incident.id}');
