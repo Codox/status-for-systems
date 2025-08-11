@@ -322,11 +322,6 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
     return DateFormat('MMM dd, yyyy HH:mm').format(date);
   }
 
-  String _capitalizeFirstLetter(String text) {
-    if (text.isEmpty) return text;
-    return text[0].toUpperCase() + text.substring(1);
-  }
-
   /// Get responsive horizontal padding based on screen width
   double _getResponsiveHorizontalPadding(double screenWidth) {
     if (screenWidth < 600) {
