@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/uptime_data.dart';
 import 'components/update_card.dart';
+import 'common/status_badges.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -233,18 +234,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
               subtitle: Text('${group.components.length} services'),
               children: group.components.map((component) => ListTile(
                 leading: Icon(
-                  _getStatusIcon(component.status),
-                  color: _getStatusColor(component.status),
+                  StatusUtils.getComponentStatusIcon(component.status),
+                  color: StatusUtils.getComponentStatusColor(component.status),
                   size: 20,
                 ),
                 title: Text(component.name),
                 subtitle: Text(component.description),
-                trailing: Chip(
-                  label: Text(
-                    component.status.toUpperCase(),
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                  backgroundColor: _getStatusColor(component.status).withOpacity(0.1),
+                trailing: ComponentStatusBadge(
+                  status: component.status,
+                  showIcon: true,
+                  fontSize: 10,
                 ),
               )).toList(),
             ),
@@ -253,39 +252,5 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'operational':
-        return Colors.green;
-      case 'degraded':
-        return Colors.yellow[700]!;
-      case 'partial':
-        return Colors.orange;
-      case 'major':
-        return Colors.red;
-      case 'under_maintenance':
-        return Colors.blue;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  IconData _getStatusIcon(String status) {
-    switch (status.toLowerCase()) {
-      case 'operational':
-        return Icons.check_circle;
-      case 'degraded':
-        return Icons.warning;
-      case 'partial':
-        return Icons.error;
-      case 'major':
-        return Icons.cancel;
-      case 'under_maintenance':
-        return Icons.build;
-      default:
-        return Icons.help;
-    }
-  }
 }
 
