@@ -102,33 +102,51 @@ class _AdminDashboardState extends State<AdminDashboard> {
       );
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Text(
-            'Dashboard',
-            style: theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Dashboard',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Manage your system status and incidents',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: isLightMode ? Colors.grey[600] : Colors.grey[400],
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Manage your system status and incidents',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: isLightMode ? Colors.grey[600] : Colors.grey[400],
+            const SizedBox(height: 24),
+
+            // Dashboard Content
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Recent Incidents
+                    _buildRecentIncidents(),
+                    const SizedBox(height: 24),
+
+                    // Service Groups Overview
+                    _buildServiceGroupsOverview(),
+                  ],
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-
-          // Recent Incidents
-          _buildRecentIncidents(),
-          const SizedBox(height: 24),
-
-          // Service Groups Overview
-          _buildServiceGroupsOverview(),
-        ],
+          ],
+        ),
       ),
     );
   }
