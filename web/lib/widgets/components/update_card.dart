@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../models/uptime_data.dart';
+import '../common/status_badges.dart';
 
 enum UnifiedCardStyle {
   standard,     // Standard card layout for updates
@@ -54,12 +55,6 @@ class UnifiedCard extends StatelessWidget {
   }
 
   Widget _buildIncidentCardStyle(BuildContext context) {
-    // Get status color and icon
-    final statusColor = _getStatusColor(incident!.status);
-    final statusIcon = _getStatusIcon(incident!.status);
-
-    // Get impact color
-    final impactColor = _getImpactColor(incident!.impact);
 
     return Card(
       elevation: 2,
@@ -92,15 +87,15 @@ class UnifiedCard extends StatelessWidget {
                           spacing: 4,
                           runSpacing: 4,
                           children: [
-                            _buildIncidentBadge(
-                              context,
-                              '$statusIcon ${_capitalizeFirstLetter(incident!.status)}',
-                              statusColor,
+                            IncidentStatusBadge(
+                              status: incident!.status,
+                              showIcon: true,
+                              fontSize: 12,
                             ),
-                            _buildIncidentBadge(
-                              context,
-                              _capitalizeFirstLetter(incident!.impact),
-                              impactColor,
+                            IncidentImpactBadge(
+                              impact: incident!.impact,
+                              showLabel: false,
+                              fontSize: 12,
                             ),
                           ],
                         ),
@@ -122,15 +117,15 @@ class UnifiedCard extends StatelessWidget {
                         Wrap(
                           spacing: 4,
                           children: [
-                            _buildIncidentBadge(
-                              context,
-                              '$statusIcon ${_capitalizeFirstLetter(incident!.status)}',
-                              statusColor,
+                            IncidentStatusBadge(
+                              status: incident!.status,
+                              showIcon: true,
+                              fontSize: 12,
                             ),
-                            _buildIncidentBadge(
-                              context,
-                              _capitalizeFirstLetter(incident!.impact),
-                              impactColor,
+                            IncidentImpactBadge(
+                              impact: incident!.impact,
+                              showLabel: false,
+                              fontSize: 12,
                             ),
                           ],
                         ),
@@ -174,16 +169,14 @@ class UnifiedCard extends StatelessWidget {
       child: ListTile(
         leading: Icon(
           Icons.warning,
-          color: _getImpactColor(incident!.impact),
+          color: StatusUtils.getIncidentImpactColor(incident!.impact),
         ),
         title: Text(incident!.title),
         subtitle: Text(incident!.description),
-        trailing: Chip(
-          label: Text(
-            incident!.status.toUpperCase(),
-            style: const TextStyle(fontSize: 12),
-          ),
-          backgroundColor: _getImpactColor(incident!.impact).withOpacity(0.1),
+        trailing: IncidentStatusBadge(
+          status: incident!.status,
+          showIcon: false,
+          fontSize: 12,
         ),
         onTap: onTap,
       ),
@@ -247,11 +240,19 @@ class UnifiedCard extends StatelessWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                _buildStatusBadge(update!.statusUpdate!.from ?? 'unknown'),
+                IncidentStatusBadge(
+                  status: update!.statusUpdate!.from ?? 'unknown',
+                  showIcon: false,
+                  fontSize: 12,
+                ),
                 const SizedBox(width: 8),
                 const Text('→'),
                 const SizedBox(width: 8),
-                _buildStatusBadge(update!.statusUpdate!.to),
+                IncidentStatusBadge(
+                  status: update!.statusUpdate!.to,
+                  showIcon: false,
+                  fontSize: 12,
+                ),
               ],
             ),
           ],
@@ -267,11 +268,19 @@ class UnifiedCard extends StatelessWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                _buildImpactBadge(update!.impactUpdate!.from),
+                IncidentImpactBadge(
+                  impact: update!.impactUpdate!.from,
+                  showLabel: false,
+                  fontSize: 12,
+                ),
                 const SizedBox(width: 8),
                 const Text('→'),
                 const SizedBox(width: 8),
-                _buildImpactBadge(update!.impactUpdate!.to),
+                IncidentImpactBadge(
+                  impact: update!.impactUpdate!.to,
+                  showLabel: false,
+                  fontSize: 12,
+                ),
               ],
             ),
           ],
@@ -292,11 +301,19 @@ class UnifiedCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Text('${component?.name ?? 'Unknown'}: ', style: const TextStyle(fontSize: 12)),
-                    _buildComponentStatusBadge(compUpdate.from),
+                    ComponentStatusBadge(
+                      status: compUpdate.from,
+                      showIcon: false,
+                      fontSize: 12,
+                    ),
                     const SizedBox(width: 8),
                     const Text('→', style: TextStyle(fontSize: 12)),
                     const SizedBox(width: 8),
-                    _buildComponentStatusBadge(compUpdate.to),
+                    ComponentStatusBadge(
+                      status: compUpdate.to,
+                      showIcon: false,
+                      fontSize: 12,
+                    ),
                   ],
                 ),
               );
@@ -349,154 +366,8 @@ class UnifiedCard extends StatelessWidget {
     return null;
   }
 
-  Widget _buildStatusBadge(String status) {
-    Color color;
-    IconData icon;
 
-    switch (status) {
-      case 'investigating':
-        color = Colors.orange;
-        icon = Icons.search;
-        break;
-      case 'identified':
-        color = Colors.blue;
-        icon = Icons.info;
-        break;
-      case 'monitoring':
-        color = Colors.purple;
-        icon = Icons.visibility;
-        break;
-      case 'resolved':
-        color = Colors.green;
-        icon = Icons.check;
-        break;
-      default:
-        color = Colors.grey;
-        icon = Icons.info;
-    }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 4),
-          Text(
-            _capitalizeFirstLetter(status),
-            style: TextStyle(
-              color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildIncidentBadge(BuildContext context, String text, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-          color: color,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImpactBadge(String impact) {
-    Color color;
-
-    switch (impact) {
-      case 'critical':
-        color = Colors.red;
-        break;
-      case 'major':
-        color = Colors.orange;
-        break;
-      case 'minor':
-        color = Colors.yellow.shade700;
-        break;
-      case 'none':
-        color = Colors.green;
-        break;
-      default:
-        color = Colors.grey;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Text(
-        style == UnifiedCardStyle.standard ? 'Impact: ${_capitalizeFirstLetter(impact)}' : _capitalizeFirstLetter(impact),
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildComponentStatusBadge(String status) {
-    Color color;
-
-    switch (status) {
-      case 'operational':
-        color = Colors.green;
-        break;
-      case 'degraded':
-        color = Colors.yellow.shade700;
-        break;
-      case 'partial':
-        color = Colors.orange;
-        break;
-      case 'major':
-        color = Colors.red;
-        break;
-      case 'under_maintenance':
-        color = Colors.blue;
-        break;
-      default:
-        color = Colors.grey;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Text(
-        _capitalizeFirstLetter(status.replaceAll('_', ' ')),
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
 
   String _formatUpdateType(String type) {
     switch (type) {
@@ -517,48 +388,6 @@ class UnifiedCard extends StatelessWidget {
     }
   }
 
-  String _getStatusIcon(String status) {
-    switch (status.toLowerCase()) {
-      case 'investigating':
-        return '🔍';
-      case 'identified':
-        return '⚠️';
-      case 'monitoring':
-        return '👁️';
-      case 'resolved':
-        return '✅';
-      default:
-        return '❓';
-    }
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'investigating':
-        return Colors.orange;
-      case 'identified':
-        return Colors.red;
-      case 'monitoring':
-        return Colors.blue;
-      case 'resolved':
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  Color _getImpactColor(String impact) {
-    switch (impact.toLowerCase()) {
-      case 'critical':
-        return Colors.red;
-      case 'major':
-        return Colors.orange;
-      case 'minor':
-        return Colors.yellow[700]!;
-      default:
-        return Colors.grey;
-    }
-  }
 
   String _formatDateTime(String dateTimeStr) {
     try {
