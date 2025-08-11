@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
 import 'components/update_card.dart';
+import 'common/status_badges.dart';
 
 class AdminIncidentDetail extends StatefulWidget {
   final String incidentId;
@@ -316,9 +317,17 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              _buildStatusBadge(incident!.status),
+                              IncidentStatusBadge(
+                                status: incident!.status,
+                                showIcon: true,
+                                fontSize: 12,
+                              ),
                               const SizedBox(width: 8),
-                              _buildImpactBadge(incident!.impact),
+                              IncidentImpactBadge(
+                                impact: incident!.impact,
+                                showLabel: false,
+                                fontSize: 12,
+                              ),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -439,7 +448,11 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
                                         component.name,
                                         style: const TextStyle(fontWeight: FontWeight.w500),
                                       ),
-                                      _buildComponentStatusBadge(component.status),
+                                      ComponentStatusBadge(
+                                        status: component.status,
+                                        showIcon: true,
+                                        fontSize: 12,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -741,132 +754,6 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
     );
   }
 
-  Widget _buildStatusBadge(String status) {
-    Color color;
-    IconData icon;
-
-    switch (status) {
-      case 'investigating':
-        color = Colors.orange;
-        icon = Icons.search;
-        break;
-      case 'identified':
-        color = Colors.blue;
-        icon = Icons.info;
-        break;
-      case 'monitoring':
-        color = Colors.purple;
-        icon = Icons.visibility;
-        break;
-      case 'resolved':
-        color = Colors.green;
-        icon = Icons.check;
-        break;
-      default:
-        color = Colors.grey;
-        icon = Icons.info;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 4),
-          Text(
-            _capitalizeFirstLetter(status),
-            style: TextStyle(
-              color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildImpactBadge(String impact) {
-    Color color;
-
-    switch (impact) {
-      case 'critical':
-        color = Colors.red;
-        break;
-      case 'major':
-        color = Colors.orange;
-        break;
-      case 'minor':
-        color = Colors.yellow.shade700;
-        break;
-      case 'none':
-        color = Colors.green;
-        break;
-      default:
-        color = Colors.grey;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Text(
-        _capitalizeFirstLetter(impact),
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildComponentStatusBadge(String status) {
-    Color color;
-
-    switch (status) {
-      case 'operational':
-        color = Colors.green;
-        break;
-      case 'degraded':
-        color = Colors.yellow.shade700;
-        break;
-      case 'partial':
-        color = Colors.orange;
-        break;
-      case 'major':
-        color = Colors.red;
-        break;
-      default:
-        color = Colors.purple;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Text(
-        _capitalizeFirstLetter(status.replaceAll('_', ' ')),
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
 
 
   String _formatDate(String dateString) {

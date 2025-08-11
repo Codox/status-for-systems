@@ -567,7 +567,7 @@ class _AdminComponentsState extends State<AdminComponents> {
         children: [
           ComponentStatusBadge(
             status: component.status,
-            showIcon: false,
+            showIcon: true,
             fontSize: 10,
           ),
           const SizedBox(width: 8),

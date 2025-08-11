@@ -175,7 +175,7 @@ class UnifiedCard extends StatelessWidget {
         subtitle: Text(incident!.description),
         trailing: IncidentStatusBadge(
           status: incident!.status,
-          showIcon: false,
+          showIcon: true,
           fontSize: 12,
         ),
         onTap: onTap,
@@ -242,7 +242,7 @@ class UnifiedCard extends StatelessWidget {
               children: [
                 IncidentStatusBadge(
                   status: update!.statusUpdate!.from ?? 'unknown',
-                  showIcon: false,
+                  showIcon: true,
                   fontSize: 12,
                 ),
                 const SizedBox(width: 8),
@@ -250,7 +250,7 @@ class UnifiedCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 IncidentStatusBadge(
                   status: update!.statusUpdate!.to,
-                  showIcon: false,
+                  showIcon: true,
                   fontSize: 12,
                 ),
               ],
@@ -303,7 +303,7 @@ class UnifiedCard extends StatelessWidget {
                     Text('${component?.name ?? 'Unknown'}: ', style: const TextStyle(fontSize: 12)),
                     ComponentStatusBadge(
                       status: compUpdate.from,
-                      showIcon: false,
+                      showIcon: true,
                       fontSize: 12,
                     ),
                     const SizedBox(width: 8),
@@ -311,7 +311,7 @@ class UnifiedCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     ComponentStatusBadge(
                       status: compUpdate.to,
-                      showIcon: false,
+                      showIcon: true,
                       fontSize: 12,
                     ),
                   ],

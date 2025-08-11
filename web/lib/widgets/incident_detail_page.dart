@@ -311,7 +311,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
   Widget _buildComponentStatusBadge(String status) {
     return ComponentStatusBadge(
       status: status,
-      showIcon: false,
+      showIcon: true,
       fontSize: 12,
     );
   }

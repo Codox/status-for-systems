@@ -296,7 +296,7 @@ class StatusDashboard extends StatelessWidget {
                   ),
                   ComponentStatusBadge(
                     status: _getGroupHighestSeverityStatus(group.components),
-                    showIcon: false,
+                    showIcon: true,
                     fontSize: 12,
                   ),
                 ],
@@ -390,7 +390,7 @@ class StatusDashboard extends StatelessWidget {
                               const SizedBox(width: 8),
                               ComponentStatusBadge(
                                 status: component.status,
-                                showIcon: false,
+                                showIcon: true,
                                 fontSize: 12,
                               ),
                             ],
