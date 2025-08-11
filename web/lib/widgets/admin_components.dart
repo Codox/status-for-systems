@@ -5,6 +5,7 @@ import 'admin_create_component_dialog.dart';
 import 'admin_create_group_dialog.dart';
 import 'admin_edit_group_components_dialog.dart';
 import 'admin_edit_component_dialog.dart';
+import 'common/status_badges.dart';
 
 class AdminComponents extends StatefulWidget {
   const AdminComponents({super.key});
@@ -543,8 +544,8 @@ class _AdminComponentsState extends State<AdminComponents> {
 
     return ListTile(
       leading: Icon(
-        _getStatusIcon(component.status),
-        color: _getStatusColor(component.status),
+        StatusUtils.getComponentStatusIcon(component.status),
+        color: StatusUtils.getComponentStatusColor(component.status),
         size: 20,
       ),
       title: Text(component.name),
@@ -564,12 +565,10 @@ class _AdminComponentsState extends State<AdminComponents> {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Chip(
-            label: Text(
-              component.status.toUpperCase(),
-              style: const TextStyle(fontSize: 10),
-            ),
-            backgroundColor: _getStatusColor(component.status).withOpacity(0.1),
+          ComponentStatusBadge(
+            status: component.status,
+            showIcon: false,
+            fontSize: 10,
           ),
           const SizedBox(width: 8),
           IconButton(
@@ -591,39 +590,6 @@ class _AdminComponentsState extends State<AdminComponents> {
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'operational':
-        return Colors.green;
-      case 'degraded':
-        return Colors.yellow[700]!;
-      case 'partial':
-        return Colors.orange;
-      case 'major':
-        return Colors.red;
-      case 'under_maintenance':
-        return Colors.blue;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  IconData _getStatusIcon(String status) {
-    switch (status.toLowerCase()) {
-      case 'operational':
-        return Icons.check_circle;
-      case 'degraded':
-        return Icons.warning;
-      case 'partial':
-        return Icons.error;
-      case 'major':
-        return Icons.cancel;
-      case 'under_maintenance':
-        return Icons.build;
-      default:
-        return Icons.help;
-    }
-  }
 
   Widget _buildFAB() {
     return Stack(

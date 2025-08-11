@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
+import 'common/status_badges.dart';
 
 class StatusCard extends StatelessWidget {
   final Service service;
@@ -70,56 +71,28 @@ class StatusIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color;
-    String label;
+    // Map legacy service status to component status
+    String componentStatus = _mapLegacyStatusToComponentStatus(status);
     
-    switch (status.toLowerCase()) {
-      case 'up':
-        color = Colors.green;
-        label = 'Operational';
-        break;
-      case 'degraded':
-        color = Colors.orange;
-        label = 'Degraded';
-        break;
-      case 'down':
-        color = Colors.red;
-        label = 'Down';
-        break;
-      default:
-        color = Colors.grey;
-        label = 'Unknown';
-    }
-    
-    return Container(
+    return ComponentStatusBadge(
+      status: componentStatus,
+      showIcon: true,
+      fontSize: 14,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 10,
-            height: 10,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
     );
+  }
+
+  String _mapLegacyStatusToComponentStatus(String legacyStatus) {
+    switch (legacyStatus.toLowerCase()) {
+      case 'up':
+        return 'operational';
+      case 'degraded':
+        return 'degraded';
+      case 'down':
+        return 'major';
+      default:
+        return 'operational';
+    }
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
+import 'common/status_badges.dart';
 import 'components/update_card.dart';
 
 class StatusDashboard extends StatelessWidget {
@@ -247,7 +248,8 @@ class StatusDashboard extends StatelessWidget {
 
 
   Widget _buildGroupCard(BuildContext context, Group group) {
-    final groupStatus = _getHighestSeverityStatus(group.components);
+    final groupStatusString = _getGroupHighestSeverityStatus(group.components);
+    final groupStatus = _getStatusStyles(groupStatusString);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
@@ -292,15 +294,10 @@ class StatusDashboard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  _buildBadge(
-                    context,
-                    '${groupStatus['icon']} ${_isAllOperational(group.components) ? 'All Operational' : groupStatus['displayText']}',
-                    isDarkMode
-                        ? _getColorFromName(groupStatus['colorDark'])
-                        : _getColorFromName(groupStatus['color']),
-                    backgroundColor: isDarkMode
-                        ? _getColorFromName(groupStatus['bgColorDark']).withOpacity(0.2)
-                        : _getColorFromName(groupStatus['bgColor']).withOpacity(0.2),
+                  ComponentStatusBadge(
+                    status: _getGroupHighestSeverityStatus(group.components),
+                    showIcon: false,
+                    fontSize: 12,
                   ),
                 ],
               ),
@@ -359,7 +356,6 @@ class StatusDashboard extends StatelessWidget {
                   itemCount: group.components.length,
                   itemBuilder: (context, index) {
                     final component = group.components[index];
-                    final statusStyles = _getStatusStyles(component.status);
 
                     return Container(
                       padding: const EdgeInsets.all(10),
@@ -392,15 +388,10 @@ class StatusDashboard extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              _buildBadge(
-                                context,
-                                '${statusStyles['icon']} ${statusStyles['displayText']}',
-                                isDarkMode
-                                    ? _getColorFromName(statusStyles['colorDark'])
-                                    : _getColorFromName(statusStyles['color']),
-                                backgroundColor: isDarkMode
-                                    ? _getColorFromName(statusStyles['bgColorDark']).withOpacity(0.2)
-                                    : _getColorFromName(statusStyles['bgColor']).withOpacity(0.2),
+                              ComponentStatusBadge(
+                                status: component.status,
+                                showIcon: false,
+                                fontSize: 12,
                               ),
                             ],
                           ),
@@ -433,24 +424,6 @@ class StatusDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildBadge(BuildContext context, String text, Color textColor,
-      {Color? backgroundColor}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: backgroundColor ?? textColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: textColor,
-          fontWeight: FontWeight.w500,
-          fontSize: 12,
-        ),
-      ),
-    );
-  }
 
   Map<String, dynamic> _getOverallStatus() {
     if (groups == null || groups!.isEmpty) {
@@ -540,6 +513,37 @@ class StatusDashboard extends StatelessWidget {
     }
   }
 
+
+  String _getGroupHighestSeverityStatus(List<Component> components) {
+    if (components.isEmpty) return 'operational';
+    
+    // Define severity order (higher number = more severe)
+    Map<String, int> severityMap = {
+      'operational': 0,
+      'under_maintenance': 0,
+      'degraded': 1,
+      'partial': 2,
+      'major': 3,
+    };
+    
+    String highestStatus = 'operational';
+    int highestSeverity = 0;
+    
+    for (var component in components) {
+      int severity = severityMap[component.status] ?? 0;
+      if (severity > highestSeverity) {
+        highestSeverity = severity;
+        highestStatus = component.status;
+      }
+    }
+    
+    return highestStatus;
+  }
+
+  bool _isAllOperational(List<Component> components) {
+    return components.every((c) => c.status == 'operational');
+  }
+
   Map<String, dynamic> _getStatusStyles(String status) {
     switch (status) {
       case 'operational':
@@ -605,23 +609,6 @@ class StatusDashboard extends StatelessWidget {
     }
   }
 
-  Map<String, dynamic> _getHighestSeverityStatus(List<Component> components) {
-    return components.fold(
-      _getStatusStyles('operational'),
-          (highest, component) {
-        final currentStatus = _getStatusStyles(component.status);
-        return currentStatus['severity'] > highest['severity']
-            ? currentStatus
-            : highest;
-      },
-    );
-  }
-
-  bool _isAllOperational(List<Component> components) {
-    return components.every((c) => c.status == 'operational');
-  }
-
-
   Color _getColorFromName(String colorName) {
     final parts = colorName.split('.');
     if (parts.length != 2) return Colors.grey;
@@ -649,7 +636,6 @@ class StatusDashboard extends StatelessWidget {
         return Colors.grey;
     }
   }
-
 
   /// Get responsive horizontal padding based on screen width
   double _getResponsiveHorizontalPadding(double screenWidth) {

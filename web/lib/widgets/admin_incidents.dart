@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
 import 'admin_create_incident_dialog.dart';
+import 'common/status_badges.dart';
 
 class AdminIncidents extends StatefulWidget {
   const AdminIncidents({super.key});
@@ -394,36 +395,10 @@ class _AdminIncidentsState extends State<AdminIncidents> {
       padding: const EdgeInsets.all(12),
       alignment: Alignment.center,
       constraints: const BoxConstraints(minHeight: 60),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            _getStatusIcon(incident.status),
-            size: 16,
-            color: _getStatusColor(incident.status),
-          ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: _getStatusColor(incident.status).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                incident.status,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: _getStatusColor(incident.status),
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-        ],
+      child: IncidentStatusBadge(
+        status: incident.status,
+        showIcon: true,
+        fontSize: 12,
       ),
     );
   }
@@ -433,21 +408,10 @@ class _AdminIncidentsState extends State<AdminIncidents> {
       padding: const EdgeInsets.all(12),
       alignment: Alignment.center,
       constraints: const BoxConstraints(minHeight: 60),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: _getImpactColor(incident.impact).withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          incident.impact,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: _getImpactColor(incident.impact),
-          ),
-          overflow: TextOverflow.ellipsis,
-        ),
+      child: IncidentImpactBadge(
+        impact: incident.impact,
+        showLabel: false,
+        fontSize: 12,
       ),
     );
   }
@@ -510,50 +474,6 @@ class _AdminIncidentsState extends State<AdminIncidents> {
     return DateFormat('MMM dd, yyyy HH:mm').format(date);
   }
 
-  IconData _getStatusIcon(String status) {
-    switch (status.toLowerCase()) {
-      case 'investigating':
-        return Icons.search;
-      case 'identified':
-        return Icons.info_outline;
-      case 'monitoring':
-        return Icons.visibility;
-      case 'resolved':
-        return Icons.check_circle_outline;
-      default:
-        return Icons.info_outline;
-    }
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'investigating':
-        return Colors.orange;
-      case 'identified':
-        return Colors.blue;
-      case 'monitoring':
-        return Colors.purple;
-      case 'resolved':
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  Color _getImpactColor(String impact) {
-    switch (impact.toLowerCase()) {
-      case 'critical':
-        return Colors.red;
-      case 'major':
-        return Colors.orange;
-      case 'minor':
-        return Colors.yellow[700]!;
-      case 'none':
-        return Colors.grey;
-      default:
-        return Colors.grey;
-    }
-  }
 
   void _showCreateIncidentDialog() {
     showDialog(
