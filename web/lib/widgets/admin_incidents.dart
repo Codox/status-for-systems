@@ -284,7 +284,6 @@ class _AdminIncidentsState extends State<AdminIncidents> {
           2: FlexColumnWidth(1), // Impact
           3: FlexColumnWidth(1), // Duration
           4: FlexColumnWidth(1.5), // Created
-          5: FlexColumnWidth(1), // Actions
         },
         children: [
           // Table Header Row
@@ -298,7 +297,6 @@ class _AdminIncidentsState extends State<AdminIncidents> {
               _buildTableHeader('Impact', alignment: Alignment.center),
               _buildTableHeader('Duration', alignment: Alignment.center),
               _buildTableHeader('Created', alignment: Alignment.center),
-              _buildTableHeader('Actions'),
             ],
           ),
           // Table Data Rows
@@ -316,7 +314,6 @@ class _AdminIncidentsState extends State<AdminIncidents> {
               _buildImpactCell(incident),
               _buildDurationCell(incident),
               _buildCreatedCell(incident),
-              _buildActionsCell(incident),
             ],
           )).toList(),
         ],
@@ -492,25 +489,6 @@ class _AdminIncidentsState extends State<AdminIncidents> {
     );
   }
 
-  Widget _buildActionsCell(Incident incident) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      alignment: Alignment.topLeft,
-      constraints: const BoxConstraints(minHeight: 60),
-      child: TextButton(
-        onPressed: () => Navigator.of(context).pushNamed('/admin/incident/${incident.id}'),
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          minimumSize: Size.zero,
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
-        child: const Text(
-          'View',
-          style: TextStyle(fontSize: 12),
-        ),
-      ),
-    );
-  }
 
   // Helper methods
   String _calculateDuration(String createdAt, String? resolvedAt) {

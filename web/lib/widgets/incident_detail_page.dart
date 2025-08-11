@@ -80,7 +80,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
-                        Icon(Icons.error, color: Colors.red),
+                        const Icon(Icons.error, color: Colors.red),
                         const SizedBox(width: 8),
                         Text(error ?? 'Incident not found or failed to load'),
                       ],
