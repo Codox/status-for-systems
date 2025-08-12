@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../services/auth_service.dart';
+import '../services/config_service.dart';
 
 // Legacy model - keeping for backward compatibility
 class Service {
@@ -216,8 +216,8 @@ class UptimeDataService {
   // API data fetching methods
   static Future<List<Group>> fetchGroups() async {
     try {
-      // Get API URL from .env file, or use a default value
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      // Get API URL from config, or use a default value
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -254,7 +254,7 @@ class UptimeDataService {
       // Try one more time before returning empty list
       try {
         print('Retrying groups data fetch...');
-        final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+        final apiUrl = ConfigService.apiUrl;
 
         final response = await http.get(
           Uri.parse('$apiUrl/public/groups'),
@@ -293,8 +293,8 @@ class UptimeDataService {
 
   static Future<List<Incident>> fetchActiveIncidents() async {
     try {
-      // Get API URL from .env file, or use a default value
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      // Get API URL from config, or use a default value
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -334,7 +334,7 @@ class UptimeDataService {
       // Try one more time before returning empty list
       try {
         print('Retrying incidents data fetch...');
-        final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+        final apiUrl = ConfigService.apiUrl;
 
         final response = await http.get(
           Uri.parse('$apiUrl/public/incidents'),
@@ -376,8 +376,8 @@ class UptimeDataService {
 
   static Future<Incident> fetchIncident(String incidentId) async {
     try {
-      // Get API URL from .env file, or use a default value
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      // Get API URL from config, or use a default value
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -418,7 +418,7 @@ class UptimeDataService {
   static Future<List<Update>> fetchIncidentUpdates(String incidentId) async {
     try {
       // Get API URL from .env file, or use a default value
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -472,7 +472,7 @@ class UptimeDataService {
     required List<Map<String, String>> componentUpdates,
   }) async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -506,7 +506,7 @@ class UptimeDataService {
 
   static Future<void> closeIncident(String incidentId) async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -533,7 +533,7 @@ class UptimeDataService {
     required List<Map<String, String>> affectedComponents,
   }) async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -580,7 +580,7 @@ class UptimeDataService {
 
   static Future<Incident> fetchAdminIncident(String incidentId) async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -615,7 +615,7 @@ class UptimeDataService {
 
   static Future<List<Update>> fetchAdminIncidentUpdates(String incidentId) async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -657,7 +657,7 @@ class UptimeDataService {
 
   static Future<List<Component>> fetchAllComponents() async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -690,7 +690,7 @@ class UptimeDataService {
     required List<String> groups,
   }) async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -732,7 +732,7 @@ class UptimeDataService {
     required String description,
   }) async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -772,7 +772,7 @@ class UptimeDataService {
     required List<String> componentIds,
   }) async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -804,7 +804,7 @@ class UptimeDataService {
     List<String>? groups,
   }) async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
@@ -849,7 +849,7 @@ class UptimeDataService {
     List<String>? components,
   }) async {
     try {
-      final apiUrl = dotenv.env['API_URL'] ?? 'https://api.statusforsystems.com';
+      final apiUrl = ConfigService.apiUrl;
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }

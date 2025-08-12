@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'storage_service.dart';
+import 'config_service.dart';
 
 class AuthService {
   static const String _tokenKey = 'jwt_token';
@@ -10,9 +10,9 @@ class AuthService {
   static String? _cachedToken;
   static DateTime? _cachedExpiry;
 
-  // Get the API base URL from environment
+  // Get the API base URL from config
   static String get _baseUrl {
-    return dotenv.env['API_URL'] ?? 'http://localhost:3000';
+    return ConfigService.apiUrl;
   }
 
   // Login with username and password

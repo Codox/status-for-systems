@@ -19,6 +19,8 @@ export class ComponentsService {
   async findAll(): Promise<Component[]> {
     return this.componentModel.find().exec();
   }
+  
+  
 
   async findUngrouped(): Promise<Component[]> {
     // Get all component IDs that are assigned to groups

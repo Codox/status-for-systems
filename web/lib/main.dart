@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart';
 import 'models/uptime_data.dart';
+import 'services/config_service.dart';
 import 'widgets/status_dashboard.dart';
 import 'widgets/incident_detail_page.dart';
 import 'widgets/admin_layout.dart';
@@ -32,13 +32,8 @@ Future<void> main() async {
     setUrlStrategy(PathUrlStrategy());
   }
 
-  // Load environment variables from .env file
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (e) {
-    // For web builds, try loading from assets if needed
-    // await dotenv.load(fileName: "assets/.env");
-  }
+  // Load configuration from config.json
+  await ConfigService.loadConfig();
 
   runApp(MyApp());
 }
@@ -106,42 +101,24 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Map<String, dynamic> _config = {};
-  String _siteTitle = 'Default Title';
-
   @override
   void initState() {
     super.initState();
-
-    _loadConfig();
+    _updateDocumentTitle();
   }
 
-  Future<void> _loadConfig() async {
+  void _updateDocumentTitle() {
     if (kIsWeb) {
-      try {
-        final response = await http.get(Uri.parse('/config.json'));
-        if (response.statusCode == 200) {
-          final config = json.decode(response.body);
-
-          setState(() {
-            _config = config;
-            _siteTitle = config['siteTitle'] ?? _siteTitle;
-          });
-
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            html.document.title = _siteTitle;
-          });
-        }
-      } catch (e) {
-        // Handle error or fallback here
-      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        html.document.title = ConfigService.siteTitle;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: _siteTitle, // Set app title from config (used by Flutter internally)
+      title: ConfigService.siteTitle,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
