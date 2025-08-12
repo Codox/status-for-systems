@@ -23,7 +23,7 @@ class ConfigService {
         print('Error loading config.json: $e');
         // Set default values if config loading fails
         _config = {
-          'apiUrl': 'https://api.statusforsystems.com',
+          'apiUrl': '/api',
           'siteTitle': 'Status Dashboard',
         };
         _isLoaded = true;
