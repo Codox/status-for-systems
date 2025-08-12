@@ -11,8 +11,6 @@ import { ComponentsModule } from './components/components.module';
 import { IncidentsModule } from './incidents/incidents.module';
 import * as mongoose from 'mongoose';
 
-mongoose.set('debug', true);
-
 @Module({
   imports: [
     ConfigModule.forRoot({
