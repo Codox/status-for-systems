@@ -4,14 +4,11 @@ import { Model } from 'mongoose';
 import { Group } from './entities/group.entity';
 import { CreateGroupRequest } from './requests/create-group.request';
 import { UpdateGroupRequest } from './requests/update-group.request';
-import { Component } from '../components/entities/component.entity';
 
 @Injectable()
 export class GroupsService {
   constructor(
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
-    @InjectModel(Component.name)
-    private readonly componentModel: Model<Component>,
   ) {}
 
   async findAll(): Promise<Group[]> {
