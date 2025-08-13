@@ -1,4 +1,4 @@
-name: Build and Push - Alpha
+name: Publish Alpha
 
 on:
   push:
@@ -6,9 +6,59 @@ on:
       - 'v*.*.*-alpha.*'
 
 jobs:
-  build-and-push-alpha:
+  start:
+    name: Publish Alpha Start
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract_version.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      - name: Extract version from tag
+        id: extract_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  server:
+    name: Server - Run Unit Tests
+    runs-on: ubuntu-latest
+    needs: start
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./server
+
+      - name: Run unit tests
+        run: npm test
+        working-directory: ./server
+
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    needs: start
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+  publish:
+    name: Publish Alpha
+    runs-on: ubuntu-latest
+    needs: [start, server, web]
     permissions:
       contents: read
       packages: write
@@ -24,18 +74,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract version from tag
-        id: extract_version
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
       - name: Build Docker image
         run: |
           docker build -t ghcr.io/codox/status-for-systems:alpha .
-          docker tag ghcr.io/codox/status-for-systems:alpha ghcr.io/codox/status-for-systems:${{ env.VERSION }}
+          docker tag ghcr.io/codox/status-for-systems:alpha ghcr.io/codox/status-for-systems:${{ needs.start.outputs.version }}
 
       - name: Push Docker images
         run: |
           docker push ghcr.io/codox/status-for-systems:alpha
-          docker push ghcr.io/codox/status-for-systems:${{ env.VERSION }}
+          docker push ghcr.io/codox/status-for-systems:${{ needs.start.outputs.version }}
