@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
+import '../services/config_service.dart';
 import 'common/status_badges.dart';
 import 'components/update_card.dart';
 
@@ -51,7 +52,7 @@ class StatusDashboard extends StatelessWidget {
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16.0),
-            child: LoadingState(),
+            child: const LoadingState(),
           ),
         ),
       );
@@ -70,7 +71,7 @@ class StatusDashboard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'System Status',
+                    ConfigService.siteTitle,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
