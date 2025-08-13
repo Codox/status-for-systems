@@ -47,7 +47,7 @@ export class IncidentsService {
     createIncidentRequest: CreateIncidentRequest,
   ): Promise<Incident> {
     // Verify that all affected component IDs exist
-    let componentIds = map(
+    const componentIds = map(
       createIncidentRequest.affectedComponents,
       (c) => c.id,
     ) as string[];
@@ -58,7 +58,6 @@ export class IncidentsService {
         _id: { $in: componentIds },
       })
       .exec();
-
 
     const incident = new this.incidentModel({
       title: createIncidentRequest.title,

@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -70,13 +69,6 @@ export class AdminController {
   async findUngroupedComponents(): Promise<Component[]> {
     return this.componentsService.findUngrouped();
   }
-
-  @Get('components/:id')
-  async findOneComponent(@Param('id') id: string): Promise<Component> {
-    // TODO: Implement findOne
-    return null;
-  }
-
   @Post('components')
   async createComponent(
     @Body() createComponentRequest: CreateComponentRequest,
@@ -91,23 +83,10 @@ export class AdminController {
   ): Promise<Component> {
     return this.componentsService.update(id, updateComponentRequest);
   }
-
-  @Delete('components/:id')
-  async removeComponent(@Param('id') id: string): Promise<void> {
-    // TODO: Implement remove
-  }
-
   @Get('groups')
   async findAllGroups(): Promise<Group[]> {
     return this.groupsService.findAll();
   }
-
-  @Get('groups/:id')
-  async findOneGroup(@Param('id') id: string): Promise<Group> {
-    // TODO: Implement findOne
-    return null;
-  }
-
   @Post('groups')
   async createGroup(
     @Body() createGroupRequest: CreateGroupRequest,
@@ -123,10 +102,6 @@ export class AdminController {
     return this.groupsService.update(id, updateGroupRequest);
   }
 
-  @Delete('groups/:id')
-  async removeGroup(@Param('id') id: string): Promise<void> {
-    // TODO: Implement remove
-  }
 
   @Post('incidents')
   async createIncident(
@@ -143,8 +118,4 @@ export class AdminController {
     return this.incidentsService.update(id, updateIncidentRequest);
   }
 
-  @Delete('incidents/:id')
-  async removeIncident(@Param('id') id: string): Promise<void> {
-    // TODO: Implement remove
-  }
 }
