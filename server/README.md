@@ -22,6 +22,12 @@ The server will start on [http://localhost:3001](http://localhost:3001) by defau
 - `npm run seed:test` — Seed test data
 - `npm run seed` — Seed test data via CLI
 
+## Environment Variables
+
+- `ALLOWED_ORIGINS`: Comma-separated list of allowed origins for CORS. Example:
+  - `ALLOWED_ORIGINS=http://localhost:3000,https://status.example.com`
+  - Requests from other origins will be blocked. If not set or empty, all origins are allowed.
+
 ## Main Dependencies
 
 - @nestjs/common, @nestjs/core, @nestjs/platform-express

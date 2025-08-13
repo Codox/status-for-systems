@@ -196,14 +196,11 @@ class StatusDashboard extends StatelessWidget {
 
         if (constraints.maxWidth > 1200) {
           // Large desktop: 2 columns for incidents
-          print("LArge desktop");
           crossAxisCount = 2;
           childAspectRatio = 5.0;
           crossAxisSpacing = 16;
           mainAxisSpacing = 16;
         } else if (constraints.maxWidth > 900) {
-          print("Desktop");
-
           // Desktop: 2 columns - cards will use vertical badge layout due to 480px threshold
           crossAxisCount = 2;
           childAspectRatio = 2.8;
@@ -517,7 +514,7 @@ class StatusDashboard extends StatelessWidget {
 
   String _getGroupHighestSeverityStatus(List<Component> components) {
     if (components.isEmpty) return 'operational';
-    
+
     // Define severity order (higher number = more severe)
     Map<String, int> severityMap = {
       'operational': 0,
@@ -539,10 +536,6 @@ class StatusDashboard extends StatelessWidget {
     }
     
     return highestStatus;
-  }
-
-  bool _isAllOperational(List<Component> components) {
-    return components.every((c) => c.status == 'operational');
   }
 
   Map<String, dynamic> _getStatusStyles(String status) {
