@@ -19,22 +19,25 @@
    flutter run -d chrome
    ```
 
-## Environment Variables
+## Configuration
 
-This project uses environment variables for configuration. For development, a `.env` file has been created with the following variables:
+This project uses a `config.json` file for configuration. To set up your configuration:
 
-- `API_URL`: The URL of the API server (default: http://localhost:3000)
+1. Copy the example configuration file:
+   ```
+   cp config.json.example config.json
+   ```
 
-**Important**: For web builds, there are two `.env` files that need to be kept in sync:
-1. The main `.env` file in the project root directory
-2. A copy in the `web/.env` file for web builds
+2. Edit `config.json` with your settings:
+   - `siteTitle`: The title of your status page
+   - `apiUrl`: The URL of the API server (default: http://localhost:3000)
 
-If you change the API URL or add new environment variables, make sure to update both files.
-
-To use a different API URL, you can modify both `.env` files or set the environment variable at runtime:
-
-```
-flutter run -d chrome --dart-define=API_URL=https://your-api-url.com
+Example `config.json`:
+```json
+{
+  "siteTitle": "My Status Page",
+  "apiUrl": "http://localhost:3000"
+}
 ```
 
 ## Building for Production
