@@ -38,6 +38,8 @@ See Releases for available versions.
    -e BASIC_AUTH_USERNAME=admin \
    -e BASIC_AUTH_PASSWORD=admin \
    -e JWT_SECRET=<YOUR_JWT_SECRET> \
+   -e WEB_API_URL="/api" \
+   -e WEB_SITE_TITLE="Status for Systems"
    ghcr.io/codox/status-for-systems:<VERSION>
    ```
 
