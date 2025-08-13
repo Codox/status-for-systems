@@ -76,23 +76,10 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "transformIgnorePatterns": [
-      "node_modules/(?!(?:@nestjs/common|@nestjs/core|@nestjs/testing|@nestjs/platform-express)/)"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsconfig": {
-          "allowJs": true
-        }
-      }
-    },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^remeda$": "<rootDir>/test-helpers/remeda.mock.ts"
-    }
+    "testEnvironment": "node"
   }
 }
