@@ -25,8 +25,22 @@ export class IncidentsService {
     private readonly componentModel: Model<Component>,
   ) {}
 
-  async all(): Promise<Incident[]> {
-    return this.incidentModel.find().populate('affectedComponents').exec();
+  async all(options?: {
+    at?: Date;
+    onlyActive?: boolean;
+  }): Promise<Incident[]> {
+    const at = options?.at;
+    const onlyActive = options?.onlyActive === true;
+
+    let query: any = {};
+
+    if (at instanceof Date && !isNaN(at.getTime())) {
+      query = { updatedAt: { $lte: at } };
+    } else if (onlyActive) {
+      query = { status: { $ne: IncidentStatus.RESOLVED } };
+    }
+
+    return this.incidentModel.find(query).populate('affectedComponents').exec();
   }
 
   async one(id: string): Promise<Incident> {

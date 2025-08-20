@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { Group } from '../groups/entities/group.entity';
 import { Incident } from '../incidents/entities/incident.entity';
 import { IncidentUpdate } from '../incidents/entities/incident-update.entity';
@@ -22,8 +22,12 @@ export class PublicController {
   }
 
   @Get('incidents')
-  async getIncidents(): Promise<Incident[]> {
-    return this.incidentsService.all();
+  async getIncidents(@Query('at') at?: string): Promise<Incident[]> {
+    const date = at ? new Date(at) : undefined;
+    if (date && !isNaN(date.getTime())) {
+      return this.incidentsService.all({ at: date });
+    }
+    return this.incidentsService.all({ onlyActive: true });
   }
 
   @Get('incidents/:id')
