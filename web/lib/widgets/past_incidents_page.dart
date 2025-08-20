@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
+import '../services/config_service.dart';
 import 'components/update_card.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class PastIncidentsPage extends StatefulWidget {
   const PastIncidentsPage({super.key});
@@ -30,7 +33,35 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
       _error = null;
     });
     try {
-      final incidents = await UptimeDataService.fetchPublicIncidents();
+      final apiUrl = ConfigService.apiUrl;
+      if (apiUrl.isEmpty) {
+        throw Exception('API URL is not configured');
+      }
+      final response = await http.get(
+        Uri.parse('$apiUrl/public/incidents'),
+        headers: {
+          'Accept': 'application/json',
+        },
+      );
+      if (response.statusCode != 200) {
+        throw Exception('Failed to fetch incidents: ${response.statusCode}');
+      }
+      final List<dynamic> data = jsonDecode(response.body);
+      final incidents = data.map((incident) => Incident(
+        id: incident['_id'],
+        title: incident['title'],
+        description: incident['description'],
+        status: incident['status'],
+        impact: incident['impact'],
+        affectedComponents: (incident['affectedComponents'] as List<dynamic>).map((component) => AffectedComponent(
+          id: component['_id'],
+          name: component['name'],
+          status: component['status'],
+        )).toList(),
+        createdAt: incident['createdAt'],
+        updatedAt: incident['updatedAt'],
+        resolvedAt: incident['resolvedAt'],
+      )).toList();
       // Sort by createdAt desc by default
       incidents.sort((a, b) => DateTime.parse(b.createdAt).compareTo(DateTime.parse(a.createdAt)));
       setState(() {
