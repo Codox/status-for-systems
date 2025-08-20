@@ -6,6 +6,7 @@ import 'models/uptime_data.dart';
 import 'services/config_service.dart';
 import 'widgets/status_dashboard.dart';
 import 'widgets/incident_detail_page.dart';
+import 'widgets/past_incidents_page.dart';
 import 'widgets/admin_layout.dart';
 import 'widgets/admin_dashboard.dart';
 import 'widgets/admin_incidents.dart';
@@ -136,6 +137,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         '/': (context) => const StatusPage(),
+        '/incidents': (context) => const PastIncidentsPage(),
         '/admin/login': (context) => const LoginPage(),
         '/admin': (context) => const AuthGuard(
           currentRoute: '/admin',

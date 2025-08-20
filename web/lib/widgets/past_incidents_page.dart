@@ -1,0 +1,187 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../models/uptime_data.dart';
+import 'components/update_card.dart';
+
+class PastIncidentsPage extends StatefulWidget {
+  const PastIncidentsPage({super.key});
+
+  @override
+  State<PastIncidentsPage> createState() => _PastIncidentsPageState();
+}
+
+class _PastIncidentsPageState extends State<PastIncidentsPage> {
+  List<Incident> _allIncidents = [];
+  bool _loading = true;
+  String? _error;
+
+  DateTime _fromDate = DateTime.now().subtract(const Duration(days: 30));
+  DateTime _toDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadIncidents();
+  }
+
+  Future<void> _loadIncidents() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final incidents = await UptimeDataService.fetchPublicIncidents();
+      // Sort by createdAt desc by default
+      incidents.sort((a, b) => DateTime.parse(b.createdAt).compareTo(DateTime.parse(a.createdAt)));
+      setState(() {
+        _allIncidents = incidents;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _pickFromDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _fromDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _fromDate = DateTime(picked.year, picked.month, picked.day);
+        if (_fromDate.isAfter(_toDate)) {
+          _toDate = _fromDate;
+        }
+      });
+    }
+  }
+
+  Future<void> _pickToDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _toDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _toDate = DateTime(picked.year, picked.month, picked.day, 23, 59, 59, 999);
+        if (_toDate.isBefore(_fromDate)) {
+          _fromDate = DateTime(_toDate.year, _toDate.month, _toDate.day);
+        }
+      });
+    }
+  }
+
+  List<Incident> get _filteredIncidents {
+    // Include incidents that overlap with the selected date range.
+    // If resolvedAt is null, consider it ongoing (use now).
+    return _allIncidents.where((inc) {
+      final created = DateTime.tryParse(inc.createdAt) ?? DateTime(1970);
+      final resolved = inc.resolvedAt != null ? DateTime.tryParse(inc.resolvedAt!) : null;
+      final effectiveEnd = resolved ?? DateTime.now();
+      // overlap if created <= to and effectiveEnd >= from
+      return !created.isAfter(_toDate) && !effectiveEnd.isBefore(_fromDate);
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final df = DateFormat('MMM dd, yyyy');
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Past Incidents'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: _DateField(
+                    label: 'From',
+                    value: df.format(_fromDate),
+                    onTap: _pickFromDate,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _DateField(
+                    label: 'To',
+                    value: df.format(_toDate),
+                    onTap: _pickToDate,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                IconButton(
+                  tooltip: 'Reset to last 30 days',
+                  onPressed: () {
+                    setState(() {
+                      _fromDate = DateTime.now().subtract(const Duration(days: 30));
+                      _toDate = DateTime.now();
+                    });
+                  },
+                  icon: const Icon(Icons.refresh),
+                )
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (_loading) const LinearProgressIndicator(),
+            if (_error != null) Text('Error: $_error', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            if (!_loading)
+              Expanded(
+                child: _filteredIncidents.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No incidents found for the selected date range.',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _filteredIncidents.length,
+                        itemBuilder: (context, index) {
+                          final incident = _filteredIncidents[index];
+                          return UnifiedCard(
+                            incident: incident,
+                            style: UnifiedCardStyle.incidentList,
+                            onTap: () => Navigator.of(context).pushNamed('/incident/${incident.id}'),
+                          );
+                        },
+                      ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DateField extends StatelessWidget {
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+  const _DateField({required this.label, required this.value, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+          suffixIcon: const Icon(Icons.calendar_today),
+        ),
+        child: Text(value),
+      ),
+    );
+  }
+}
