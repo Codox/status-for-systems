@@ -1,9 +1,10 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Header, Param, Query } from '@nestjs/common';
 import { Group } from '../groups/entities/group.entity';
 import { Incident } from '../incidents/entities/incident.entity';
 import { IncidentUpdate } from '../incidents/entities/incident-update.entity';
 import { GroupsService } from '../groups/groups.service';
 import { IncidentsService } from '../incidents/incidents.service';
+import { Feed } from 'feed';
 
 @Controller('public')
 export class PublicController {
@@ -49,5 +50,22 @@ export class PublicController {
   @Get('incidents/:id/updates')
   async getIncidentUpdates(@Param('id') id: string): Promise<IncidentUpdate[]> {
     return this.incidentsService.getIncidentUpdates(id);
+  }
+
+  @Get('feed/rss')
+  @Header('content-type', 'application/rss+xml')
+  async getRSSFeed() {
+    const feed = new Feed({
+      title: 'Status Page Feed',
+      description: 'RSS feed for status page incidents',
+      id: 'http://example.com/',
+      link: 'http://example.com/',
+      copyright: 'All rights reserved 2013, John Doe',
+    });
+
+    console.log('feed', feed);
+
+    // Set headers for RSS feed
+    return feed.rss2();
   }
 }
