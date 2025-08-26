@@ -34,6 +34,7 @@
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "feed": "^5.1.0",
     "mongoose": "^8.15.1",
     "nest-commander": "^3.17.0",
     "passport": "^0.7.0",
@@ -66,7 +67,11 @@
     "typescript": "^5.0.0"
   },
   "jest": {
-    "moduleFileExtensions": ["js", "json", "ts"],
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
     "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
@@ -82,7 +87,10 @@
     "transformIgnorePatterns": [
       "/node_modules/(?!(remeda|@nestjs/common|@nestjs/testing|@nestjs/mongoose|mongoose|bson)/)"
     ],
-    "collectCoverageFrom": ["src/**/*.(t|j)s", "test/unit/**/*.(t|j)s"],
+    "collectCoverageFrom": [
+      "src/**/*.(t|j)s",
+      "test/unit/**/*.(t|j)s"
+    ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "testPathIgnorePatterns": [
