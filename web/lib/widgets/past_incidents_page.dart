@@ -37,8 +37,17 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
       if (apiUrl.isEmpty) {
         throw Exception('API URL is not configured');
       }
+
+      // Build query parameters expected by backend: before and after (ISO8601 UTC)
+      final before = _toDate.toUtc().toIso8601String();
+      final after = _fromDate.toUtc().toIso8601String();
+      final uri = Uri.parse('$apiUrl/public/incidents').replace(queryParameters: {
+        'before': before,
+        'after': after,
+      });
+
       final response = await http.get(
-        Uri.parse('$apiUrl/public/incidents'),
+        uri,
         headers: {
           'Accept': 'application/json',
         },
@@ -90,6 +99,8 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
           _toDate = _fromDate;
         }
       });
+      // Reload incidents with new date range
+      await _loadIncidents();
     }
   }
 
@@ -107,6 +118,8 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
           _fromDate = DateTime(_toDate.year, _toDate.month, _toDate.day);
         }
       });
+      // Reload incidents with new date range
+      await _loadIncidents();
     }
   }
 
@@ -154,11 +167,12 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
                 const SizedBox(width: 12),
                 IconButton(
                   tooltip: 'Reset to last 30 days',
-                  onPressed: () {
+                  onPressed: () async {
                     setState(() {
                       _fromDate = DateTime.now().subtract(const Duration(days: 30));
                       _toDate = DateTime.now();
                     });
+                    await _loadIncidents();
                   },
                   icon: const Icon(Icons.refresh),
                 )
