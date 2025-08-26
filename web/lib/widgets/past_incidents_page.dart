@@ -135,77 +135,212 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
     }).toList();
   }
 
+  String _formatDate(DateTime date) => DateFormat('MMM dd, yyyy').format(date);
+
   @override
   Widget build(BuildContext context) {
-    final df = DateFormat('MMM dd, yyyy');
+    final bgColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.grey[50]
+        : Colors.grey[900];
+    final textColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.grey[600]
+        : Colors.grey[400];
+
+    // responsive horizontal padding mirroring incident_detail_page
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = _getResponsiveHorizontalPadding(screenWidth);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Past Incidents'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: _DateField(
-                    label: 'From',
-                    value: df.format(_fromDate),
-                    onTap: _pickFromDate,
+      backgroundColor: bgColor,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Back button similar to incident detail
+              ElevatedButton.icon(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('Back to Dashboard'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: textColor,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _DateField(
-                    label: 'To',
-                    value: df.format(_toDate),
-                    onTap: _pickToDate,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                IconButton(
-                  tooltip: 'Reset to last 30 days',
-                  onPressed: () async {
-                    setState(() {
-                      _fromDate = DateTime.now().subtract(const Duration(days: 30));
-                      _toDate = DateTime.now();
-                    });
-                    await _loadIncidents();
-                  },
-                  icon: const Icon(Icons.refresh),
-                )
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (_loading) const LinearProgressIndicator(),
-            if (_error != null) Text('Error: $_error', style: TextStyle(color: Theme.of(context).colorScheme.error)),
-            if (!_loading)
-              Expanded(
-                child: _filteredIncidents.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No incidents found for the selected date range.',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: _filteredIncidents.length,
-                        itemBuilder: (context, index) {
-                          final incident = _filteredIncidents[index];
-                          return UnifiedCard(
-                            incident: incident,
-                            style: UnifiedCardStyle.incidentList,
-                            onTap: () => Navigator.of(context).pushNamed('/incident/${incident.id}'),
-                          );
-                        },
-                      ),
               ),
-          ],
+              const SizedBox(height: 16),
+
+              // Header similar to incident detail header
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Past Incidents',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Showing: ${_formatDate(_fromDate)} — ${_formatDate(_toDate)}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: textColor,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Filters Card with header bar
+              Card(
+                elevation: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey[100]
+                            : Colors.grey[800],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(8),
+                          topRight: Radius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        'Filters',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _DateField(
+                                  label: 'From',
+                                  value: DateFormat('MMM dd, yyyy').format(_fromDate),
+                                  onTap: _pickFromDate,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _DateField(
+                                  label: 'To',
+                                  value: DateFormat('MMM dd, yyyy').format(_toDate),
+                                  onTap: _pickToDate,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              IconButton(
+                                tooltip: 'Reset to last 30 days',
+                                onPressed: () async {
+                                  setState(() {
+                                    _fromDate = DateTime.now().subtract(const Duration(days: 30));
+                                    _toDate = DateTime.now();
+                                  });
+                                  await _loadIncidents();
+                                },
+                                icon: const Icon(Icons.refresh),
+                              )
+                            ],
+                          ),
+                          if (_loading) ...[
+                            const SizedBox(height: 12),
+                            const LinearProgressIndicator(),
+                          ],
+                          if (_error != null) ...[
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('Error: $_error', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Incidents list in a card, similar to Updates card layout
+              Card(
+                elevation: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey[100]
+                            : Colors.grey[800],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(8),
+                          topRight: Radius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        'Incidents',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: _filteredIncidents.isEmpty
+                          ? Text(
+                              'No incidents found for the selected date range.',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            )
+                          : Column(
+                              children: _filteredIncidents
+                                  .map((incident) => UnifiedCard(
+                                        incident: incident,
+                                        style: UnifiedCardStyle.incidentCard,
+                                        onTap: () => Navigator.of(context).pushNamed('/incident/${incident.id}'),
+                                      ))
+                                  .toList(),
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  /// Get responsive horizontal padding based on screen width (match incident detail)
+  double _getResponsiveHorizontalPadding(double screenWidth) {
+    if (screenWidth < 600) {
+      return 16.0;
+    } else if (screenWidth < 900) {
+      return 24.0;
+    } else if (screenWidth < 1200) {
+      return 40.0;
+    } else if (screenWidth < 1600) {
+      return 80.0;
+    } else {
+      return 120.0;
+    }
   }
 }
 
@@ -220,11 +355,11 @@ class _DateField extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          suffixIcon: const Icon(Icons.calendar_today),
-        ),
+        decoration: const InputDecoration(
+          labelText: 'Date',
+          border: OutlineInputBorder(),
+          suffixIcon: Icon(Icons.calendar_today),
+        ).copyWith(labelText: label),
         child: Text(value),
       ),
     );
