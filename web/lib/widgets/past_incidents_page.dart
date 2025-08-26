@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
 import '../services/config_service.dart';
 import 'components/update_card.dart';
+import 'common/public_back_button.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -159,19 +160,7 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Back button similar to incident detail
-              ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Back to Dashboard'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: textColor,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ),
+              const PublicBackButton(),
               const SizedBox(height: 16),
 
               // Header similar to incident detail header
@@ -313,7 +302,10 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
                                   .map((incident) => UnifiedCard(
                                         incident: incident,
                                         style: UnifiedCardStyle.incidentCard,
-                                        onTap: () => Navigator.of(context).pushNamed('/incident/${incident.id}'),
+                                        onTap: () => Navigator.of(context).pushNamed(
+                                          '/incident/${incident.id}',
+                                          arguments: {'from': 'history'},
+                                        ),
                                       ))
                                   .toList(),
                             ),

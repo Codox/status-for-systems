@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../models/uptime_data.dart';
 import 'common/status_badges.dart';
 import 'components/update_card.dart';
+import 'common/public_back_button.dart';
 
 class IncidentDetailPage extends StatefulWidget {
   final String incidentId;
@@ -89,15 +90,17 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Back to Dashboard'),
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
+                Builder(
+                  builder: (context) {
+                    final args = ModalRoute.of(context)?.settings.arguments;
+                    final fromHistory = args is Map && args['from'] == 'history';
+                    return PublicBackButton(
+                      label: fromHistory ? 'Back to History' : 'Back to Dashboard',
+                      onPressed: fromHistory
+                          ? () => Navigator.of(context).pop()
+                          : null,
+                    );
+                  },
                 ),
               ],
             ),
@@ -115,18 +118,17 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Back button
-              ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Back to Dashboard'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: textColor,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
+              Builder(
+                builder: (context) {
+                  final args = ModalRoute.of(context)?.settings.arguments;
+                  final fromHistory = args is Map && args['from'] == 'history';
+                  return PublicBackButton(
+                    label: fromHistory ? 'Back to History' : 'Back to Dashboard',
+                    onPressed: fromHistory
+                        ? () => Navigator.of(context).pop()
+                        : null, // default goes to dashboard
+                  );
+                },
               ),
               const SizedBox(height: 16),
 
