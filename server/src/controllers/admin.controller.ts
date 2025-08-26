@@ -102,7 +102,6 @@ export class AdminController {
     return this.groupsService.update(id, updateGroupRequest);
   }
 
-
   @Post('incidents')
   async createIncident(
     @Body() createIncidentRequest: CreateIncidentRequest,
@@ -117,5 +116,4 @@ export class AdminController {
   ): Promise<Incident> {
     return this.incidentsService.update(id, updateIncidentRequest);
   }
-
 }

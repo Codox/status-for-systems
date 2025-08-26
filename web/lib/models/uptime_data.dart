@@ -374,6 +374,7 @@ class UptimeDataService {
     }
   }
 
+
   static Future<Incident> fetchIncident(String incidentId) async {
     try {
       // Get API URL from config, or use a default value

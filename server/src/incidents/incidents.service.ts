@@ -26,16 +26,27 @@ export class IncidentsService {
   ) {}
 
   async all(options?: {
-    at?: Date;
+    before?: Date;
+    after?: Date;
     onlyActive?: boolean;
   }): Promise<Incident[]> {
-    const at = options?.at;
+    const before = options?.before;
+    const after = options?.after;
     const onlyActive = options?.onlyActive === true;
 
     let query: any = {};
 
-    if (at instanceof Date && !isNaN(at.getTime())) {
-      query = { updatedAt: { $lte: at } };
+    const isValidDate = (d?: Date) => d instanceof Date && !isNaN(d.getTime());
+
+    if (isValidDate(before) || isValidDate(after)) {
+      const updatedAt: any = {};
+      if (isValidDate(after)) {
+        updatedAt.$gte = after;
+      }
+      if (isValidDate(before)) {
+        updatedAt.$lte = before;
+      }
+      query = { updatedAt };
     } else if (onlyActive) {
       query = { status: { $ne: IncidentStatus.RESOLVED } };
     }

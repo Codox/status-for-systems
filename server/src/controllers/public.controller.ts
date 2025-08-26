@@ -22,11 +22,22 @@ export class PublicController {
   }
 
   @Get('incidents')
-  async getIncidents(@Query('at') at?: string): Promise<Incident[]> {
-    const date = at ? new Date(at) : undefined;
-    if (date && !isNaN(date.getTime())) {
-      return this.incidentsService.all({ at: date });
+  async getIncidents(
+    @Query('before') before?: string,
+    @Query('after') after?: string,
+  ): Promise<Incident[]> {
+    const beforeDate = before ? new Date(before) : undefined;
+    const afterDate = after ? new Date(after) : undefined;
+
+    const isValidDate = (d?: Date) => d instanceof Date && !isNaN(d.getTime());
+
+    if (isValidDate(beforeDate) || isValidDate(afterDate)) {
+      const options: any = {};
+      if (isValidDate(beforeDate)) options.before = beforeDate;
+      if (isValidDate(afterDate)) options.after = afterDate;
+      return this.incidentsService.all(options);
     }
+
     return this.incidentsService.all({ onlyActive: true });
   }
 
