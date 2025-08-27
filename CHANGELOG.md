@@ -3,7 +3,8 @@
 ## v0.1.0-alpha.18 - 2024-08-27
 ### Added
 - (api) Added RSS feed
-
+- (web) Added RSS feed button to footer
+ 
 ## v0.1.0-alpha.17 - 2024-08-26
 ### Updated
 - (web) Updated layout of public Incident History page
