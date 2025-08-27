@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' as html;
 import '../models/uptime_data.dart';
 import '../services/config_service.dart';
 import 'common/status_badges.dart';
@@ -120,10 +123,56 @@ class StatusDashboard extends StatelessWidget {
                     .map((group) => _buildGroupCard(context, group))
                     .toList(),
               ),
+
+              const SizedBox(height: 24),
+              _buildFooter(context),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFooter(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final textColor = isLight ? Colors.grey[600] : Colors.grey[400];
+    final rssUrl = '${ConfigService.apiUrl}/public/feed/rss';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Subscribe to updates',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: textColor),
+                ),
+              ),
+              Tooltip(
+                message: 'RSS Feed',
+                child: IconButton(
+                  icon: const Icon(Icons.rss_feed),
+                  color: isLight ? Colors.orange[700] : Colors.orange[300],
+                  onPressed: () {
+                    // Open RSS in a new tab on web; fallback to same tab otherwise
+                    if (kIsWeb) {
+                      html.window.open(rssUrl, '_blank');
+                    } else {
+                      // For non-web (if ever used), navigate browser location
+                      // ignore: avoid_print
+                      print('Open RSS at: ' + rssUrl);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
