@@ -55,18 +55,88 @@ export class PublicController {
   @Get('feed/rss')
   @Header('content-type', 'application/rss+xml')
   async getRSSFeed() {
+    const {
+      RSS_TITLE = 'Status Page Feed',
+      RSS_DESCRIPTION = 'RSS feed for status page incidents',
+      RSS_ID = process.env.RSS_LINK || 'http://localhost/',
+      RSS_LINK = process.env.RSS_LINK || 'http://localhost/',
+      RSS_COPYRIGHT = '',
+      RSS_LANGUAGE = 'en',
+      RSS_AUTHOR_NAME,
+      RSS_AUTHOR_EMAIL,
+    } = process.env as Record<string, string>;
+
     const feed = new Feed({
-      title: 'Status Page Feed',
-      description: 'RSS feed for status page incidents',
-      id: 'http://example.com/',
-      link: 'http://example.com/',
-      copyright: 'All rights reserved 2013, John Doe',
+      title: RSS_TITLE,
+      description: RSS_DESCRIPTION,
+      id: RSS_ID,
+      link: RSS_LINK,
+      copyright: RSS_COPYRIGHT,
       updated: new Date(),
+      language: RSS_LANGUAGE,
+      author: RSS_AUTHOR_NAME
+        ? {
+            name: RSS_AUTHOR_NAME,
+            email: RSS_AUTHOR_EMAIL,
+          }
+        : undefined,
     });
 
-    console.log('feed', feed);
+    // Add incidents and their updates as feed items
+    const incidents = await this.incidentsService.all({});
 
-    // Set headers for RSS feed
+    for (const incident of incidents) {
+      // Add one item for the incident itself (summary)
+      const incidentUrl = `${RSS_LINK.replace(/\/$/, '')}/public/incidents/${
+        incident._id
+      }`;
+      feed.addItem({
+        id: `${incident._id}`,
+        title: `[${incident.status}] ${incident.title}`,
+        link: incidentUrl,
+        description: incident.description,
+        date: incident.updatedAt || incident.createdAt || new Date(),
+      });
+
+      // Add items for each update ("incident posts")
+      const updates = await this.incidentsService.getIncidentUpdates(
+        incident._id.toString(),
+      );
+      for (const update of updates) {
+        const parts: string[] = [];
+        if (update.type) parts.push(`type: ${update.type}`);
+        if (update.statusUpdate)
+          parts.push(
+            `status: ${update.statusUpdate.from || 'n/a'} -> ${
+              update.statusUpdate.to
+            }`,
+          );
+        if (update.impactUpdate)
+          parts.push(
+            `impact: ${update.impactUpdate.from || 'n/a'} -> ${
+              update.impactUpdate.to
+            }`,
+          );
+        if (update.componentStatusUpdates?.length) {
+          parts.push(
+            `components: ${update.componentStatusUpdates
+              .map((c) => `${c.id}:${c.from}→${c.to}`)
+              .join(', ')}`,
+          );
+        }
+        const content = [update.description, parts.join(' | ')]
+          .filter(Boolean)
+          .join(' — ');
+        feed.addItem({
+          id: `${incident._id}:${update._id}`,
+          title: `Update for ${incident.title}`,
+          link: incidentUrl,
+          description: content,
+          date: update.createdAt || incident.updatedAt || new Date(),
+        });
+      }
+    }
+
     return feed.rss2();
   }
 }
