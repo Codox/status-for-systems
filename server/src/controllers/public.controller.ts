@@ -61,6 +61,7 @@ export class PublicController {
       id: 'http://example.com/',
       link: 'http://example.com/',
       copyright: 'All rights reserved 2013, John Doe',
+      updated: new Date(),
     });
 
     console.log('feed', feed);

@@ -298,6 +298,7 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
                               style: Theme.of(context).textTheme.bodyLarge,
                             )
                           : Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: _filteredIncidents
                                   .map((incident) => UnifiedCard(
                                         incident: incident,
