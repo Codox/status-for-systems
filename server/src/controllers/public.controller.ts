@@ -5,6 +5,7 @@ import { IncidentUpdate } from '../incidents/entities/incident-update.entity';
 import { GroupsService } from '../groups/groups.service';
 import { IncidentsService } from '../incidents/incidents.service';
 import { Feed } from 'feed';
+import { map, pipe, sortBy, take } from 'remeda';
 
 @Controller('public')
 export class PublicController {
@@ -64,7 +65,10 @@ export class PublicController {
       RSS_LANGUAGE = 'en',
       RSS_AUTHOR_NAME,
       RSS_AUTHOR_EMAIL,
+      RSS_MAX_ITEMS,
     } = process.env as Record<string, string>;
+
+    const maxItems = Number(RSS_MAX_ITEMS) > 0 ? Number(RSS_MAX_ITEMS) : 50;
 
     const feed = new Feed({
       title: RSS_TITLE,
@@ -82,60 +86,43 @@ export class PublicController {
         : undefined,
     });
 
-    // Add incidents and their updates as feed items
+    // Lightweight feed: one concise item per incident, limited count
     const incidents = await this.incidentsService.all({});
 
-    for (const incident of incidents) {
-      // Add one item for the incident itself (summary)
-      const incidentUrl = `${RSS_LINK.replace(/\/$/, '')}/public/incidents/${
-        incident._id
-      }`;
-      feed.addItem({
-        id: `${incident._id}`,
-        title: `[${incident.status}] ${incident.title}`,
-        link: incidentUrl,
-        description: incident.description,
-        date: incident.updatedAt || incident.createdAt || new Date(),
-      });
+    pipe(
+      incidents,
+      sortBy([
+        (i) => (i.updatedAt || i.createdAt || new Date(0)).getTime(),
+        'desc',
+      ]),
+      take(maxItems),
+      map((incident) => {
+        const incidentUrl = `${RSS_LINK.replace(/\/$/, '')}/public/incidents/${
+          incident._id
+        }`;
 
-      // Add items for each update ("incident posts")
-      const updates = await this.incidentsService.getIncidentUpdates(
-        incident._id.toString(),
-      );
-      for (const update of updates) {
-        const parts: string[] = [];
-        if (update.type) parts.push(`type: ${update.type}`);
-        if (update.statusUpdate)
-          parts.push(
-            `status: ${update.statusUpdate.from || 'n/a'} -> ${
-              update.statusUpdate.to
-            }`,
-          );
-        if (update.impactUpdate)
-          parts.push(
-            `impact: ${update.impactUpdate.from || 'n/a'} -> ${
-              update.impactUpdate.to
-            }`,
-          );
-        if (update.componentStatusUpdates?.length) {
-          parts.push(
-            `components: ${update.componentStatusUpdates
-              .map((c) => `${c.id}:${c.from}→${c.to}`)
-              .join(', ')}`,
-          );
-        }
-        const content = [update.description, parts.join(' | ')]
+        const rawDesc = incident.description || '';
+        const trimmed =
+          rawDesc.length > 200 ? `${rawDesc.slice(0, 200)}…` : rawDesc;
+        const summaryBits = [
+          `status: ${incident.status}`,
+          `impact: ${incident.impact}`,
+        ];
+        const description = [trimmed, summaryBits.join(' | ')]
           .filter(Boolean)
           .join(' — ');
+
         feed.addItem({
-          id: `${incident._id}:${update._id}`,
-          title: `Update for ${incident.title}`,
+          id: `${incident._id}`,
+          title: `[${incident.status}] ${incident.title}`,
           link: incidentUrl,
-          description: content,
-          date: update.createdAt || incident.updatedAt || new Date(),
+          description,
+          date: incident.updatedAt || incident.createdAt || new Date(),
         });
-      }
-    }
+
+        return null;
+      }),
+    );
 
     return feed.rss2();
   }
