@@ -12,7 +12,7 @@ import 'widgets/admin_dashboard.dart';
 import 'widgets/admin_incidents.dart';
 import 'widgets/admin_components.dart';
 import 'widgets/admin_incident_detail.dart';
-import 'widgets/login_page.dart';
+import 'widgets/pages/login_page.dart';
 import 'guards/auth_guard.dart';
 import 'package:http/http.dart' as http;
 
