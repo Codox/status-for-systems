@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/uptime_data.dart';
-import '../services/config_service.dart';
-import 'components/update_card.dart';
-import 'common/public_back_button.dart';
+import '../../../models/uptime_data.dart';
+import '../../../services/config_service.dart';
+import '../../components/update_card.dart';
+import '../../common/public_back_button.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
