@@ -7,19 +7,19 @@ import '../../common/public_back_button.dart';
 import '../../../utils/date_format.dart';
 import '../../../utils/responsive.dart';
 
-class IncidentDetailPage extends StatefulWidget {
+class PublicIncidentDetailPage extends StatefulWidget {
   final String incidentId;
 
-  const IncidentDetailPage({
+  const PublicIncidentDetailPage({
     super.key,
     required this.incidentId,
   });
 
   @override
-  State<IncidentDetailPage> createState() => _IncidentDetailPageState();
+  State<PublicIncidentDetailPage> createState() => _PublicIncidentDetailPageState();
 }
 
-class _IncidentDetailPageState extends State<IncidentDetailPage> {
+class _PublicIncidentDetailPageState extends State<PublicIncidentDetailPage> {
   Incident? incident;
   List<Update>? updates;
   bool isLoading = true;

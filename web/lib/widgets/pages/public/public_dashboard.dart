@@ -9,12 +9,12 @@ import '../../common/status_badges.dart';
 import '../../components/update_card.dart';
 import '../../../utils/responsive.dart';
 
-class StatusDashboard extends StatelessWidget {
+class PublicDashboard extends StatelessWidget {
   final List<Group>? groups;
   final List<Incident>? activeIncidents;
   final dynamic error;
 
-  const StatusDashboard({
+  const PublicDashboard({
     super.key,
     required this.groups,
     required this.activeIncidents,

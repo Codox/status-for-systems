@@ -85,7 +85,7 @@ class _StatusPageState extends State<StatusPage> {
     return Scaffold(
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : StatusDashboard(
+          : PublicDashboard(
         groups: groups,
         activeIncidents: activeIncidents,
         error: error,
@@ -137,7 +137,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         '/': (context) => const StatusPage(),
-        '/incidents': (context) => const PastIncidentsPage(),
+        '/incidents': (context) => const PublicPastIncidentsPage(),
         '/admin/login': (context) => const LoginPage(),
         '/admin': (context) => const AuthGuard(
           currentRoute: '/admin',
@@ -165,7 +165,7 @@ class _MyAppState extends State<MyApp> {
         if (settings.name?.startsWith('/incident/') == true) {
           final incidentId = settings.name!.substring('/incident/'.length);
           return MaterialPageRoute(
-            builder: (context) => IncidentDetailPage(incidentId: incidentId),
+            builder: (context) => PublicIncidentDetailPage(incidentId: incidentId),
             settings: settings,
           );
         }

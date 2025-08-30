@@ -12,14 +12,14 @@ import 'package:flutter/foundation.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
-class PastIncidentsPage extends StatefulWidget {
-  const PastIncidentsPage({super.key});
+class PublicPastIncidentsPage extends StatefulWidget {
+  const PublicPastIncidentsPage({super.key});
 
   @override
-  State<PastIncidentsPage> createState() => _PastIncidentsPageState();
+  State<PublicPastIncidentsPage> createState() => _PublicPastIncidentsPageState();
 }
 
-class _PastIncidentsPageState extends State<PastIncidentsPage> {
+class _PublicPastIncidentsPageState extends State<PublicPastIncidentsPage> {
   List<Incident> _allIncidents = [];
   bool _loading = true;
   String? _error;
