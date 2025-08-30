@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'models/uptime_data.dart';
 import 'services/config_service.dart';
-import 'widgets/status_dashboard.dart';
+import 'widgets/pages/public/public_dashboard.dart';
 import 'widgets/incident_detail_page.dart';
 import 'widgets/pages/public/public_past_incidents_page.dart';
 import 'widgets/admin_layout.dart';

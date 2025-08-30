@@ -3,10 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-import '../models/uptime_data.dart';
-import '../services/config_service.dart';
-import 'common/status_badges.dart';
-import 'components/update_card.dart';
+import '../../../models/uptime_data.dart';
+import '../../../services/config_service.dart';
+import '../../common/status_badges.dart';
+import '../../components/update_card.dart';
 
 class StatusDashboard extends StatelessWidget {
   final List<Group>? groups;
