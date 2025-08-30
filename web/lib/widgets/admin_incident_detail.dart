@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../utils/date_format.dart';
 import '../models/uptime_data.dart';
 import 'components/update_card.dart';
@@ -753,11 +752,5 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
         ),
       ),
     );
-  }
-
-
-  String _capitalizeFirstLetter(String text) {
-    if (text.isEmpty) return text;
-    return text[0].toUpperCase() + text.substring(1);
   }
 }
