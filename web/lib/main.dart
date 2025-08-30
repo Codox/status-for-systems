@@ -9,7 +9,7 @@ import 'widgets/pages/public/public_incident_detail_page.dart';
 import 'widgets/pages/public/public_past_incidents_page.dart';
 import 'widgets/admin_layout.dart';
 import 'widgets/admin_dashboard.dart';
-import 'widgets/admin_incidents.dart';
+import 'widgets/pages/admin/admin_incidents_page.dart';
 import 'widgets/admin_components.dart';
 import 'widgets/pages/admin/admin_incident_detail_page.dart';
 import 'widgets/pages/login_page.dart';
@@ -149,7 +149,7 @@ class _MyAppState extends State<MyApp> {
         '/admin/incidents': (context) => const AuthGuard(
           currentRoute: '/admin/incidents',
           child: AdminLayout(
-            child: AdminIncidents(),
+            child: AdminIncidentsPage(),
             currentRoute: '/admin/incidents',
           ),
         ),

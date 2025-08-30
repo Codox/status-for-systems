@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../utils/date_format.dart';
-import '../models/uptime_data.dart';
-import 'admin_create_incident_dialog.dart';
-import 'common/status_badges.dart';
+import '../../../utils/date_format.dart';
+import '../../../models/uptime_data.dart';
+import '../../admin_create_incident_dialog.dart';
+import '../../common/status_badges.dart';
 
-class AdminIncidents extends StatefulWidget {
-  const AdminIncidents({super.key});
+class AdminIncidentsPage extends StatefulWidget {
+  const AdminIncidentsPage({super.key});
 
   @override
-  State<AdminIncidents> createState() => _AdminIncidentsState();
+  State<AdminIncidentsPage> createState() => _AdminIncidentsPageState();
 }
 
-class _AdminIncidentsState extends State<AdminIncidents> {
+class _AdminIncidentsPageState extends State<AdminIncidentsPage> {
   List<Incident>? incidents;
   bool isLoading = true;
   String? error;
