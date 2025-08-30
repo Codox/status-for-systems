@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/uptime_data.dart';
-import 'common/status_badges.dart';
-import 'components/update_card.dart';
-import 'common/public_back_button.dart';
+import '../../../models/uptime_data.dart';
+import '../../common/status_badges.dart';
+import '../../components/update_card.dart';
+import '../../common/public_back_button.dart';
 
 class IncidentDetailPage extends StatefulWidget {
   final String incidentId;
