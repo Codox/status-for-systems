@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import '../utils/date_format.dart';
-import '../models/uptime_data.dart';
-import 'components/update_card.dart';
-import 'common/status_badges.dart';
+import '../../../utils/date_format.dart';
+import '../../../models/uptime_data.dart';
+import '../../components/update_card.dart';
+import '../../common/status_badges.dart';
 
-class AdminIncidentDetail extends StatefulWidget {
+class AdminIncidentDetailPage extends StatefulWidget {
   final String incidentId;
 
-  const AdminIncidentDetail({
+  const AdminIncidentDetailPage({
     super.key,
     required this.incidentId,
   });
 
   @override
-  State<AdminIncidentDetail> createState() => _AdminIncidentDetailState();
+  State<AdminIncidentDetailPage> createState() => _AdminIncidentDetailPageState();
 }
 
-class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
+class _AdminIncidentDetailPageState extends State<AdminIncidentDetailPage> {
   Incident? incident;
   List<Update>? updates;
   List<Component>? allComponents;

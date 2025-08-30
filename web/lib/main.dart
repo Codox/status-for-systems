@@ -11,7 +11,7 @@ import 'widgets/admin_layout.dart';
 import 'widgets/admin_dashboard.dart';
 import 'widgets/admin_incidents.dart';
 import 'widgets/admin_components.dart';
-import 'widgets/admin_incident_detail.dart';
+import 'widgets/pages/admin/admin_incident_detail_page.dart';
 import 'widgets/pages/login_page.dart';
 import 'guards/auth_guard.dart';
 import 'package:http/http.dart' as http;
@@ -176,7 +176,7 @@ class _MyAppState extends State<MyApp> {
               currentRoute: settings.name!,
               child: AdminLayout(
                 currentRoute: settings.name!,
-                child: AdminIncidentDetail(incidentId: incidentId),
+                child: AdminIncidentDetailPage(incidentId: incidentId),
               ),
             ),
             settings: settings,
