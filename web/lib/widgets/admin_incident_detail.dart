@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../utils/date_format.dart';
 import '../models/uptime_data.dart';
 import 'components/update_card.dart';
 import 'common/status_badges.dart';
@@ -332,7 +333,7 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Created: ${_formatDate(incident!.createdAt)} • Last updated: ${_formatDate(incident!.updatedAt)}',
+                            'Created: ${DateFormatUtils.formatIsoDateTime(incident!.createdAt)} • Last updated: ${DateFormatUtils.formatIsoDateTime(incident!.updatedAt)}',
                             style: TextStyle(
                               fontSize: 14,
                               color: textColor,
@@ -754,12 +755,6 @@ class _AdminIncidentDetailState extends State<AdminIncidentDetail> {
     );
   }
 
-
-
-  String _formatDate(String dateString) {
-    final date = DateTime.parse(dateString);
-    return DateFormat('MMM dd, yyyy HH:mm').format(date);
-  }
 
   String _capitalizeFirstLetter(String text) {
     if (text.isEmpty) return text;

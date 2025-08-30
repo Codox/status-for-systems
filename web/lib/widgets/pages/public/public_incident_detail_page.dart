@@ -4,6 +4,7 @@ import '../../../models/uptime_data.dart';
 import '../../common/status_badges.dart';
 import '../../components/update_card.dart';
 import '../../common/public_back_button.dart';
+import '../../../utils/date_format.dart';
 import '../../../utils/responsive.dart';
 
 class IncidentDetailPage extends StatefulWidget {
@@ -153,7 +154,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Created: ${_formatDate(incident!.createdAt)} • Last updated: ${_formatDate(incident!.updatedAt)}',
+                    'Created: ${DateFormatUtils.formatIsoDateTime(incident!.createdAt)} • Last updated: ${DateFormatUtils.formatIsoDateTime(incident!.updatedAt)}',
                     style: TextStyle(
                       fontSize: 14,
                       color: textColor,
@@ -317,12 +318,6 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
       showIcon: true,
       fontSize: 12,
     );
-  }
-
-
-  String _formatDate(String dateString) {
-    final date = DateTime.parse(dateString);
-    return DateFormat('MMM dd, yyyy HH:mm').format(date);
   }
 
 }

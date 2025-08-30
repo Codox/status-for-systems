@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../utils/date_format.dart';
 import '../../models/uptime_data.dart';
 import '../common/status_badges.dart';
 
@@ -148,7 +149,7 @@ class UnifiedCard extends StatelessWidget {
               if (showUpdatedTime) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Updated: ${_formatDateTime(incident!.updatedAt)}',
+                  'Updated: ${DateFormatUtils.formatIsoDateTime(incident!.updatedAt)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).brightness == Brightness.light
                         ? Colors.grey[600]
@@ -208,7 +209,7 @@ class UnifiedCard extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
-                _formatDate(update!.createdAt),
+                DateFormatUtils.formatIsoDateTime(update!.createdAt),
                 style: TextStyle(
                   fontSize: 12,
                   color: textColor,
@@ -385,25 +386,6 @@ class UnifiedCard extends StatelessWidget {
         return type.replaceAll('_', ' ').split(' ')
             .map((word) => _capitalizeFirstLetter(word))
             .join(' ');
-    }
-  }
-
-
-  String _formatDateTime(String dateTimeStr) {
-    try {
-      final dateTime = DateTime.parse(dateTimeStr);
-      return DateFormat('MMM dd, yyyy HH:mm').format(dateTime);
-    } catch (e) {
-      return dateTimeStr;
-    }
-  }
-
-  String _formatDate(String dateTimeStr) {
-    try {
-      final dateTime = DateTime.parse(dateTimeStr);
-      return DateFormat('MMM dd, yyyy HH:mm').format(dateTime);
-    } catch (e) {
-      return dateTimeStr;
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../utils/date_format.dart';
 import '../models/uptime_data.dart';
 import 'admin_create_incident_dialog.dart';
 import 'common/status_badges.dart';
@@ -439,7 +440,7 @@ class _AdminIncidentsState extends State<AdminIncidents> {
       alignment: Alignment.center,
       constraints: const BoxConstraints(minHeight: 60),
       child: Tooltip(
-        message: _formatDate(incident.createdAt),
+        message: DateFormatUtils.formatIsoDateTime(incident.createdAt),
         child: Text(
           DateFormat('MMM dd, yyyy').format(createdDate),
           style: theme.textTheme.bodySmall?.copyWith(
@@ -469,10 +470,7 @@ class _AdminIncidentsState extends State<AdminIncidents> {
     }
   }
 
-  String _formatDate(String dateString) {
-    final date = DateTime.parse(dateString);
-    return DateFormat('MMM dd, yyyy HH:mm').format(date);
-  }
+  // Centralized in DateFormatUtils
 
 
   void _showCreateIncidentDialog() {

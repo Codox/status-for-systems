@@ -4,6 +4,7 @@ import '../../../models/uptime_data.dart';
 import '../../../services/config_service.dart';
 import '../../components/update_card.dart';
 import '../../common/public_back_button.dart';
+import '../../../utils/date_format.dart';
 import '../../../utils/responsive.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -140,7 +141,7 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
     }).toList();
   }
 
-  String _formatDate(DateTime date) => DateFormat('MMM dd, yyyy').format(date);
+  // Centralized in DateFormatUtils
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +180,7 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Showing: ${_formatDate(_fromDate)} — ${_formatDate(_toDate)}',
+                    'Showing: ${DateFormatUtils.formatDate(_fromDate)} — ${DateFormatUtils.formatDate(_toDate)}',
                     style: TextStyle(
                       fontSize: 14,
                       color: textColor,
