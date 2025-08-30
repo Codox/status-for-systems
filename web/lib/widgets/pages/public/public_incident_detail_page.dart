@@ -4,6 +4,7 @@ import '../../../models/uptime_data.dart';
 import '../../common/status_badges.dart';
 import '../../components/update_card.dart';
 import '../../common/public_back_button.dart';
+import '../../../utils/responsive.dart';
 
 class IncidentDetailPage extends StatefulWidget {
   final String incidentId;
@@ -58,7 +59,7 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
 
     // Get responsive horizontal padding based on screen width
     final screenWidth = MediaQuery.of(context).size.width;
-    final horizontalPadding = _getResponsiveHorizontalPadding(screenWidth);
+    final horizontalPadding = getResponsiveHorizontalPadding(screenWidth);
 
     if (isLoading) {
       return Scaffold(
@@ -324,23 +325,4 @@ class _IncidentDetailPageState extends State<IncidentDetailPage> {
     return DateFormat('MMM dd, yyyy HH:mm').format(date);
   }
 
-  /// Get responsive horizontal padding based on screen width
-  double _getResponsiveHorizontalPadding(double screenWidth) {
-    if (screenWidth < 600) {
-      // Mobile: 16px padding
-      return 16.0;
-    } else if (screenWidth < 900) {
-      // Small tablet: 24px padding
-      return 24.0;
-    } else if (screenWidth < 1200) {
-      // Large tablet: 40px padding
-      return 40.0;
-    } else if (screenWidth < 1600) {
-      // Desktop: 80px padding
-      return 80.0;
-    } else {
-      // Large desktop: 120px padding
-      return 120.0;
-    }
-  }
 }

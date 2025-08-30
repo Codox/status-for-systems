@@ -4,6 +4,7 @@ import '../../../models/uptime_data.dart';
 import '../../../services/config_service.dart';
 import '../../components/update_card.dart';
 import '../../common/public_back_button.dart';
+import '../../../utils/responsive.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
@@ -152,7 +153,7 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
 
     // responsive horizontal padding mirroring incident_detail_page
     final screenWidth = MediaQuery.of(context).size.width;
-    final horizontalPadding = _getResponsiveHorizontalPadding(screenWidth);
+    final horizontalPadding = getResponsiveHorizontalPadding(screenWidth);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -325,21 +326,6 @@ class _PastIncidentsPageState extends State<PastIncidentsPage> {
         ),
       ),
     );
-  }
-
-  /// Get responsive horizontal padding based on screen width (match incident detail)
-  double _getResponsiveHorizontalPadding(double screenWidth) {
-    if (screenWidth < 600) {
-      return 16.0;
-    } else if (screenWidth < 900) {
-      return 24.0;
-    } else if (screenWidth < 1200) {
-      return 40.0;
-    } else if (screenWidth < 1600) {
-      return 80.0;
-    } else {
-      return 120.0;
-    }
   }
 
   Widget _buildFooter(BuildContext context) {
