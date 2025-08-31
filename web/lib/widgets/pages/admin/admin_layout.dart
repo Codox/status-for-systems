@@ -45,17 +45,16 @@ class _AdminLayoutState extends State<AdminLayout> {
     final isMobile = MediaQuery.of(context).size.width < 768;
 
     final bgColor = isLightMode ? Colors.white : Colors.grey[800]!;
-    final headerBgColor = isLightMode ? Colors.blue[500]! : Colors.blue[600]!;
-    final activeBgColor = isLightMode ? Colors.blue[50]! : Colors.blue[900]!;
-    final hoverBgColor = isLightMode ? Colors.grey[100]! : Colors.grey[700]!;
+    final headerBgColor = theme.brightness == Brightness.light 
+        ? Colors.blue[500]! 
+        : Colors.blue[600]!;
 
     return Scaffold(
       key: _scaffoldKey,
       appBar: isMobile ? _buildMobileAppBar(headerBgColor) : null,
-      drawer: isMobile ? _buildDrawer(bgColor, activeBgColor, hoverBgColor) : null,
+      drawer: isMobile ? _buildDrawer() : null,
       body: Row(
         children: [
-          // Desktop Sidebar
           if (!isMobile)
             Container(
               width: _drawerWidth,
@@ -68,17 +67,9 @@ class _AdminLayoutState extends State<AdminLayout> {
                     width: 1,
                   ),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(2, 0),
-                  ),
-                ],
               ),
-              child: _buildNavigationContent(bgColor, activeBgColor, hoverBgColor, headerBgColor),
+              child: _buildNavigationContent(headerBgColor),
             ),
-          // Main Content
           Expanded(
             child: Container(
               color: isLightMode ? Colors.grey[50] : Colors.grey[900],
@@ -111,136 +102,216 @@ class _AdminLayoutState extends State<AdminLayout> {
     );
   }
 
-  Widget _buildDrawer(Color bgColor, Color activeBgColor, Color hoverBgColor) {
+  Widget _buildDrawer() {
+    final theme = Theme.of(context);
+    final headerBgColor = theme.brightness == Brightness.light 
+        ? Colors.blue[500]! 
+        : Colors.blue[600]!;
+
     return Drawer(
-      child: _buildNavigationContent(bgColor, activeBgColor, hoverBgColor, Colors.blue),
+      child: _buildNavigationContent(headerBgColor),
     );
   }
 
-  Widget _buildNavigationContent(Color bgColor, Color activeBgColor, Color hoverBgColor, Color headerBgColor) {
+  Widget _buildNavigationContent(Color headerBgColor) {
     return Column(
       children: [
         // Header
         Container(
+          height: 64,
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: headerBgColor,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
+          color: headerBgColor,
+          child: const Center(
+            child: Text(
+              'Dashboard',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Admin',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Manage your system',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
-                  fontSize: 12,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
-
-        // Navigation List
+        // Navigation Items
         Expanded(
-          child: ListView.builder(
-            itemCount: _navigationItems.length + 1, // +1 for sign out
-            itemBuilder: (context, index) {
-              if (index < _navigationItems.length) {
-                final item = _navigationItems[index];
-                final isActive = widget.currentRoute == item.route;
-
-                return MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: InkWell(
-                    onTap: () {
-                      if (widget.currentRoute != item.route) {
-                        Navigator.of(context).pushReplacementNamed(item.route);
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isActive ? activeBgColor : Colors.transparent,
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Theme.of(context).brightness == Brightness.light
-                                ? Colors.grey[300]!
-                                : Colors.grey[700]!,
-                          ),
-                        ),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      child: Row(
-                        children: [
-                          Icon(
-                            item.icon,
-                            color: isActive ? Colors.blue[700] : Colors.grey[600],
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              item.name,
-                              style: TextStyle(
-                                fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-                                color: isActive ? Colors.blue[700] : null,
-                              ),
-                            ),
-                          ),
-                          if (isActive)
-                            Container(
-                              width: 4,
-                              height: 24,
-                              color: Colors.blue[700],
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              } else {
-                // Sign Out button
-                return Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        await AuthService.signOut();
-                        if (mounted) {
-                          Navigator.of(context).pushReplacementNamed('/admin/login');
-                        }
-                      },
-                      icon: const Icon(Icons.logout),
-                      label: const Text('Sign Out'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[600],
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(double.infinity, 48),
-                      ),
-                    ),
-                  ),
-                );
-              }
-            },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              children: [
+                ..._navigationItems.map((item) => _buildNavigationItem(item)),
+              ],
+            ),
+          ),
+        ),
+        // Footer
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              _buildBackToStatusPageButton(),
+              const SizedBox(height: 4),
+              _buildLogoutButton(),
+            ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildNavigationItem(NavigationItem item) {
+    final isActive = widget.currentRoute == item.route;
+    final isMobile = MediaQuery.of(context).size.width < 768;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+      child: Material(
+        color: isActive ? (Theme.of(context).brightness == Brightness.light ? Colors.blue[50] : Colors.blue[900]) : Colors.transparent,
+        borderRadius: BorderRadius.circular(4),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(4),
+          onTap: () {
+            if (isMobile) {
+              Navigator.of(context).pop(); // Close drawer
+            }
+            if (widget.currentRoute != item.route) {
+              Navigator.of(context).pushReplacementNamed(item.route);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 40,
+                  child: Icon(
+                    item.icon,
+                    size: 20,
+                    color: isActive 
+                        ? Theme.of(context).primaryColor 
+                        : Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ),
+                Text(
+                  item.name,
+                  style: TextStyle(
+                    fontWeight: isActive ? FontWeight.w500 : FontWeight.normal,
+                    color: isActive 
+                        ? Theme.of(context).primaryColor 
+                        : Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackToStatusPageButton() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(4),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(4),
+          onTap: () {
+            if (isMobile) {
+              Navigator.of(context).pop(); // Close drawer
+            }
+            Navigator.of(context).pushReplacementNamed('/');
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 40,
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 20,
+                  ),
+                ),
+                Text(
+                  'Back to Status Page',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(4),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(4),
+          onTap: () async {
+            if (isMobile) {
+              Navigator.of(context).pop(); // Close drawer
+            }
+
+            // Show confirmation dialog
+            final shouldLogout = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Logout'),
+                content: const Text('Are you sure you want to logout?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Logout'),
+                  ),
+                ],
+              ),
+            );
+
+            if (shouldLogout == true) {
+              await AuthService.logout();
+              if (mounted) {
+                Navigator.of(context).pushReplacementNamed('/admin/login');
+              }
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 40,
+                  child: Icon(
+                    Icons.logout,
+                    size: 20,
+                    color: Colors.red,
+                  ),
+                ),
+                Text(
+                  'Logout',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -250,5 +321,9 @@ class NavigationItem {
   final String route;
   final IconData icon;
 
-  NavigationItem({required this.name, required this.route, required this.icon});
+  NavigationItem({
+    required this.name,
+    required this.route,
+    required this.icon,
+  });
 }
