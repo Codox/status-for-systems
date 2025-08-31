@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import '../models/uptime_data.dart';
+import '../../../models/uptime_data.dart';
 
-class EditGroupComponentsDialog extends StatefulWidget {
+class AdminEditGroupComponentsDialog extends StatefulWidget {
   final Group group;
   final VoidCallback onComponentsUpdated;
 
-  const EditGroupComponentsDialog({
+  const AdminEditGroupComponentsDialog({
     super.key,
     required this.group,
     required this.onComponentsUpdated,
   });
 
   @override
-  State<EditGroupComponentsDialog> createState() => _EditGroupComponentsDialogState();
+  State<AdminEditGroupComponentsDialog> createState() => _AdminEditGroupComponentsDialogState();
 }
 
-class _EditGroupComponentsDialogState extends State<EditGroupComponentsDialog> {
+class _AdminEditGroupComponentsDialogState extends State<AdminEditGroupComponentsDialog> {
   List<Component> _allComponents = [];
   Set<String> _selectedComponentIds = {};
   bool _isLoading = false;

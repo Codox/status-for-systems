@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../models/uptime_data.dart';
-import '../../admin_create_component_dialog.dart';
-import '../../admin_create_group_dialog.dart';
-import '../../admin_edit_group_components_dialog.dart';
-import '../../admin_edit_component_dialog.dart';
+import '../../dialogs/admin/admin_create_component_dialog.dart';
+import '../../dialogs/admin/admin_create_group_dialog.dart';
+import '../../dialogs/admin/admin_edit_group_components_dialog.dart';
+import '../../dialogs/admin/admin_edit_component_dialog.dart';
 import '../../common/status_badges.dart';
 
 class AdminComponentsPage extends StatefulWidget {
@@ -81,7 +81,7 @@ class _AdminComponentsPageState extends State<AdminComponentsPage> {
   void _showCreateComponentDialog() {
     showDialog(
       context: context,
-      builder: (context) => CreateComponentDialog(
+      builder: (context) => AdminCreateComponentDialog(
         onComponentCreated: _refreshComponents,
       ),
     );
@@ -90,7 +90,7 @@ class _AdminComponentsPageState extends State<AdminComponentsPage> {
   void _showCreateGroupDialog() {
     showDialog(
       context: context,
-      builder: (context) => CreateGroupDialog(
+      builder: (context) => AdminCreateGroupDialog(
         onGroupCreated: _refreshComponents,
       ),
     );
@@ -99,7 +99,7 @@ class _AdminComponentsPageState extends State<AdminComponentsPage> {
   void _showEditGroupComponentsDialog(Group group) {
     showDialog(
       context: context,
-      builder: (context) => EditGroupComponentsDialog(
+      builder: (context) => AdminEditGroupComponentsDialog(
         group: group,
         onComponentsUpdated: _refreshComponents,
       ),
@@ -109,7 +109,7 @@ class _AdminComponentsPageState extends State<AdminComponentsPage> {
   void _showEditComponentDialog(Component component) {
     showDialog(
       context: context,
-      builder: (context) => EditComponentDialog(
+      builder: (context) => AdminEditComponentDialog(
         component: component,
         onComponentUpdated: _refreshComponents,
       ),

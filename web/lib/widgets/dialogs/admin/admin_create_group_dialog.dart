@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import '../models/uptime_data.dart';
+import '../../../models/uptime_data.dart';
 
-class CreateGroupDialog extends StatefulWidget {
+class AdminCreateGroupDialog extends StatefulWidget {
   final VoidCallback onGroupCreated;
 
-  const CreateGroupDialog({
+  const AdminCreateGroupDialog({
     super.key,
     required this.onGroupCreated,
   });
 
   @override
-  State<CreateGroupDialog> createState() => _CreateGroupDialogState();
+  State<AdminCreateGroupDialog> createState() => _AdminCreateGroupDialogState();
 }
 
-class _CreateGroupDialogState extends State<CreateGroupDialog> {
+class _AdminCreateGroupDialogState extends State<AdminCreateGroupDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();

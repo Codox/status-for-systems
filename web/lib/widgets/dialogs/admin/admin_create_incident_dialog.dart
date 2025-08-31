@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import '../models/uptime_data.dart';
+import '../../../models/uptime_data.dart';
 
-class CreateIncidentDialog extends StatefulWidget {
+class AdminCreateIncidentDialog extends StatefulWidget {
   final VoidCallback onIncidentCreated;
 
-  const CreateIncidentDialog({
+  const AdminCreateIncidentDialog({
     super.key,
     required this.onIncidentCreated,
   });
 
   @override
-  State<CreateIncidentDialog> createState() => _CreateIncidentDialogState();
+  State<AdminCreateIncidentDialog> createState() => _AdminCreateIncidentDialogState();
 }
 
-class _CreateIncidentDialogState extends State<CreateIncidentDialog> {
+class _AdminCreateIncidentDialogState extends State<AdminCreateIncidentDialog> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();

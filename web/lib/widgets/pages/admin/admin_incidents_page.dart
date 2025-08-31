@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../utils/date_format.dart';
 import '../../../models/uptime_data.dart';
-import '../../admin_create_incident_dialog.dart';
+import '../../dialogs/admin/admin_create_incident_dialog.dart';
 import '../../common/status_badges.dart';
 
 class AdminIncidentsPage extends StatefulWidget {
@@ -477,7 +477,7 @@ class _AdminIncidentsPageState extends State<AdminIncidentsPage> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => CreateIncidentDialog(
+      builder: (context) => AdminCreateIncidentDialog(
         onIncidentCreated: () {
           _refreshIncidents();
         },
