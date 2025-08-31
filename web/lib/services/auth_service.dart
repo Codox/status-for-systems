@@ -179,4 +179,9 @@ class AuthService {
         throw ArgumentError('Unsupported HTTP method: $method');
     }
   }
+
+  // Backward-compatible alias for logout
+  static Future<void> signOut() async {
+    await logout();
+  }
 }
