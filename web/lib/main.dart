@@ -7,7 +7,7 @@ import 'services/config_service.dart';
 import 'widgets/pages/public/public_dashboard.dart';
 import 'widgets/pages/public/public_incident_detail_page.dart';
 import 'widgets/pages/public/public_past_incidents_page.dart';
-import 'widgets/admin_layout.dart';
+import 'widgets/pages/admin/admin_layout.dart';
 import 'widgets/pages/admin/admin_dashboard_page.dart';
 import 'widgets/pages/admin/admin_incidents_page.dart';
 import 'widgets/pages/admin/admin_components_page.dart';
