@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/uptime_data.dart';
-import 'admin_create_component_dialog.dart';
-import 'admin_create_group_dialog.dart';
-import 'admin_edit_group_components_dialog.dart';
-import 'admin_edit_component_dialog.dart';
-import 'common/status_badges.dart';
+import '../../../models/uptime_data.dart';
+import '../../admin_create_component_dialog.dart';
+import '../../admin_create_group_dialog.dart';
+import '../../admin_edit_group_components_dialog.dart';
+import '../../admin_edit_component_dialog.dart';
+import '../../common/status_badges.dart';
 
-class AdminComponents extends StatefulWidget {
-  const AdminComponents({super.key});
+class AdminComponentsPage extends StatefulWidget {
+  const AdminComponentsPage({super.key});
 
   @override
-  State<AdminComponents> createState() => _AdminComponentsState();
+  State<AdminComponentsPage> createState() => _AdminComponentsPageState();
 }
 
-class _AdminComponentsState extends State<AdminComponents> {
+class _AdminComponentsPageState extends State<AdminComponentsPage> {
   List<Group>? groups;
   List<Component>? allComponents;
   List<Component>? ungroupedComponents;
