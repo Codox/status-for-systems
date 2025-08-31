@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import '../models/uptime_data.dart';
-import 'components/update_card.dart';
-import 'common/status_badges.dart';
+import '../../../models/uptime_data.dart';
+import '../../components/update_card.dart';
+import '../../common/status_badges.dart';
 
-class AdminDashboard extends StatefulWidget {
-  const AdminDashboard({super.key});
+class AdminDashboardPage extends StatefulWidget {
+  const AdminDashboardPage({super.key});
 
   @override
-  State<AdminDashboard> createState() => _AdminDashboardState();
+  State<AdminDashboardPage> createState() => _AdminDashboardPageState();
 }
 
-class _AdminDashboardState extends State<AdminDashboard> {
+class _AdminDashboardPageState extends State<AdminDashboardPage> {
   List<Group>? groups;
   List<Incident>? incidents;
   bool isLoading = true;
