@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../utils/date_format.dart';
-import '../../../models/uptime_data.dart';
+import '../../../models/incident.dart';
+import '../../../services/uptime_data_service.dart';
 import '../../dialogs/admin/admin_create_incident_dialog.dart';
 import '../../common/status_badges.dart';
 

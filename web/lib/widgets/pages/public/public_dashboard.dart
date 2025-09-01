@@ -3,7 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
-import '../../../models/uptime_data.dart';
+import '../../../models/group.dart';
+import '../../../models/incident.dart';
+import '../../../models/component.dart';
 import '../../../services/config_service.dart';
 import '../../common/status_badges.dart';
 import '../../components/update_card.dart';
@@ -641,7 +643,7 @@ class PublicDashboard extends StatelessWidget {
           'colorDark': 'green.200',
           'icon': '✓',
           'severity': 0,
-          'displayText': 'Operational',
+          'displayText': StatusUtils.getComponentStatusText(status),
         };
       case 'degraded':
         return {
@@ -651,7 +653,7 @@ class PublicDashboard extends StatelessWidget {
           'colorDark': 'yellow.200',
           'icon': '!',
           'severity': 1,
-          'displayText': 'Degraded',
+          'displayText': StatusUtils.getComponentStatusText(status),
         };
       case 'partial':
         return {
@@ -661,7 +663,7 @@ class PublicDashboard extends StatelessWidget {
           'colorDark': 'orange.200',
           'icon': '!',
           'severity': 2,
-          'displayText': 'Partial Outage',
+          'displayText': StatusUtils.getComponentStatusText(status),
         };
       case 'major':
         return {
@@ -671,7 +673,7 @@ class PublicDashboard extends StatelessWidget {
           'colorDark': 'red.200',
           'icon': '×',
           'severity': 3,
-          'displayText': 'Major Outage',
+          'displayText': StatusUtils.getComponentStatusText(status),
         };
       case 'under_maintenance':
         return {
@@ -681,7 +683,7 @@ class PublicDashboard extends StatelessWidget {
           'colorDark': 'blue.200',
           'icon': '⚡',
           'severity': 0,
-          'displayText': 'Under Maintenance',
+          'displayText': StatusUtils.getComponentStatusText(status),
         };
       default:
         return {
@@ -691,7 +693,7 @@ class PublicDashboard extends StatelessWidget {
           'colorDark': 'gray.400',
           'icon': '?',
           'severity': 0,
-          'displayText': 'Unknown',
+          'displayText': StatusUtils.getComponentStatusText(status),
         };
     }
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../models/uptime_data.dart';
+import '../../../models/group.dart';
+import '../../../services/status_api_service.dart';
 
 class AdminCreateComponentDialog extends StatefulWidget {
   final VoidCallback onComponentCreated;
@@ -44,7 +45,7 @@ class _AdminCreateComponentDialogState extends State<AdminCreateComponentDialog>
     });
 
     try {
-      final groups = await UptimeDataService.fetchGroups();
+      final groups = await StatusApiService.fetchGroups();
       setState(() {
         _allGroups = groups;
         _isLoading = false;
@@ -75,7 +76,7 @@ class _AdminCreateComponentDialogState extends State<AdminCreateComponentDialog>
     });
 
     try {
-      await UptimeDataService.createComponent(
+      await StatusApiService.createComponent(
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim(),
         status: 'operational',

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../models/uptime_data.dart';
+import '../../../models/incident.dart';
 import '../../../services/config_service.dart';
 import '../../components/update_card.dart';
 import '../../common/public_back_button.dart';

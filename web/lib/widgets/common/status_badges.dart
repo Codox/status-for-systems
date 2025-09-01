@@ -283,6 +283,23 @@ class _IncidentImpactConfig {
 
 // Utility functions for getting status colors and icons (for backward compatibility)
 class StatusUtils {
+  static String getComponentStatusText(String status) {
+    switch (status.toLowerCase()) {
+      case 'operational':
+        return 'Operational';
+      case 'degraded':
+        return 'Degraded';
+      case 'partial':
+        return 'Partial Outage';
+      case 'major':
+        return 'Major Outage';
+      case 'under_maintenance':
+        return 'Under Maintenance';
+      default:
+        return 'Unknown';
+    }
+  }
+
   static Color getComponentStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'operational':

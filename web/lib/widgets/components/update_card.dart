@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../utils/date_format.dart';
-import '../../models/uptime_data.dart';
+import '../../models/updates.dart';
+import '../../models/incident.dart';
+import '../../models/component.dart';
 import '../common/status_badges.dart';
 
 enum UnifiedCardStyle {

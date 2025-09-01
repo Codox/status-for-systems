@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../utils/date_format.dart';
-import '../../../models/uptime_data.dart';
+import '../../../models/incident.dart';
+import '../../../models/updates.dart';
+import '../../../models/component.dart';
+import '../../../services/uptime_data_service.dart';
 import '../../components/update_card.dart';
 import '../../common/status_badges.dart';
 

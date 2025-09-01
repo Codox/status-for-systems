@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'models/uptime_data.dart';
+import 'models/group.dart';
+import 'models/incident.dart';
+import 'services/status_api_service.dart';
 import 'services/config_service.dart';
 import 'widgets/pages/public/public_dashboard.dart';
 import 'widgets/pages/public/public_incident_detail_page.dart';
@@ -64,8 +66,8 @@ class _StatusPageState extends State<StatusPage> {
   Future<void> _loadData() async {
     try {
       // Fetch data from API
-      final fetchedGroups = await UptimeDataService.fetchGroups();
-      final fetchedIncidents = await UptimeDataService.fetchActiveIncidents();
+      final fetchedGroups = await StatusApiService.fetchGroups();
+      final fetchedIncidents = await StatusApiService.fetchActiveIncidents();
 
       setState(() {
         groups = fetchedGroups;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../models/uptime_data.dart';
+import '../../../models/group.dart';
+import '../../../models/component.dart';
+import '../../../services/status_api_service.dart';
 import '../../dialogs/admin/admin_create_component_dialog.dart';
 import '../../dialogs/admin/admin_create_group_dialog.dart';
 import '../../dialogs/admin/admin_edit_group_components_dialog.dart';
@@ -31,8 +33,8 @@ class _AdminComponentsPageState extends State<AdminComponentsPage> {
   Future<void> _loadComponents() async {
     try {
       // Always fetch all components and groups to show both grouped and ungrouped
-      final fetchedAllComponents = await UptimeDataService.fetchAllComponents();
-      final fetchedGroups = await UptimeDataService.fetchGroups();
+      final fetchedAllComponents = await StatusApiService.fetchAllComponents();
+      final fetchedGroups = await StatusApiService.fetchGroups();
       
       // Get all component IDs that are in groups
       final groupedComponentIds = <String>{};

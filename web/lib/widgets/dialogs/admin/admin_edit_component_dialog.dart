@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../models/uptime_data.dart';
+import '../../../models/component.dart';
+import '../../../models/group.dart';
+import '../../../services/status_api_service.dart';
 
 class AdminEditComponentDialog extends StatefulWidget {
   final Component component;
@@ -48,7 +50,7 @@ class _AdminEditComponentDialogState extends State<AdminEditComponentDialog> {
     });
 
     try {
-      final groups = await UptimeDataService.fetchGroups();
+      final groups = await StatusApiService.fetchGroups();
       
       // Find which groups currently contain this component
       final currentGroupIds = <String>{};
@@ -92,7 +94,7 @@ class _AdminEditComponentDialogState extends State<AdminEditComponentDialog> {
     });
 
     try {
-      await UptimeDataService.updateComponent(
+      await StatusApiService.updateComponent(
         componentId: widget.component.id,
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim(),

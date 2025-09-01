@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../models/uptime_data.dart';
+import '../../../models/group.dart';
+import '../../../models/incident.dart';
+import '../../../services/status_api_service.dart';
 import '../../components/update_card.dart';
 import '../../common/status_badges.dart';
 
@@ -24,8 +26,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   Future<void> _loadData() async {
     try {
-      final fetchedGroups = await UptimeDataService.fetchGroups();
-      final fetchedIncidents = await UptimeDataService.fetchActiveIncidents();
+      final fetchedGroups = await StatusApiService.fetchGroups();
+      final fetchedIncidents = await StatusApiService.fetchActiveIncidents();
 
       setState(() {
         groups = fetchedGroups;

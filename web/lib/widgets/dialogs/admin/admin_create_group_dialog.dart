@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../models/uptime_data.dart';
+import '../../../services/status_api_service.dart';
 
 class AdminCreateGroupDialog extends StatefulWidget {
   final VoidCallback onGroupCreated;
@@ -39,7 +39,7 @@ class _AdminCreateGroupDialogState extends State<AdminCreateGroupDialog> {
     });
 
     try {
-      await UptimeDataService.createGroup(
+      await StatusApiService.createGroup(
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim(),
       );

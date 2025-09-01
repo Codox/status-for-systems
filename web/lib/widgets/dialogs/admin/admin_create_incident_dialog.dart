@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../models/uptime_data.dart';
+import '../../../models/component.dart';
+import '../../../services/status_api_service.dart';
 
 class AdminCreateIncidentDialog extends StatefulWidget {
   final VoidCallback onIncidentCreated;
@@ -66,7 +67,7 @@ class _AdminCreateIncidentDialogState extends State<AdminCreateIncidentDialog> {
     });
 
     try {
-      final components = await UptimeDataService.fetchAllComponents();
+      final components = await StatusApiService.fetchAllComponents();
       setState(() {
         _allComponents = components;
         _isLoading = false;
@@ -102,7 +103,7 @@ class _AdminCreateIncidentDialogState extends State<AdminCreateIncidentDialog> {
           .map((entry) => {'id': entry.key, 'status': entry.value})
           .toList();
 
-      await UptimeDataService.createIncident(
+      await StatusApiService.createIncident(
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
         status: _selectedStatus,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../models/uptime_data.dart';
+import '../../../models/group.dart';
+import '../../../models/component.dart';
+import '../../../services/status_api_service.dart';
+import '../../common/status_badges.dart';
 
 class AdminEditGroupComponentsDialog extends StatefulWidget {
   final Group group;
@@ -48,7 +51,7 @@ class _AdminEditGroupComponentsDialogState extends State<AdminEditGroupComponent
     });
 
     try {
-      final components = await UptimeDataService.fetchAllComponents();
+      final components = await StatusApiService.fetchAllComponents();
       setState(() {
         _allComponents = components;
         // Pre-select components that are already in this group
@@ -70,7 +73,7 @@ class _AdminEditGroupComponentsDialogState extends State<AdminEditGroupComponent
     });
 
     try {
-      await UptimeDataService.updateGroup(
+      await StatusApiService.updateGroup(
         groupId: widget.group.id,
         name: _nameController.text.trim(),
         description: _descriptionController.text.trim(),
@@ -288,15 +291,15 @@ class _AdminEditGroupComponentsDialogState extends State<AdminEditGroupComponent
                                         Row(
                                           children: [
                                             Icon(
-                                              _getStatusIcon(component.status),
-                                              color: _getStatusColor(component.status),
+                                              StatusUtils.getComponentStatusIcon(component.status),
+                                              color: StatusUtils.getComponentStatusColor(component.status),
                                               size: 16,
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
-                                              _formatStatusText(component.status),
+                                              StatusUtils.getComponentStatusText(component.status),
                                               style: TextStyle(
-                                                color: _getStatusColor(component.status),
+                                                color: StatusUtils.getComponentStatusColor(component.status),
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -381,54 +384,4 @@ class _AdminEditGroupComponentsDialogState extends State<AdminEditGroupComponent
     );
   }
 
-  String _formatStatusText(String status) {
-    switch (status) {
-      case 'operational':
-        return 'Operational';
-      case 'degraded':
-        return 'Degraded';
-      case 'partial':
-        return 'Partial Outage';
-      case 'major':
-        return 'Major Outage';
-      case 'under_maintenance':
-        return 'Maintenance';
-      default:
-        return status.toUpperCase();
-    }
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'operational':
-        return Colors.green;
-      case 'degraded':
-        return Colors.yellow[700]!;
-      case 'partial':
-        return Colors.orange;
-      case 'major':
-        return Colors.red;
-      case 'under_maintenance':
-        return Colors.blue;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  IconData _getStatusIcon(String status) {
-    switch (status.toLowerCase()) {
-      case 'operational':
-        return Icons.check_circle;
-      case 'degraded':
-        return Icons.warning;
-      case 'partial':
-        return Icons.error;
-      case 'major':
-        return Icons.cancel;
-      case 'under_maintenance':
-        return Icons.build;
-      default:
-        return Icons.help;
-    }
-  }
 }
