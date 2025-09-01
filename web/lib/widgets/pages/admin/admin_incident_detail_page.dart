@@ -3,7 +3,7 @@ import '../../../utils/date_format.dart';
 import '../../../models/incident.dart';
 import '../../../models/updates.dart';
 import '../../../models/component.dart';
-import '../../../services/uptime_data_service.dart';
+import '../../../services/status_api_service.dart';
 import '../../components/update_card.dart';
 import '../../common/status_badges.dart';
 
@@ -49,7 +49,7 @@ class _AdminIncidentDetailPageState extends State<AdminIncidentDetailPage> {
     print('[DEBUG_LOG] Loading incident data for ID: ${widget.incidentId}');
     try {
       print('[DEBUG_LOG] Fetching incident details...');
-      final fetchedIncident = await UptimeDataService.fetchAdminIncident(widget.incidentId);
+      final fetchedIncident = await StatusApiService.fetchAdminIncident(widget.incidentId);
       print('[DEBUG_LOG] Incident fetched: ${fetchedIncident.title}');
 
       print('[DEBUG_LOG] Fetching incident updates...');
