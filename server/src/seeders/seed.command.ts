@@ -9,7 +9,8 @@ import { Incident } from '../incidents/entities/incident.entity';
 @Injectable()
 @Command({
   name: 'seed:test-data',
-  description: 'Seed the database with test data for groups and components, and clear incidents',
+  description:
+    'Seed the database with test data for groups and components, and clear incidents',
 })
 export class SeedCommand extends CommandRunner {
   constructor(
