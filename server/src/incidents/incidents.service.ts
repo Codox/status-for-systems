@@ -235,7 +235,6 @@ export class IncidentsService {
 
     this.eventEmitter.emit('incident.updated', new IncidentUpdatedEvent());
 
-
     return updatedIncident;
   }
 
