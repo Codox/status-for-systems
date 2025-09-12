@@ -16,6 +16,7 @@ import { CreateIncidentUpdateRequest } from './requests/create-incident-update.r
 import { map, forEach, find } from 'remeda';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { IncidentCreatedEvent } from '../events/incident-created.event';
+import { IncidentUpdatedEvent } from '../events/incident-updated.event';
 
 @Injectable()
 export class IncidentsService {
@@ -231,6 +232,9 @@ export class IncidentsService {
         }
       });
     }
+
+    this.eventEmitter.emit('incident.updated', new IncidentUpdatedEvent());
+
 
     return updatedIncident;
   }
