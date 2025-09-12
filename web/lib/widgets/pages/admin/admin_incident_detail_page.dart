@@ -4,6 +4,7 @@ import '../../../models/incident.dart';
 import '../../../models/updates.dart';
 import '../../../models/component.dart';
 import '../../../services/status_api_service.dart';
+import '../../../services/uptime_data_service.dart';
 import '../../components/update_card.dart';
 import '../../common/status_badges.dart';
 
