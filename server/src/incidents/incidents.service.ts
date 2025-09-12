@@ -14,6 +14,8 @@ import { CreateIncidentRequest } from './requests/create-incident.request';
 import { UpdateIncidentRequest } from './requests/update-incident.request';
 import { CreateIncidentUpdateRequest } from './requests/create-incident-update.request';
 import { map, forEach, find } from 'remeda';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { IncidentCreatedEvent } from '../events/incident-created.event';
 
 @Injectable()
 export class IncidentsService {
@@ -23,6 +25,7 @@ export class IncidentsService {
     private readonly incidentUpdateModel: Model<IncidentUpdate>,
     @InjectModel(Component.name)
     private readonly componentModel: Model<Component>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async all(options?: {
@@ -141,6 +144,8 @@ export class IncidentsService {
 
     // Save the incident update
     await initialUpdate.save();
+
+    this.eventEmitter.emit('incident.created', new IncidentCreatedEvent());
 
     return savedIncident;
   }
