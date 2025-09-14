@@ -146,7 +146,16 @@ export class IncidentsService {
     // Save the incident update
     await initialUpdate.save();
 
-    this.eventEmitter.emit('incident.created', new IncidentCreatedEvent());
+    this.eventEmitter.emit(
+      'incident.created',
+      new IncidentCreatedEvent(
+        (savedIncident._id as any)?.toString?.() ?? '',
+        savedIncident.title,
+        savedIncident.description ?? null,
+        savedIncident.status,
+        savedIncident.impact,
+      ),
+    );
 
     return savedIncident;
   }
