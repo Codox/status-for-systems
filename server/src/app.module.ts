@@ -12,6 +12,7 @@ import { IncidentsModule } from './incidents/incidents.module';
 import * as mongoose from 'mongoose';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsModule } from './notifications/notifications.module';
+import { SubscribersModule } from './subscribers/subscribers.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     AuthModule,
     EventEmitterModule.forRoot(),
     NotificationsModule,
+    SubscribersModule,
   ],
   controllers: [PublicController, AdminController, AuthController],
   providers: [],
