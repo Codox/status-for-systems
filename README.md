@@ -63,4 +63,4 @@ Contributions are welcome! Please read the [CONTRIBUTING](./CONTRIBUTING.md) gui
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
 ## Credits
-A big thank you to Jake at [**Jake**](https://github.com/jcsix694) at [discovery.onl](https://discovery.onl) for supporting as the first Beta client.
+A big thank you to [jcsix694](https://github.com/jcsix694) at [discovery.onl](https://discovery.onl) for supporting as the first Beta client.
