@@ -23,13 +23,9 @@ import { SubscribersModule } from './subscribers/subscribers.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const uri = configService.get<string>('MONGODB_URI');
-        const user = configService.get<string>('MONGODB_USER');
-        const pass = configService.get<string>('MONGODB_PASSWORD');
 
         return {
           uri,
-          user,
-          pass,
         };
       },
       inject: [ConfigService],
