@@ -1,56 +1,87 @@
-# Status for Systems - Web
+# Welcome to React Router!
 
-## Development Setup
+A modern, production-ready template for building full-stack React applications using React Router.
 
-1. Make sure you have Flutter installed and set up on your machine.
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
 
-2. Navigate to the project directory:
-   ```
-   cd status-for-systems/web
-   ```
+## Features
 
-3. Install dependencies:
-   ```
-   flutter pub get
-   ```
+- 🚀 Server-side rendering
+- ⚡️ Hot Module Replacement (HMR)
+- 📦 Asset bundling and optimization
+- 🔄 Data loading and mutations
+- 🔒 TypeScript by default
+- 🎉 TailwindCSS for styling
+- 📖 [React Router docs](https://reactrouter.com/)
 
-4. Run the application:
-   ```
-   flutter run -d chrome
-   ```
+## Getting Started
 
-## Configuration
+### Installation
 
-This project uses a `config.json` file for configuration. To set up your configuration:
+Install the dependencies:
 
-1. Copy the example configuration file:
-   ```
-   cp config.json.example config.json
-   ```
-
-2. Edit `config.json` with your settings:
-   - `siteTitle`: The title of your status page
-   - `apiUrl`: The URL of the API server (default: http://localhost:3000)
-
-Example `config.json`:
-```json
-{
-  "siteTitle": "My Status Page",
-  "apiUrl": "http://localhost:3000"
-}
+```bash
+npm install
 ```
+
+### Development
+
+Start the development server with HMR:
+
+```bash
+npm run dev
+```
+
+Your application will be available at `http://localhost:5173`.
 
 ## Building for Production
 
-To build the application for production, run:
+Create a production build:
+
+```bash
+npm run build
+```
+
+## Deployment
+
+### Docker Deployment
+
+To build and run using Docker:
+
+```bash
+docker build -t my-app .
+
+# Run the container
+docker run -p 3000:3000 my-app
+```
+
+The containerized application can be deployed to any platform that supports Docker, including:
+
+- AWS ECS
+- Google Cloud Run
+- Azure Container Apps
+- Digital Ocean App Platform
+- Fly.io
+- Railway
+
+### DIY Deployment
+
+If you're familiar with deploying Node applications, the built-in app server is production-ready.
+
+Make sure to deploy the output of `npm run build`
 
 ```
-flutter build web
+├── package.json
+├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
+├── build/
+│   ├── client/    # Static assets
+│   └── server/    # Server-side code
 ```
 
-This will create a production build in the `build/web` directory.
+## Styling
 
-## Resources
+This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
 
-- [Flutter documentation](https://docs.flutter.dev/)
-- [Dart documentation](https://dart.dev/guides)
+---
+
+Built with ❤️ using React Router.
