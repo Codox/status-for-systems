@@ -23,7 +23,6 @@ export class NotificationsService {
         description: payload?.description ?? null,
         status: payload?.status ?? 'investigating',
         impact: payload?.impact ?? 'minor',
-        url: payload?.url,
       },
       { mail: this.mail },
     );
@@ -36,3 +35,4 @@ export class NotificationsService {
     // Placeholder for future update notifications
   }
 }
+
