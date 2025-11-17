@@ -1,13 +1,16 @@
 import dbConnect from '@/lib/mongodb';
 import GroupModel from '@/lib/entities/group.entity';
+import ComponentModel from '@/lib/entities/component.entity';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
     await dbConnect();
     
+    void ComponentModel;
+    
     const groups = await GroupModel.find()
-        // .populate('components')
+        .populate('components')
         .exec();
     
     return NextResponse.json(groups, { status: 200 });
@@ -17,5 +20,6 @@ export async function GET() {
       { error: 'Failed to fetch groups' },
       { status: 500 }
     );
+
   }
 }
