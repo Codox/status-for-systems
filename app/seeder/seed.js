@@ -18,42 +18,69 @@ async function seed() {
     await db.collection('components').deleteMany({});
     console.log('Cleared existing components.');
 
-    // Insert seed data
-    await db.collection('groups').insertMany([
+    // Insert components first
+    const components = [
       {
-        name: 'Admin Group',
-        description: 'System admin group',
-        components: [],
+        name: 'API Gateway',
+        description: 'Main API gateway handling all incoming requests',
+        status: 'operational',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        name: 'User Group',
-        description: 'Basic user access group',
-        components: [],
+        name: 'Authentication Service',
+        description: 'Handles user authentication and authorization',
+        status: 'operational',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-    ]);
-    console.log('Seeded groups.');
+      {
+        name: 'Database Cluster',
+        description: 'Primary database cluster',
+        status: 'operational',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        name: 'Redis Cache',
+        description: 'Caching layer for improved performance',
+        status: 'operational',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
 
-    await db.collection('components').insertMany([
+    const insertResult = await db.collection('components').insertMany(components);
+    const createdComponents = Object.values(insertResult.insertedIds);
+    console.log('Created test components');
+
+    // Create test groups with component references
+    const groups = [
       {
-        name: 'API Service',
-        status: 'operational',
-        description: 'Main API service',
+        name: 'Core Infrastructure',
+        description: 'Essential infrastructure components',
+        components: [createdComponents[0], createdComponents[2]],
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        name: 'Database',
-        status: 'operational',
-        description: 'MongoDB database',
+        name: 'Security Services',
+        description: 'Security and authentication related services',
+        components: [createdComponents[1]],
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-    ]);
-    console.log('Seeded components.');
+      {
+        name: 'Performance Layer',
+        description: 'Services focused on performance optimization',
+        components: [createdComponents[3]],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+
+    await db.collection('groups').insertMany(groups);
+    console.log('Seeded groups with component references.');
 
     console.log('Seeding completed successfully.');
   } catch (error) {
