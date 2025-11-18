@@ -1,6 +1,5 @@
 import OverallStatus from "../components/OverallStatus";
 import GroupCard from "../components/GroupCard";
-import MetricCard from "../components/MetricCard";
 import IncidentCard from "../components/IncidentCard";
 
 interface Component {
