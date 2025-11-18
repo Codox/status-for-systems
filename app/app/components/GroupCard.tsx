@@ -33,27 +33,25 @@ export default function GroupCard({ name, description, components }: GroupCardPr
         <p className="text-sm text-zinc-600 dark:text-zinc-400">{description}</p>
       </div>
       
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {components.map((component) => (
           <div 
             key={component._id}
             className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <h4 className="text-base font-medium text-zinc-900 dark:text-zinc-100 mb-1">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-start justify-between gap-2">
+                <h4 className="text-base font-medium text-zinc-900 dark:text-zinc-100">
                   {component.name}
                 </h4>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                  {component.description}
-                </p>
+                <div className={`w-3 h-3 rounded-full flex-shrink-0 mt-1 ${statusColors[component.status]}`}></div>
               </div>
-              <div className="flex items-center gap-2 ml-4">
-                <div className={`w-3 h-3 rounded-full ${statusColors[component.status]}`}></div>
-                <span className="text-sm text-zinc-600 dark:text-zinc-400 whitespace-nowrap">
-                  {statusText[component.status]}
-                </span>
-              </div>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                {component.description}
+              </p>
+              <span className="text-xs text-zinc-600 dark:text-zinc-400">
+                {statusText[component.status]}
+              </span>
             </div>
           </div>
         ))}
