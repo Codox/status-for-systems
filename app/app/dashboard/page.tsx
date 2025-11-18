@@ -1,8 +1,46 @@
 import OverallStatus from "../components/OverallStatus";
-import StatusCard from "../components/StatusCard";
+import GroupCard from "../components/GroupCard";
 import MetricCard from "../components/MetricCard";
 
-export default function DashboardPage() {
+interface Component {
+  _id: string;
+  name: string;
+  description: string;
+  status: 'operational' | 'degraded' | 'down';
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Group {
+  _id: string;
+  name: string;
+  description: string;
+  components: Component[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+async function getGroups(): Promise<Group[]> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/public/groups`, {
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch groups');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching groups:', error);
+    return [];
+  }
+}
+
+export default async function DashboardPage() {
+  const groups = await getGroups();
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -34,43 +72,19 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
               Service Status
             </h2>
-            <div className="space-y-3">
-              <StatusCard 
-                title="API Gateway" 
-                status="operational" 
-                uptime="99.99%" 
-                responseTime="142ms" 
-              />
-              <StatusCard 
-                title="Database Cluster" 
-                status="operational" 
-                uptime="99.98%" 
-                responseTime="23ms" 
-              />
-              <StatusCard 
-                title="Authentication Service" 
-                status="operational" 
-                uptime="100%" 
-                responseTime="89ms" 
-              />
-              <StatusCard 
-                title="Storage Service" 
-                status="degraded" 
-                uptime="99.85%" 
-                responseTime="312ms" 
-              />
-              <StatusCard 
-                title="Email Service" 
-                status="operational" 
-                uptime="99.95%" 
-                responseTime="456ms" 
-              />
-              <StatusCard 
-                title="CDN Network" 
-                status="operational" 
-                uptime="99.99%" 
-                responseTime="67ms" 
-              />
+            <div className="space-y-4">
+              {groups.length > 0 ? (
+                groups.map((group) => (
+                  <GroupCard
+                    key={group._id}
+                    name={group.name}
+                    description={group.description}
+                    components={group.components}
+                  />
+                ))
+              ) : (
+                <p className="text-zinc-600 dark:text-zinc-400">No service groups found.</p>
+              )}
             </div>
           </section>
         </div>
