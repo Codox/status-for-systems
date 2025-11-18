@@ -1,8 +1,11 @@
+import StatusBadge from './StatusBadge';
+import { getGroupHighestSeverityStatus } from '@/lib/utils/status.utils';
+
 interface Component {
   _id: string;
   name: string;
   description: string;
-  status: 'operational' | 'degraded' | 'down';
+  status: 'operational' | 'under_maintenance' | 'degraded' | 'partial' | 'major' | 'down';
   createdAt: string;
   updatedAt: string;
 }
@@ -14,22 +17,32 @@ interface GroupCardProps {
 }
 
 export default function GroupCard({ name, description, components }: GroupCardProps) {
-  const statusColors = {
+  const groupStatus = getGroupHighestSeverityStatus(components);
+  const statusColors: Record<string, string> = {
     operational: 'bg-green-500',
+    under_maintenance: 'bg-blue-500',
     degraded: 'bg-yellow-500',
-    down: 'bg-red-500'
+    partial: 'bg-orange-500',
+    major: 'bg-red-500',
+    down: 'bg-red-600'
   };
 
-  const statusText = {
+  const statusText: Record<string, string> = {
     operational: 'Operational',
+    under_maintenance: 'Under Maintenance',
     degraded: 'Degraded Performance',
+    partial: 'Partial Outage',
+    major: 'Major Outage',
     down: 'Down'
   };
 
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-sm border border-zinc-200 dark:border-zinc-800">
       <div className="mb-4">
-        <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-1">{name}</h3>
+        <div className="flex items-start justify-between gap-3 mb-2">
+          <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{name}</h3>
+          <StatusBadge status={groupStatus} showIcon={true} size="sm" />
+        </div>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">{description}</p>
       </div>
       
