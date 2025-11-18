@@ -109,7 +109,7 @@ export default async function DashboardPage() {
             </section>
           )}
 
-          <section>
+       {/*   <section>
             <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
               Key Metrics
             </h2>
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
               <MetricCard title="Active Users" value="8,432" change="3%" trend="up" />
               <MetricCard title="Error Rate" value="0.02%" change="0.01%" trend="down" />
             </div>
-          </section>
+          </section>*/}
 
           <section>
             <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
