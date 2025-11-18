@@ -1,6 +1,7 @@
 import OverallStatus from "../components/OverallStatus";
 import GroupCard from "../components/GroupCard";
 import MetricCard from "../components/MetricCard";
+import IncidentCard from "../components/IncidentCard";
 
 interface Component {
   _id: string;
@@ -16,6 +17,17 @@ interface Group {
   name: string;
   description: string;
   components: Component[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Incident {
+  _id: string;
+  title: string;
+  description: string;
+  status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
+  impact: 'none' | 'minor' | 'major' | 'critical';
+  affectedComponents: Component[];
   createdAt: string;
   updatedAt: string;
 }
@@ -38,8 +50,27 @@ async function getGroups(): Promise<Group[]> {
   }
 }
 
+async function getActiveIncidents(): Promise<Incident[]> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/public/incidents?onlyActive=true`, {
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch incidents');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching incidents:', error);
+    return [];
+  }
+}
+
 export default async function DashboardPage() {
   const groups = await getGroups();
+  const incidents = await getActiveIncidents();
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
@@ -55,6 +86,28 @@ export default async function DashboardPage() {
 
         <div className="space-y-6">
           <OverallStatus status="operational" />
+
+          {incidents.length > 0 && (
+            <section>
+              <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
+                Active Incidents
+              </h2>
+              <div className="space-y-4">
+                {incidents.map((incident) => (
+                  <IncidentCard
+                    key={incident._id}
+                    title={incident.title}
+                    description={incident.description}
+                    status={incident.status}
+                    impact={incident.impact}
+                    affectedComponents={incident.affectedComponents}
+                    createdAt={incident.createdAt}
+                    updatedAt={incident.updatedAt}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
 
           <section>
             <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
