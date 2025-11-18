@@ -18,13 +18,13 @@ interface GroupCardProps {
 
 export default function GroupCard({ name, description, components }: GroupCardProps) {
   const groupStatus = getGroupHighestSeverityStatus(components);
+  console.log('Group Status:', groupStatus);
   const statusColors: Record<string, string> = {
     operational: 'bg-green-500',
     under_maintenance: 'bg-blue-500',
     degraded: 'bg-yellow-500',
     partial: 'bg-orange-500',
     major: 'bg-red-500',
-    down: 'bg-red-600'
   };
 
   const statusText: Record<string, string> = {
@@ -33,7 +33,6 @@ export default function GroupCard({ name, description, components }: GroupCardPr
     degraded: 'Degraded Performance',
     partial: 'Partial Outage',
     major: 'Major Outage',
-    down: 'Down'
   };
 
   return (

@@ -16,10 +16,10 @@ export function getGroupHighestSeverityStatus(components: ComponentWithStatus[])
 
   const severityMap: Record<string, number> = {
     'operational': 0,
-    'under_maintenance': 0,
-    'degraded': 1,
-    'partial': 2,
-    'major': 3,
+    'under_maintenance': 1,
+    'degraded': 2,
+    'partial': 3,
+    'major': 4,
   };
 
   let highestStatus: ComponentStatus = 'operational';
