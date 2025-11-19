@@ -1,19 +1,51 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { setAuthToken, isAuthenticated } from '@/lib/utils/auth.utils';
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      router.push('/admin');
+    }
+  }, [router]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // TODO: Implement authentication logic
-    console.log('Password submitted:', password);
-    
-    setIsLoading(false);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Login failed');
+        setIsLoading(false);
+        return;
+      }
+
+      // Store token and redirect to admin dashboard
+      setAuthToken(data.token);
+      router.push('/admin');
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('An error occurred during login');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,6 +75,12 @@ export default function AdminLoginPage() {
                 autoComplete="current-password"
               />
             </div>
+
+            {error && (
+              <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-lg p-3">
+                <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+              </div>
+            )}
 
             <button
               type="submit"
