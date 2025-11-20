@@ -38,7 +38,6 @@ export default function AdminLoginPage() {
         return;
       }
 
-      // Store token and redirect to admin dashboard
       setAuthToken(data.token);
       router.push('/admin');
     } catch (err) {

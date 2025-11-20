@@ -6,6 +6,12 @@ import AuthGuard from '../components/AuthGuard';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const isLoginPage = pathname === '/admin/login';
+
+  // Don't apply AuthGuard to the login page
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
 
   return (
     <AuthGuard>
