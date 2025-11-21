@@ -1,13 +1,7 @@
 import { NextResponse } from 'next/server';
 import incidentsService from "@/lib/services/incidents.service";
-import { adminGuard } from "@/lib/guards/admin.guard";
 
 export async function GET(request: Request) {
-    const guardResponse = adminGuard(request);
-    if (guardResponse) {
-        return guardResponse;
-    }
-
     try {
         const { searchParams } = new URL(request.url);
 

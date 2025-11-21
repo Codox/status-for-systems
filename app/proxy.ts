@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
@@ -9,11 +10,12 @@ interface JWTPayload {
   exp: number;
 }
 
-/**
- * Admin API guard - validates JWT token from Authorization header
- * Returns null if authorized, or NextResponse with error if unauthorized
- */
-export function adminGuard(request: Request): NextResponse | null {
+export function proxy(request: NextRequest) {
+  // Only apply proxy to admin API routes
+  if (!request.nextUrl.pathname.startsWith('/api/admin')) {
+    return NextResponse.next();
+  }
+
   try {
     const authHeader = request.headers.get('authorization');
 
@@ -39,8 +41,16 @@ export function adminGuard(request: Request): NextResponse | null {
     // Verify JWT token
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
 
-    // Token is valid and user is admin
-    return null;
+    // Check if user has admin role
+    if (decoded.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Insufficient permissions' },
+        { status: 403 }
+      );
+    }
+
+    // Token is valid and user is admin, continue to route handler
+    return NextResponse.next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
       return NextResponse.json(
@@ -54,10 +64,14 @@ export function adminGuard(request: Request): NextResponse | null {
         { status: 401 }
       );
     }
-    console.error('Error in admin guard:', error);
+    console.error('Error in admin proxy:', error);
     return NextResponse.json(
       { error: 'Authentication failed' },
       { status: 401 }
     );
   }
 }
+
+export const config = {
+  matcher: '/api/admin/:path*',
+};
