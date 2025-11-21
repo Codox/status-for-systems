@@ -6,21 +6,21 @@ import { ComponentStatus } from '@/lib/entities/incident-update.entity';
 export class AffectedComponentRequest {
   @IsNotEmpty()
   @IsMongoId()
-  id: string;
+  id!: string;
 
   @IsNotEmpty()
   @IsEnum(ComponentStatus)
-  status: ComponentStatus;
+  status!: ComponentStatus;
 }
 
 export class CreateIncidentRequest {
   @IsNotEmpty()
   @IsString()
-  title: string;
+  title!: string;
 
   @IsNotEmpty()
   @IsString()
-  description: string;
+  description!: string;
 
   @IsOptional()
   @IsEnum(IncidentStatus)
