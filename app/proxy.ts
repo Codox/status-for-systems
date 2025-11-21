@@ -41,13 +41,13 @@ export function proxy(request: NextRequest) {
     // Verify JWT token
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
 
-    // Check if user has admin role
+/*    // Check if user has admin role
     if (decoded.role !== 'admin') {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
       );
-    }
+    }*/
 
     // Token is valid and user is admin, continue to route handler
     return NextResponse.next();
