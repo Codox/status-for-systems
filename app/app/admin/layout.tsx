@@ -33,6 +33,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               >
                 Dashboard
               </Link>
+              <Link
+                href="/admin/incidents"
+                className={[
+                  'block px-3 py-2 rounded-md text-sm',
+                  pathname === '/admin/incidents'
+                    ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
+                    : 'text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800',
+                ].join(' ')}
+              >
+                Incidents
+              </Link>
             </nav>
           </aside>
 
