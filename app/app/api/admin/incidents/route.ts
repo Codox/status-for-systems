@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import incidentsService from "@/lib/services/incidents.service";
+import { validateRequest } from '@/lib/utils/validation.utils';
+import { CreateIncidentRequest } from '@/lib/requests/create-incident.request';
 
 export async function GET(request: Request) {
     try {
@@ -40,6 +42,44 @@ export async function GET(request: Request) {
         console.error('Error fetching incidents:', error);
         return NextResponse.json(
             { error: 'Failed to fetch incidents' },
+            { status: 500 }
+        );
+    }
+}
+
+export async function POST(request: Request) {
+    try {
+        const body = await request.json();
+
+        // Validate request body
+        const validation = await validateRequest(CreateIncidentRequest, body);
+
+        if (!validation.valid) {
+            return NextResponse.json(
+                { error: 'Validation failed', details: validation.errors },
+                { status: 400 }
+            );
+        }
+
+        const data = validation.data!;
+
+        // Extract component IDs from affectedComponents
+        const componentIds = data.affectedComponents?.map(ac => ac.id) || [];
+
+        // Create incident
+        const incident = await incidentsService.createIncident({
+            title: data.title,
+            description: data.description,
+            status: data.status,
+            impact: data.impact,
+            affectedComponents: componentIds,
+        });
+
+        return NextResponse.json(incident, { status: 201 });
+    } catch (error) {
+        console.error('Error creating incident:', error);
+        return NextResponse.json(
+            { error: 'Failed to create incident' },
             { status: 500 }
         );
     }
