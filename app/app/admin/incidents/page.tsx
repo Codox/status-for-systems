@@ -46,6 +46,7 @@ export default function IncidentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'active' | 'resolved'>('all');
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     fetchIncidents();
@@ -79,6 +80,12 @@ export default function IncidentsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCreateIncident = () => {
+    // TODO: Open create incident modal/form
+    console.log('Create new incident clicked');
+    alert('Create incident functionality - coming soon!');
   };
 
   const filteredIncidents = incidents.filter(incident => {
@@ -251,6 +258,46 @@ export default function IncidentsPage() {
           ))}
         </div>
       )}
+
+      {/* Floating Action Button (FAB) */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <div className="relative">
+          {/* Tooltip */}
+          {showTooltip && (
+            <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium rounded-lg shadow-lg whitespace-nowrap animate-fade-in">
+              Create New Incident
+              <div className="absolute bottom-0 right-6 transform translate-y-1/2 rotate-45 w-2 h-2 bg-zinc-900 dark:bg-zinc-100"></div>
+            </div>
+          )}
+          
+          {/* FAB Button */}
+          <button
+            onClick={handleCreateIncident}
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            className="group relative w-14 h-14 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center"
+            aria-label="Create new incident"
+          >
+            {/* Plus Icon with Animation */}
+            <svg
+              className="w-6 h-6 transition-transform duration-300 group-hover:rotate-90"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            
+            {/* Ripple Effect on Hover */}
+            <span className="absolute inset-0 rounded-full bg-white dark:bg-zinc-900 opacity-0 group-hover:opacity-20 group-hover:animate-ping"></span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
