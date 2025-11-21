@@ -1,5 +1,5 @@
 import dbConnect from '@/lib/mongodb';
-import IncidentModel, { Incident, IncidentStatus } from '@/lib/entities/incident.entity';
+import IncidentModel, { Incident, IncidentStatus, IncidentImpact } from '@/lib/entities/incident.entity';
 import ComponentModel from '@/lib/entities/component.entity';
 
 export class IncidentsService {
@@ -37,6 +37,33 @@ export class IncidentsService {
     return await IncidentModel.find(query)
       .populate('affectedComponents')
       .exec();
+  }
+
+  async createIncident(data: {
+    title: string;
+    description: string;
+    status?: IncidentStatus;
+    impact?: IncidentImpact;
+    affectedComponents?: string[];
+  }): Promise<Incident> {
+    await dbConnect();
+    
+    // Ensure Component schema is registered
+    void ComponentModel;
+
+    const incident = new IncidentModel({
+      title: data.title,
+      description: data.description,
+      status: data.status || IncidentStatus.INVESTIGATING,
+      impact: data.impact || IncidentImpact.MINOR,
+      affectedComponents: data.affectedComponents || [],
+    });
+
+    await incident.save();
+    
+    return await IncidentModel.findById(incident._id)
+      .populate('affectedComponents')
+      .exec() as Incident;
   }
 }
 
