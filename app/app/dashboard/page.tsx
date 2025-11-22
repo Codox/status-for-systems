@@ -6,7 +6,7 @@ interface Component {
   _id: string;
   name: string;
   description: string;
-  status: 'operational' | 'under_maintenance' | 'degraded' | 'partial' | 'major' | 'down';
+  status: 'operational' | 'under_maintenance' | 'degraded' | 'partial' | 'major';
   createdAt: string;
   updatedAt: string;
 }
