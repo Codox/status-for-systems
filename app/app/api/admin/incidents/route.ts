@@ -63,16 +63,13 @@ export async function POST(request: Request) {
 
         const data = validation.data!;
 
-        // Extract component IDs from affectedComponents
-        const componentIds = data.affectedComponents?.map(ac => ac.id) || [];
-
         // Create incident
         const incident = await incidentsService.createIncident({
             title: data.title,
             description: data.description,
             status: data.status,
             impact: data.impact,
-            affectedComponents: componentIds,
+            affectedComponents: data.affectedComponents,
         });
 
         return NextResponse.json(incident, { status: 201 });
