@@ -1,4 +1,4 @@
-export type ComponentStatus = 'operational' | 'under_maintenance' | 'degraded' | 'partial' | 'major' | 'down';
+export type ComponentStatus = 'operational' | 'under_maintenance' | 'degraded' | 'partial' | 'major';
 
 interface ComponentWithStatus {
   status: string;
@@ -6,7 +6,7 @@ interface ComponentWithStatus {
 
 /**
  * Gets the highest severity status from a list of components.
- * Severity order: operational/under_maintenance (0) < degraded (1) < partial (2) < major (3) < down (4)
+ * Severity order: operational/under_maintenance (0) < degraded (1) < partial (2) < major (3)
  * 
  * @param components - Array of components with status property
  * @returns The status with the highest severity

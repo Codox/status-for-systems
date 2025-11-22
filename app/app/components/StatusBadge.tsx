@@ -37,12 +37,6 @@ export default function StatusBadge({ status, showIcon = true, size = 'md' }: St
       text: 'text-red-800 dark:text-red-300',
       icon: 'bg-red-500',
       label: 'Major Outage'
-    },
-    down: {
-      bg: 'bg-red-100 dark:bg-red-950/30',
-      text: 'text-red-800 dark:text-red-300',
-      icon: 'bg-red-600',
-      label: 'Down'
     }
   };
 

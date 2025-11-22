@@ -1,6 +1,6 @@
 interface StatusCardProps {
   title: string;
-  status: 'operational' | 'degraded' | 'down';
+  status: 'operational' | 'degraded';
   uptime?: string;
   responseTime?: string;
 }
@@ -8,14 +8,12 @@ interface StatusCardProps {
 export default function StatusCard({ title, status, uptime, responseTime }: StatusCardProps) {
   const statusColors = {
     operational: 'bg-green-500',
-    degraded: 'bg-yellow-500',
-    down: 'bg-red-500'
+    degraded: 'bg-yellow-500'
   };
 
   const statusText = {
     operational: 'Operational',
-    degraded: 'Degraded Performance',
-    down: 'Down'
+    degraded: 'Degraded Performance'
   };
 
   return (

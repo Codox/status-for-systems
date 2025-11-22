@@ -14,7 +14,6 @@ export enum ComponentStatus {
   DEGRADED = 'degraded',
   PARTIAL = 'partial',
   MAJOR = 'major',
-  DOWN = 'down',
 }
 
 export interface IncidentUpdate extends Document {
