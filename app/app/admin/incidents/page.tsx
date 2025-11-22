@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getAuthToken } from '@/lib/utils/auth.utils';
+import CreateIncidentModal from '@/app/components/CreateIncidentModal';
 
 interface Component {
   _id: string;
@@ -47,6 +48,7 @@ export default function IncidentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'active' | 'resolved'>('all');
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchIncidents();
@@ -83,9 +85,16 @@ export default function IncidentsPage() {
   };
 
   const handleCreateIncident = () => {
-    // TODO: Open create incident modal/form
-    console.log('Create new incident clicked');
-    alert('Create incident functionality - coming soon!');
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleIncidentCreated = () => {
+    // Refresh incidents list after creating a new incident
+    fetchIncidents();
   };
 
   const filteredIncidents = incidents.filter(incident => {
@@ -298,6 +307,13 @@ export default function IncidentsPage() {
           </button>
         </div>
       </div>
+
+      {/* Create Incident Modal */}
+      <CreateIncidentModal 
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onSuccess={handleIncidentCreated}
+      />
     </div>
   );
 }
