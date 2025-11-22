@@ -166,10 +166,9 @@ export default function CreateIncidentModal({ isOpen, onClose, onSuccess }: Crea
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div 
         className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col"
-        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-800 rounded-t-lg border-b border-zinc-200 dark:border-zinc-700">
