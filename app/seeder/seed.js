@@ -18,6 +18,9 @@ async function seed() {
     await db.collection('components').deleteMany({});
     console.log('Cleared existing components.');
 
+    await db.collection('incidents').deleteMany({});
+    console.log('Cleared existing incidents.');
+
     // Insert components first
     const components = [
       {
