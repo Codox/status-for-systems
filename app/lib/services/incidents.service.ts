@@ -1,7 +1,8 @@
 import dbConnect from '@/lib/mongodb';
 import IncidentModel, { Incident, IncidentStatus, IncidentImpact } from '@/lib/entities/incident.entity';
 import ComponentModel, { Component } from '@/lib/entities/component.entity';
-import IncidentUpdateModel, { IncidentUpdateType, ComponentStatus } from '@/lib/entities/incident-update.entity';
+import IncidentUpdateModel, { IncidentUpdate, IncidentUpdateType, ComponentStatus } from '@/lib/entities/incident-update.entity';
+import { Types } from 'mongoose';
 
 export class IncidentsService {
   async getIncidents(options?: {
@@ -129,6 +130,15 @@ export class IncidentsService {
     return await IncidentModel.findById(savedIncident._id)
       .populate('affectedComponents')
       .exec() as Incident;
+  }
+
+  async getIncidentUpdates(incidentId: string): Promise<IncidentUpdate[]> {
+    await dbConnect();
+    
+    return await IncidentUpdateModel
+      .find({ incidentId: new Types.ObjectId(incidentId) })
+      .sort({ createdAt: 'desc' })
+      .exec();
   }
 }
 
