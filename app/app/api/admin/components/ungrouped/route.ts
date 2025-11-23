@@ -3,7 +3,7 @@ import componentsService from '@/lib/services/components.service';
 
 export async function GET() {
   try {
-    const components = await componentsService.findUngrouped();
+    const components = await componentsService.getUngrouped();
     
     return NextResponse.json(components, { status: 200 });
   } catch (error) {

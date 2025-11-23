@@ -1,6 +1,14 @@
 import dbConnect from '@/lib/mongodb';
 import ComponentModel, { Component } from '@/lib/entities/component.entity';
 import GroupModel from '@/lib/entities/group.entity';
+import { ComponentStatus } from '@/lib/entities/incident-update.entity';
+
+interface CreateComponentRequest {
+  name: string;
+  description: string;
+  status: ComponentStatus;
+  groups?: string[];
+}
 
 export class ComponentsService {
   async getComponents(): Promise<Component[]> {
@@ -9,7 +17,7 @@ export class ComponentsService {
     return await ComponentModel.find().exec();
   }
 
-  async findUngrouped(): Promise<Component[]> {
+  async getUngrouped(): Promise<Component[]> {
     await dbConnect();
     
     // Get all component IDs that are assigned to groups
@@ -22,6 +30,32 @@ export class ComponentsService {
     return await ComponentModel
       .find({ _id: { $nin: assignedComponentIds } })
       .exec();
+  }
+
+  async create(createComponentRequest: CreateComponentRequest): Promise<Component> {
+    await dbConnect();
+
+    // Create the component
+    const component = new ComponentModel({
+      name: createComponentRequest.name,
+      description: createComponentRequest.description,
+      status: createComponentRequest.status,
+    });
+
+    const savedComponent = await component.save();
+
+    // If groups are specified, add the component to those groups
+    if (
+      createComponentRequest.groups &&
+      createComponentRequest.groups.length > 0
+    ) {
+      await GroupModel.updateMany(
+        { _id: { $in: createComponentRequest.groups } },
+        { $addToSet: { components: savedComponent._id } },
+      );
+    }
+
+    return savedComponent;
   }
 }
 
