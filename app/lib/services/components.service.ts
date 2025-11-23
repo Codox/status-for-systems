@@ -1,14 +1,7 @@
 import dbConnect from '@/lib/mongodb';
 import ComponentModel, { Component } from '@/lib/entities/component.entity';
 import GroupModel from '@/lib/entities/group.entity';
-import { ComponentStatus } from '@/lib/entities/incident-update.entity';
-
-interface CreateComponentRequest {
-  name: string;
-  description: string;
-  status: ComponentStatus;
-  groups?: string[];
-}
+import { CreateComponentRequest } from '@/lib/requests/create-component.request';
 
 export class ComponentsService {
   async getComponents(): Promise<Component[]> {
