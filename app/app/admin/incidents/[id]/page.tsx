@@ -56,26 +56,82 @@ interface Update {
   updatedAt: string;
 }
 
-const STATUS_COLORS = {
-  investigating: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-  identified: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-  monitoring: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  resolved: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+const STATUS_CONFIG = {
+  investigating: {
+    color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+    icon: '🔍',
+    label: 'Investigating'
+  },
+  identified: {
+    color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
+    icon: '⚠️',
+    label: 'Identified'
+  },
+  monitoring: {
+    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+    icon: '👁️',
+    label: 'Monitoring'
+  },
+  resolved: {
+    color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+    icon: '✅',
+    label: 'Resolved'
+  },
 };
 
-const IMPACT_COLORS = {
-  none: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300',
-  minor: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  major: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-  critical: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+const IMPACT_CONFIG = {
+  none: {
+    color: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300',
+    icon: '○',
+    label: 'None',
+    gradient: 'from-zinc-500 to-zinc-600'
+  },
+  minor: {
+    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+    icon: '◔',
+    label: 'Minor',
+    gradient: 'from-blue-500 to-blue-600'
+  },
+  major: {
+    color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
+    icon: '◑',
+    label: 'Major',
+    gradient: 'from-orange-500 to-orange-600'
+  },
+  critical: {
+    color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+    icon: '●',
+    label: 'Critical',
+    gradient: 'from-red-500 to-red-600'
+  },
 };
 
-const COMPONENT_STATUS_COLORS: Record<string, string> = {
-  operational: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-  degraded: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-  partial: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-  major: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-  under_maintenance: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+const COMPONENT_STATUS_CONFIG: Record<string, { color: string; icon: string; label: string }> = {
+  operational: {
+    color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+    icon: '✓',
+    label: 'Operational'
+  },
+  degraded: {
+    color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+    icon: '⚠',
+    label: 'Degraded'
+  },
+  partial: {
+    color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
+    icon: '◐',
+    label: 'Partial Outage'
+  },
+  major: {
+    color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+    icon: '✕',
+    label: 'Major Outage'
+  },
+  under_maintenance: {
+    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+    icon: '🔧',
+    label: 'Under Maintenance'
+  },
 };
 
 export default function IncidentDetailPage() {
@@ -305,7 +361,16 @@ export default function IncidentDetailPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString();
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
   };
 
   const formatUpdateType = (type: string) => {
@@ -315,7 +380,10 @@ export default function IncidentDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-zinc-500 dark:text-zinc-400">Loading incident...</div>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-zinc-200 dark:border-zinc-700 border-t-zinc-900 dark:border-t-zinc-100 rounded-full animate-spin"></div>
+          <div className="text-zinc-500 dark:text-zinc-400">Loading incident...</div>
+        </div>
       </div>
     );
   }
@@ -323,20 +391,21 @@ export default function IncidentDetailPage() {
   if (error && !incident) {
     return (
       <div className="space-y-4">
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-red-800 dark:text-red-300">{error}</p>
+        <div className="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/10 border border-red-200 dark:border-red-800 rounded-xl p-6 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="text-2xl">⚠️</div>
+            <div>
+              <h3 className="font-semibold text-red-900 dark:text-red-100 mb-1">Error Loading Incident</h3>
+              <p className="text-red-800 dark:text-red-300 text-sm">{error}</p>
+            </div>
           </div>
         </div>
         <button
           onClick={() => router.push('/admin/incidents')}
-          className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1"
+          className="inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
           Back to Incidents
         </button>
@@ -348,197 +417,281 @@ export default function IncidentDetailPage() {
     return null;
   }
 
+  const statusConfig = STATUS_CONFIG[incident.status];
+  const impactConfig = IMPACT_CONFIG[incident.impact];
+
   return (
-    <div className="space-y-6 max-w-5xl">
-      {/* Back button */}
+    <div className="space-y-6 pb-8">
+      {/* Back Button */}
       <button
         onClick={() => router.push('/admin/incidents')}
-        className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1 opacity-70"
+        className="inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors group"
       >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Back
+        Back to Incidents
       </button>
 
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
-            {incident.title}
-          </h1>
-          <div className="flex items-center gap-2 mb-3">
-            <span className={`px-3 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[incident.status]}`}>
-              {incident.status.toUpperCase()}
-            </span>
-            <span className={`px-3 py-1 rounded-full text-xs font-medium ${IMPACT_COLORS[incident.impact]}`}>
-              {incident.impact.toUpperCase()}
-            </span>
-          </div>
-          <div className="text-sm text-zinc-600 dark:text-zinc-400">
-            Created: {formatDate(incident.createdAt)} • Last updated: {formatDate(incident.updatedAt)}
+      {/* Hero Section with Gradient */}
+      <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${impactConfig.gradient} p-8 shadow-lg`}>
+        <div className="absolute inset-0 bg-black/10 dark:bg-black/30"></div>
+        <div className="relative z-10">
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-3">
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${statusConfig.color} shadow-sm`}>
+                  <span>{statusConfig.icon}</span>
+                  <span>{statusConfig.label}</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-white/90 dark:bg-black/40 text-zinc-900 dark:text-zinc-100 shadow-sm">
+                  <span>{impactConfig.icon}</span>
+                  <span>{impactConfig.label} Impact</span>
+                </span>
+              </div>
+              <h1 className="text-3xl font-bold text-white mb-3 drop-shadow-md">
+                {incident.title}
+              </h1>
+              <div className="flex items-center gap-4 text-sm text-white/90">
+                <div className="flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Created {formatDate(incident.createdAt)}
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Updated {formatDate(incident.updatedAt)}
+                </div>
+              </div>
+            </div>
+            {incident.status !== 'resolved' && (
+              <button
+                onClick={resolveIncident}
+                disabled={isSaving}
+                className="flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-zinc-50 text-green-700 rounded-lg text-sm font-semibold shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {isSaving ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-green-700 border-t-transparent rounded-full animate-spin"></div>
+                    <span>Resolving...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Resolve Incident</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
-        {incident.status !== 'resolved' && (
-          <button
-            onClick={resolveIncident}
-            disabled={isSaving}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSaving ? (
-              <>
-                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Resolving...
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                Resolve Incident
-              </>
-            )}
-          </button>
-        )}
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <div className="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/10 border border-red-200 dark:border-red-800 rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-red-800 dark:text-red-300">{error}</p>
+            <span className="text-lg">⚠️</span>
+            <p className="text-red-800 dark:text-red-300 text-sm font-medium">{error}</p>
           </div>
         </div>
       )}
 
-      {/* Incident Details Card */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden">
-        <div className="bg-zinc-50 dark:bg-zinc-800 px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Incident Details</h2>
-        </div>
-        <div className="p-6 space-y-4">
-          <div>
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">Description</h3>
-            <p className="text-zinc-700 dark:text-zinc-300">{incident.description}</p>
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Main Content */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Incident Description Card */}
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-2 mb-4">
+              <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Incident Description</h2>
+            </div>
+            <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">{incident.description}</p>
           </div>
-          <hr className="border-zinc-200 dark:border-zinc-700" />
-          <div>
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">Affected Components</h3>
+
+          {/* Updates Section - Will be added next */}
+        </div>
+
+        {/* Right Column - Sidebar */}
+        <div className="space-y-6">
+          {/* Affected Components Card */}
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-2 mb-4">
+              <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Affected Components</h3>
+            </div>
             {incident.affectedComponents.length === 0 ? (
-              <p className="text-zinc-600 dark:text-zinc-400 text-sm">No components affected</p>
+              <div className="text-center py-6">
+                <div className="text-3xl mb-2">📦</div>
+                <p className="text-zinc-600 dark:text-zinc-400 text-sm">No components affected</p>
+              </div>
             ) : (
-              <div className="space-y-2">
-                {incident.affectedComponents.map((component) => (
-                  <div
-                    key={component._id}
-                    className="flex items-center justify-between p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg"
-                  >
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100">{component.name}</span>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${COMPONENT_STATUS_COLORS[component.status] || 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300'}`}>
-                      {component.status.toUpperCase().replace('_', ' ')}
-                    </span>
-                  </div>
-                ))}
+              <div className="space-y-2.5">
+                {incident.affectedComponents.map((component) => {
+                  const statusConfig = COMPONENT_STATUS_CONFIG[component.status] || { color: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300', icon: '?', label: component.status };
+                  return (
+                    <div
+                      key={component._id}
+                      className="group relative p-3.5 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-800/50 rounded-lg border border-zinc-200/50 dark:border-zinc-700/50 hover:shadow-sm transition-all"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                            {component.name}
+                          </div>
+                        </div>
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusConfig.color} shadow-sm whitespace-nowrap`}>
+                          <span>{statusConfig.icon}</span>
+                          <span>{statusConfig.label}</span>
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
+          </div>
+
+          {/* Quick Stats Card */}
+          <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Quick Stats</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-zinc-600 dark:text-zinc-400">Updates</span>
+                <span className="text-base font-bold text-zinc-900 dark:text-zinc-100">{updates.length}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-zinc-600 dark:text-zinc-400">Components</span>
+                <span className="text-base font-bold text-zinc-900 dark:text-zinc-100">{incident.affectedComponents.length}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-zinc-600 dark:text-zinc-400">Status</span>
+                <span className="text-base font-bold text-zinc-900 dark:text-zinc-100">{statusConfig.label}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Updates Card */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden">
-        <div className="bg-zinc-50 dark:bg-zinc-800 px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Updates</h2>
-        </div>
-        <div className="p-6 space-y-6">
-          {/* Update Form - only show if incident is not resolved */}
-          {incident.status !== 'resolved' && (
-            <>
-              <div className="p-4 border border-zinc-200 dark:border-zinc-700 rounded-lg space-y-4">
-                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Add Update</h3>
+          {/* Updates Section */}
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-6">
+              <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Incident Timeline</h2>
+              <span className="ml-auto text-xs font-medium text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1 rounded-full">
+                {updates.length} {updates.length === 1 ? 'Update' : 'Updates'}
+              </span>
+            </div>
 
-                {/* Status and Impact dropdowns */}
-                <div className="grid grid-cols-2 gap-4">
+            {/* Add Update Form */}
+            {incident.status !== 'resolved' && (
+              <div className="mb-8 p-5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 border-2 border-blue-200 dark:border-blue-800 rounded-xl space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Post New Update</h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                      Status
+                    <label className="flex items-center gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Incident Status
                     </label>
                     <select
                       value={selectedStatus}
                       onChange={(e) => setSelectedStatus(e.target.value)}
-                      className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                      className="w-full px-3 py-2.5 text-sm border-2 border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                     >
-                      <option value="investigating">Investigating</option>
-                      <option value="identified">Identified</option>
-                      <option value="monitoring">Monitoring</option>
-                      <option value="resolved">Resolved</option>
+                      <option value="investigating">🔍 Investigating</option>
+                      <option value="identified">⚠️ Identified</option>
+                      <option value="monitoring">👁️ Monitoring</option>
+                      <option value="resolved">✅ Resolved</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                      Impact
+                    <label className="flex items-center gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      Impact Level
                     </label>
                     <select
                       value={selectedImpact}
                       onChange={(e) => setSelectedImpact(e.target.value)}
-                      className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                      className="w-full px-3 py-2.5 text-sm border-2 border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                     >
-                      <option value="none">None</option>
-                      <option value="minor">Minor</option>
-                      <option value="major">Major</option>
-                      <option value="critical">Critical</option>
+                      <option value="none">○ None</option>
+                      <option value="minor">◔ Minor</option>
+                      <option value="major">◑ Major</option>
+                      <option value="critical">● Critical</option>
                     </select>
                   </div>
                 </div>
 
-                {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Description
+                  <label className="flex items-center gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Update Description
                   </label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Provide details about this update"
+                    placeholder="Provide details about what's happening with this incident..."
                     rows={3}
-                    className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                    className="w-full px-3 py-2.5 text-sm border-2 border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"
                   />
                 </div>
 
-                {/* Component Statuses */}
                 {incident.affectedComponents.length > 0 && (
                   <div>
-                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                      Component Statuses
+                    <label className="flex items-center gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                      </svg>
+                      Component Status Updates
                     </label>
-                    <div className="space-y-2">
+                    <div className="space-y-2.5">
                       {incident.affectedComponents.map((affectedComponent) => {
                         const component = allComponents.find((c) => c._id === affectedComponent._id) || affectedComponent;
-
                         return (
-                          <div
-                            key={affectedComponent._id}
-                            className="p-3 border border-zinc-200 dark:border-zinc-700 rounded-lg space-y-2"
-                          >
-                            <div className="font-medium text-zinc-900 dark:text-zinc-100">{component.name}</div>
+                          <div key={affectedComponent._id} className="flex items-center gap-3 p-3 bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 min-w-[140px] truncate">{component.name}</span>
                             <select
                               value={componentUpdates[affectedComponent._id] || affectedComponent.status}
                               onChange={(e) => setComponentUpdates({
                                 ...componentUpdates,
                                 [affectedComponent._id]: e.target.value,
                               })}
-                              className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm"
+                              className="flex-1 px-3 py-2 text-sm border-2 border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             >
-                              <option value="operational">Operational</option>
-                              <option value="degraded">Degraded</option>
-                              <option value="partial">Partial Outage</option>
-                              <option value="major">Major Outage</option>
-                              <option value="under_maintenance">Under Maintenance</option>
+                              <option value="operational">✓ Operational</option>
+                              <option value="degraded">⚠ Degraded</option>
+                              <option value="partial">◐ Partial Outage</option>
+                              <option value="major">✕ Major Outage</option>
+                              <option value="under_maintenance">🔧 Under Maintenance</option>
                             </select>
                           </div>
                         );
@@ -547,107 +700,179 @@ export default function IncidentDetailPage() {
                   </div>
                 )}
 
-                {/* Save button */}
-                <div className="flex justify-end">
+                <div className="flex justify-end pt-2">
                   <button
                     onClick={updateIncident}
                     disabled={isSaving}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md"
                   >
                     {isSaving ? (
                       <>
-                        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Updating...
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Posting...</span>
                       </>
                     ) : (
                       <>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                         </svg>
-                        Add Update
+                        <span>Post Update</span>
                       </>
                     )}
                   </button>
                 </div>
               </div>
-              <hr className="border-zinc-200 dark:border-zinc-700" />
-            </>
-          )}
+            )}
 
-          {/* Updates List */}
-          {updates.length === 0 ? (
-            <p className="text-zinc-600 dark:text-zinc-400 text-sm">No updates yet</p>
-          ) : (
-            <div className="space-y-4">
-              {updates.map((update) => (
-                <div
-                  key={update._id}
-                  className="border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 space-y-3"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs font-medium px-2 py-1 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-                          {formatUpdateType(update.type)}
-                        </span>
-                        <span className="text-xs text-zinc-500 dark:text-zinc-500">
-                          {formatDate(update.createdAt)}
-                        </span>
+            {/* Updates Timeline */}
+            {updates.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-5xl mb-3">📝</div>
+                <p className="text-zinc-600 dark:text-zinc-400 text-sm font-medium">No updates yet</p>
+                <p className="text-zinc-500 dark:text-zinc-500 text-xs mt-1">Updates will appear here as the incident progresses</p>
+              </div>
+            ) : (
+              <div className="relative">
+                {/* Timeline Line */}
+                <div className="absolute left-[19px] top-8 bottom-0 w-0.5 bg-gradient-to-b from-blue-200 via-zinc-200 to-transparent dark:from-blue-800 dark:via-zinc-700"></div>
+                
+                <div className="space-y-6">
+                  {updates.map((update) => (
+                    <div key={update._id} className="relative pl-12">
+                      {/* Timeline Dot */}
+                      <div className={`absolute left-0 top-1 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
+                        update.type === 'created' ? 'bg-gradient-to-br from-blue-500 to-blue-600' :
+                        update.type === 'resolved' ? 'bg-gradient-to-br from-green-500 to-green-600' :
+                        'bg-gradient-to-br from-zinc-400 to-zinc-500'
+                      }`}>
+                        {update.type === 'created' ? (
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                          </svg>
+                        ) : update.type === 'resolved' ? (
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        )}
                       </div>
-                      {update.description && (
-                        <p className="text-sm text-zinc-700 dark:text-zinc-300 mb-2">{update.description}</p>
-                      )}
-                    </div>
-                  </div>
 
-                  {/* Status and Impact changes */}
-                  <div className="space-y-2">
-                    {update.statusUpdate && (
-                      <div className="text-sm">
-                        <span className="text-zinc-600 dark:text-zinc-400">Status: </span>
-                        <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                          {update.statusUpdate.from ? `${update.statusUpdate.from} → ` : ''}
-                          {update.statusUpdate.to}
-                        </span>
-                      </div>
-                    )}
-                    {update.impactUpdate && (
-                      <div className="text-sm">
-                        <span className="text-zinc-600 dark:text-zinc-400">Impact: </span>
-                        <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                          {update.impactUpdate.from ? `${update.impactUpdate.from} → ` : ''}
-                          {update.impactUpdate.to}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                      {/* Update Card */}
+                      <div className="bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
+                        <div className="flex items-start justify-between mb-3">
+                          <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+                            update.type === 'created' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                            update.type === 'resolved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                            'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300'
+                          }`}>
+                            <span className="text-base">
+                              {update.type === 'created' ? '🆕' : update.type === 'resolved' ? '✅' : '📝'}
+                            </span>
+                            <span>{formatUpdateType(update.type)}</span>
+                          </span>
+                          <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-500">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="font-medium">{formatDate(update.createdAt)}</span>
+                          </div>
+                        </div>
 
-                  {/* Component status changes */}
-                  {update.componentStatusUpdates && update.componentStatusUpdates.length > 0 && (
-                    <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700">
-                      <div className="text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-2">Component Updates:</div>
-                      <div className="space-y-1">
-                        {update.componentStatusUpdates.map((compUpdate) => {
-                          const component = allComponents.find((c) => c._id === compUpdate.id);
-                          return (
-                            <div key={compUpdate.id} className="text-sm text-zinc-700 dark:text-zinc-300">
-                              <span className="font-medium">{component?.name || compUpdate.id}</span>
-                              {': '}
-                              {compUpdate.from} → {compUpdate.to}
+                        {update.description && (
+                          <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed mb-4 bg-zinc-50 dark:bg-zinc-800/50 p-3 rounded-lg border border-zinc-100 dark:border-zinc-700/50">
+                            {update.description}
+                          </p>
+                        )}
+
+                        {(update.statusUpdate || update.impactUpdate) && (
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {update.statusUpdate && (
+                              <div className="inline-flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                                <svg className="w-4 h-4 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                <div className="text-xs">
+                                  <span className="text-zinc-600 dark:text-zinc-400 font-medium">Status:</span>
+                                  <span className="ml-1 font-bold text-zinc-900 dark:text-zinc-100">
+                                    {update.statusUpdate.from && (
+                                      <>
+                                        <span className="text-zinc-500 dark:text-zinc-500">{update.statusUpdate.from}</span>
+                                        <span className="mx-1.5 text-zinc-400 dark:text-zinc-600">→</span>
+                                      </>
+                                    )}
+                                    <span className="text-yellow-700 dark:text-yellow-300">{update.statusUpdate.to}</span>
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                            {update.impactUpdate && (
+                              <div className="inline-flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/10 border border-orange-200 dark:border-orange-800 rounded-lg">
+                                <svg className="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <div className="text-xs">
+                                  <span className="text-zinc-600 dark:text-zinc-400 font-medium">Impact:</span>
+                                  <span className="ml-1 font-bold text-zinc-900 dark:text-zinc-100">
+                                    {update.impactUpdate.from && (
+                                      <>
+                                        <span className="text-zinc-500 dark:text-zinc-500">{update.impactUpdate.from}</span>
+                                        <span className="mx-1.5 text-zinc-400 dark:text-zinc-600">→</span>
+                                      </>
+                                    )}
+                                    <span className="text-orange-700 dark:text-orange-300">{update.impactUpdate.to}</span>
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {update.componentStatusUpdates && update.componentStatusUpdates.length > 0 && (
+                          <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2.5">
+                              <svg className="w-4 h-4 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                              </svg>
+                              Component Changes
                             </div>
-                          );
-                        })}
+                            <div className="space-y-2">
+                              {update.componentStatusUpdates.map((compUpdate) => {
+                                const component = allComponents.find((c) => c._id === compUpdate.id);
+                                const fromConfig = COMPONENT_STATUS_CONFIG[compUpdate.from];
+                                const toConfig = COMPONENT_STATUS_CONFIG[compUpdate.to];
+                                return (
+                                  <div key={compUpdate.id} className="flex items-center gap-2 text-xs p-2.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-zinc-100 dark:border-zinc-700/50">
+                                    <span className="font-semibold text-zinc-900 dark:text-zinc-100 min-w-[100px] truncate">
+                                      {component?.name || compUpdate.id}
+                                    </span>
+                                    <div className="flex items-center gap-2 flex-1">
+                                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${fromConfig?.color || 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300'}`}>
+                                        <span>{fromConfig?.icon || '?'}</span>
+                                        <span className="font-medium">{compUpdate.from}</span>
+                                      </span>
+                                      <svg className="w-3 h-3 text-zinc-400 dark:text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                      </svg>
+                                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${toConfig?.color || 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300'}`}>
+                                        <span>{toConfig?.icon || '?'}</span>
+                                        <span className="font-medium">{compUpdate.to}</span>
+                                      </span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-                  )}
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              </div>
+            )}
       </div>
     </div>
   );
