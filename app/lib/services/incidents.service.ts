@@ -299,6 +299,90 @@ export class IncidentsService {
     // Save the incident update
     return await incidentUpdate.save();
   }
+
+  async updateIncident(
+    id: string,
+    data: {
+      title?: string;
+      description?: string;
+      status?: IncidentStatus;
+      impact?: IncidentImpact;
+      affectedComponents?: Array<{ id: string; status: ComponentStatus }>;
+    }
+  ): Promise<Incident> {
+    await dbConnect();
+    
+    // Ensure Component schema is registered
+    void ComponentModel;
+
+    // Find the existing incident
+    const existingIncident = await IncidentModel
+      .findById(id)
+      .populate('affectedComponents')
+      .exec();
+
+    if (!existingIncident) {
+      throw new Error(`Incident with ID ${id} not found`);
+    }
+
+    let requestedComponents = [];
+
+    // Only process affected components if they are provided in the request
+    if (data.affectedComponents && data.affectedComponents.length > 0) {
+      // Verify that all affected component IDs in the request exist
+      const requestedComponentIds = data.affectedComponents.map((c) => c.id);
+
+      // Get all components from the database that are in the request
+      requestedComponents = await ComponentModel
+        .find({
+          _id: { $in: requestedComponentIds },
+        })
+        .exec();
+    }
+
+    // Update the incident fields (only if provided in the request)
+    if (data.title !== undefined) {
+      existingIncident.title = data.title;
+    }
+
+    if (data.description !== undefined) {
+      existingIncident.description = data.description;
+    }
+
+    if (data.status !== undefined) {
+      existingIncident.status = data.status;
+    }
+
+    if (data.impact !== undefined) {
+      existingIncident.impact = data.impact;
+    }
+
+    if (data.affectedComponents && data.affectedComponents.length > 0) {
+      existingIncident.affectedComponents = requestedComponents;
+    }
+
+    // Save the updated incident
+    const updatedIncident = await existingIncident.save();
+
+    // Update the components' statuses from the request if affected components are provided
+    if (data.affectedComponents && data.affectedComponents.length > 0) {
+      for (const component of data.affectedComponents) {
+        // Find the component in the database
+        const existingComponent = requestedComponents.find(
+          (c: any) => c._id.toString() === component.id,
+        );
+
+        if (existingComponent) {
+          await ComponentModel.updateOne(
+            { _id: existingComponent._id },
+            { $set: { status: component.status } }
+          );
+        }
+      }
+    }
+
+    return updatedIncident;
+  }
 }
 
 export default new IncidentsService();
