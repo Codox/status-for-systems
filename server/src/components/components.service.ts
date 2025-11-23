@@ -16,51 +16,6 @@ export class ComponentsService {
     private readonly groupModel: Model<Group>,
   ) {}
 
-  async findAll(): Promise<Component[]> {
-    return this.componentModel.find().exec();
-  }
-
-  async findUngrouped(): Promise<Component[]> {
-    // Get all component IDs that are assigned to groups
-    const groups = await this.groupModel.find({}, { components: 1 }).exec();
-    const assignedComponentIds = pipe(
-      groups,
-      flatMap((group) => group.components),
-      map((componentId) => componentId.toString()),
-    );
-
-    // Find components that are not in any group
-    return this.componentModel
-      .find({ _id: { $nin: assignedComponentIds } })
-      .exec();
-  }
-
-  async create(
-    createComponentRequest: CreateComponentRequest,
-  ): Promise<Component> {
-    // Create the component
-    const component = new this.componentModel({
-      name: createComponentRequest.name,
-      description: createComponentRequest.description,
-      status: createComponentRequest.status,
-    });
-
-    const savedComponent = await component.save();
-
-    // If groups are specified, add the component to those groups
-    if (
-      createComponentRequest.groups &&
-      createComponentRequest.groups.length > 0
-    ) {
-      await this.groupModel.updateMany(
-        { _id: { $in: createComponentRequest.groups } },
-        { $addToSet: { components: savedComponent._id } },
-      );
-    }
-
-    return savedComponent;
-  }
-
   async update(
     id: string,
     updateComponentRequest: UpdateComponentRequest,

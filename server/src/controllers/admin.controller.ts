@@ -60,22 +60,6 @@ export class AdminController {
     );
   }
 
-  @Get('components')
-  async findAllComponents(): Promise<Component[]> {
-    return this.componentsService.findAll();
-  }
-
-  @Get('components/ungrouped')
-  async findUngroupedComponents(): Promise<Component[]> {
-    return this.componentsService.findUngrouped();
-  }
-  @Post('components')
-  async createComponent(
-    @Body() createComponentRequest: CreateComponentRequest,
-  ): Promise<Component> {
-    return this.componentsService.create(createComponentRequest);
-  }
-
   @Patch('components/:id')
   async updateComponent(
     @Param('id') id: string,
@@ -83,10 +67,8 @@ export class AdminController {
   ): Promise<Component> {
     return this.componentsService.update(id, updateComponentRequest);
   }
-  @Get('groups')
-  async findAllGroups(): Promise<Group[]> {
-    return this.groupsService.findAll();
-  }
+
+
   @Post('groups')
   async createGroup(
     @Body() createGroupRequest: CreateGroupRequest,
