@@ -1,24 +1,4 @@
-import 'package:flutter/material.dart';
-import '../../../utils/date_format.dart';
-import '../../../models/incident.dart';
-import '../../../models/updates.dart';
-import '../../../models/component.dart';
-import '../../../services/status_api_service.dart';
-import '../../../services/uptime_data_service.dart';
-import '../../components/update_card.dart';
-import '../../common/status_badges.dart';
 
-class AdminIncidentDetailPage extends StatefulWidget {
-  final String incidentId;
-
-  const AdminIncidentDetailPage({
-    super.key,
-    required this.incidentId,
-  });
-
-  @override
-  State<AdminIncidentDetailPage> createState() => _AdminIncidentDetailPageState();
-}
 
 class _AdminIncidentDetailPageState extends State<AdminIncidentDetailPage> {
   Incident? incident;
@@ -33,19 +13,7 @@ class _AdminIncidentDetailPageState extends State<AdminIncidentDetailPage> {
   String _selectedStatus = '';
   String _selectedImpact = '';
   Map<String, String> _componentUpdates = {};
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  @override
-  void dispose() {
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
+  
   Future<void> _loadData() async {
     print('[DEBUG_LOG] Loading incident data for ID: ${widget.incidentId}');
     try {

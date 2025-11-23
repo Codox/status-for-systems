@@ -33,32 +33,6 @@ export class AdminController {
     private readonly incidentsService: IncidentsService,
   ) {}
 
-  /**
-   * DONE
-   */
-  @Get('incidents')
-  async getIncidents(): Promise<Incident[]> {
-    return this.incidentsService.all();
-  }
-
-  @Get('incidents/:id')
-  async getIncident(@Param('id') id: string): Promise<Incident> {
-    return this.incidentsService.one(id);
-  }
-
-  @Get('incidents/:id/updates')
-  async getIncidentUpdates(@Param('id') id: string): Promise<IncidentUpdate[]> {
-    return this.incidentsService.getIncidentUpdates(id);
-  }
-
-  @Post('incidents/updates')
-  async createIncidentUpdate(
-    @Body() createIncidentUpdateRequest: CreateIncidentUpdateRequest,
-  ): Promise<IncidentUpdate> {
-    return this.incidentsService.createIncidentUpdate(
-      createIncidentUpdateRequest,
-    );
-  }
 
   @Patch('components/:id')
   async updateComponent(
@@ -82,13 +56,6 @@ export class AdminController {
     @Body() updateGroupRequest: UpdateGroupRequest,
   ): Promise<Group> {
     return this.groupsService.update(id, updateGroupRequest);
-  }
-
-  @Post('incidents')
-  async createIncident(
-    @Body() createIncidentRequest: CreateIncidentRequest,
-  ): Promise<Incident> {
-    return this.incidentsService.create(createIncidentRequest);
   }
 
   @Put('incidents/:id')
