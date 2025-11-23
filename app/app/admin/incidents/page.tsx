@@ -219,7 +219,8 @@ export default function IncidentsPage() {
           {filteredIncidents.map((incident) => (
             <div
               key={incident._id}
-              className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 hover:shadow-md transition-shadow"
+              onClick={() => window.location.href = `/admin/incidents/${incident._id}`}
+              className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">

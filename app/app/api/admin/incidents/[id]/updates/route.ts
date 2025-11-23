@@ -3,10 +3,10 @@ import incidentsService from '@/lib/services/incidents.service';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const updates = await incidentsService.getIncidentUpdates(id);
 
