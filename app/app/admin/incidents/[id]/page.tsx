@@ -145,6 +145,7 @@ export default function IncidentDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [actionsOpen, setActionsOpen] = useState(false);
 
   // Form state
   const [description, setDescription] = useState('');
@@ -468,27 +469,6 @@ export default function IncidentDetailPage() {
                 </div>
               </div>
             </div>
-            {incident.status !== 'resolved' && (
-              <button
-                onClick={resolveIncident}
-                disabled={isSaving}
-                className="flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-zinc-50 text-green-700 rounded-lg text-sm font-semibold shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                {isSaving ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-green-700 border-t-transparent rounded-full animate-spin"></div>
-                    <span>Resolving...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>Resolve Incident</span>
-                  </>
-                )}
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -873,6 +853,69 @@ export default function IncidentDetailPage() {
                 </div>
               </div>
             )}
+      {/* Actions FAB */}
+      {incident.status !== 'resolved' && (
+        <>
+          {/* Overlay when open */}
+          {actionsOpen && (
+            <button
+              aria-label="Close actions menu"
+              className="fixed inset-0 z-40 bg-black/0"
+              onClick={() => setActionsOpen(false)}
+            />
+          )}
+
+          <div className="fixed bottom-6 right-6 z-50">
+            <div className="relative">
+              {/* Speed-dial menu */}
+              {actionsOpen && (
+                <div className="absolute bottom-16 right-0 mb-3 w-56 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl overflow-hidden">
+                  <div className="py-1">
+                    <button
+                      onClick={() => { setActionsOpen(false); resolveIncident(); }}
+                      disabled={isSaving}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSaving ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                          <span>Resolving…</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span>Resolve Incident</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* FAB button */}
+              <button
+                onClick={() => setActionsOpen((v) => !v)}
+                aria-label="Actions"
+                className="w-14 h-14 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center"
+              >
+                {/* Dots icon when closed, X when open */}
+                {actionsOpen ? (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6h.01M12 12h.01M12 18h.01" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
       </div>
     </div>
   );
