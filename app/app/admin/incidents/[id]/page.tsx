@@ -482,89 +482,57 @@ export default function IncidentDetailPage() {
         </div>
       )}
 
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Incident Description Card */}
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-2 mb-4">
-              <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Incident Description</h2>
-            </div>
-            <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">{incident.description}</p>
+      {/* Details Sections */}
+      <div className="space-y-6">
+        {/* Incident Description Card */}
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Incident Description</h2>
           </div>
-
-          {/* Updates Section - Will be added next */}
+          <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">{incident.description}</p>
         </div>
 
-        {/* Right Column - Sidebar */}
-        <div className="space-y-6">
-          {/* Affected Components Card */}
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-2 mb-4">
-              <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-              <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Affected Components</h3>
+        {/* Affected Components - Full Width */}
+        <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-2 mb-4">
+            <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Affected Components</h3>
+          </div>
+          {incident.affectedComponents.length === 0 ? (
+            <div className="text-center py-6">
+              <div className="text-3xl mb-2">📦</div>
+              <p className="text-zinc-600 dark:text-zinc-400 text-sm">No components affected</p>
             </div>
-            {incident.affectedComponents.length === 0 ? (
-              <div className="text-center py-6">
-                <div className="text-3xl mb-2">📦</div>
-                <p className="text-zinc-600 dark:text-zinc-400 text-sm">No components affected</p>
-              </div>
-            ) : (
-              <div className="space-y-2.5">
-                {incident.affectedComponents.map((component) => {
-                  const statusConfig = COMPONENT_STATUS_CONFIG[component.status] || { color: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300', icon: '?', label: component.status };
-                  return (
-                    <div
-                      key={component._id}
-                      className="group relative p-3.5 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-800/50 rounded-lg border border-zinc-200/50 dark:border-zinc-700/50 hover:shadow-sm transition-all"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
-                            {component.name}
-                          </div>
+          ) : (
+            <div className="space-y-2.5">
+              {incident.affectedComponents.map((component) => {
+                const statusConfig = COMPONENT_STATUS_CONFIG[component.status] || { color: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300', icon: '?', label: component.status };
+                return (
+                  <div
+                    key={component._id}
+                    className="group relative p-3.5 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-800/50 rounded-lg border border-zinc-200/50 dark:border-zinc-700/50 hover:shadow-sm transition-all"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                          {component.name}
                         </div>
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusConfig.color} shadow-sm whitespace-nowrap`}>
-                          <span>{statusConfig.icon}</span>
-                          <span>{statusConfig.label}</span>
-                        </span>
                       </div>
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${statusConfig.color} shadow-sm whitespace-nowrap`}>
+                        <span>{statusConfig.icon}</span>
+                        <span>{statusConfig.label}</span>
+                      </span>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Quick Stats Card */}
-          <div className="bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Quick Stats</h3>
+                  </div>
+                );
+              })}
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-600 dark:text-zinc-400">Updates</span>
-                <span className="text-base font-bold text-zinc-900 dark:text-zinc-100">{updates.length}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-600 dark:text-zinc-400">Components</span>
-                <span className="text-base font-bold text-zinc-900 dark:text-zinc-100">{incident.affectedComponents.length}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-600 dark:text-zinc-400">Status</span>
-                <span className="text-base font-bold text-zinc-900 dark:text-zinc-100">{statusConfig.label}</span>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
