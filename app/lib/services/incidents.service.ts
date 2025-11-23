@@ -40,6 +40,17 @@ export class IncidentsService {
       .exec();
   }
 
+  async getIncident(id: string): Promise<Incident | null> {
+    await dbConnect();
+    
+    // Ensure Component schema is registered
+    void ComponentModel;
+
+    return await IncidentModel.findById(id)
+      .populate('affectedComponents')
+      .exec();
+  }
+
   async createIncident(data: {
     title: string;
     description: string;
