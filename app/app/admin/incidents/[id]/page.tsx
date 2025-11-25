@@ -438,20 +438,14 @@ export default function IncidentDetailPage() {
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 shadow-sm">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${statusConfig.color} shadow-sm`}>
-                <span>{statusConfig.icon}</span>
-                <span>{statusConfig.label}</span>
-              </span>
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${impactConfig.color} shadow-sm`}>
-                <span>{impactConfig.icon}</span>
-                <span>{impactConfig.label} Impact</span>
-              </span>
-            </div>
             <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
               {incident.title}
             </h1>
             <div className="flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400">
+              <span>Status: {statusConfig.label}</span>
+              <span>•</span>
+              <span>Impact: {impactConfig.label}</span>
+              <span>•</span>
               <div className="flex items-center gap-1.5">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
