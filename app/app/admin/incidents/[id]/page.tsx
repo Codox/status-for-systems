@@ -434,39 +434,36 @@ export default function IncidentDetailPage() {
         Back to Incidents
       </button>
 
-      {/* Hero Section with Gradient */}
-      <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${impactConfig.gradient} p-8 shadow-lg`}>
-        <div className="absolute inset-0 bg-black/10 dark:bg-black/30"></div>
-        <div className="relative z-10">
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-3">
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${statusConfig.color} shadow-sm`}>
-                  <span>{statusConfig.icon}</span>
-                  <span>{statusConfig.label}</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-white/90 dark:bg-black/40 text-zinc-900 dark:text-zinc-100 shadow-sm">
-                  <span>{impactConfig.icon}</span>
-                  <span>{impactConfig.label} Impact</span>
-                </span>
+      {/* Hero Section */}
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 shadow-sm">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-3">
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${statusConfig.color} shadow-sm`}>
+                <span>{statusConfig.icon}</span>
+                <span>{statusConfig.label}</span>
+              </span>
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${impactConfig.color} shadow-sm`}>
+                <span>{impactConfig.icon}</span>
+                <span>{impactConfig.label} Impact</span>
+              </span>
+            </div>
+            <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">
+              {incident.title}
+            </h1>
+            <div className="flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400">
+              <div className="flex items-center gap-1.5">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Created {formatDate(incident.createdAt)}
               </div>
-              <h1 className="text-3xl font-bold text-white mb-3 drop-shadow-md">
-                {incident.title}
-              </h1>
-              <div className="flex items-center gap-4 text-sm text-white/90">
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Created {formatDate(incident.createdAt)}
-                </div>
-                <span>•</span>
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  Updated {formatDate(incident.updatedAt)}
-                </div>
+              <span>•</span>
+              <div className="flex items-center gap-1.5">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Updated {formatDate(incident.updatedAt)}
               </div>
             </div>
           </div>
