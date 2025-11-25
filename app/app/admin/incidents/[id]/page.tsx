@@ -378,6 +378,24 @@ export default function IncidentDetailPage() {
     return type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ');
   };
 
+  // Full, explicit date and time for filling top-left gap on update cards
+  const formatFullDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    try {
+      return date.toLocaleString(undefined, {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZoneName: 'short',
+      });
+    } catch {
+      return date.toString();
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -701,13 +719,12 @@ export default function IncidentDetailPage() {
 
                       {/* Update Card */}
                       <div className="bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
-                        <div className="flex items-start justify-end mb-3">
-                          <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-500">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span className="font-medium">{formatDate(update.createdAt)}</span>
-                          </div>
+                        {/* Timestamp top-left to fill the gap */}
+                        <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-500 mb-3">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span className="font-medium">{formatFullDateTime(update.createdAt)}</span>
                         </div>
 
                         {update.description && (
