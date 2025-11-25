@@ -313,7 +313,7 @@ export default function AdminComponentsPage() {
             />
           )}
 
-          <div className="fixed bottom-6 right-6 z-50">
+          <div className="fixed bottom-8 right-8 z-50">
             {/* FAB Menu List */}
             {isFABOpen && (
               <div className="absolute bottom-16 right-0 mb-3 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl overflow-hidden">
@@ -354,16 +354,20 @@ export default function AdminComponentsPage() {
             {/* Main FAB Button */}
             <button
               onClick={() => setIsFABOpen(!isFABOpen)}
-              className="w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center"
+              className="group relative w-14 h-14 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center"
+              aria-label="Create menu"
             >
               <svg
-                className={`w-6 h-6 transition-transform duration-200 ${isFABOpen ? 'rotate-45' : ''}`}
+                className={`w-6 h-6 transition-transform duration-300 ${isFABOpen ? 'rotate-45 group-hover:rotate-45' : 'group-hover:rotate-90'}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
               </svg>
+              
+              {/* Ripple Effect on Hover */}
+              <span className="absolute inset-0 rounded-full bg-white dark:bg-zinc-900 opacity-0 group-hover:opacity-20 group-hover:animate-ping"></span>
             </button>
           </div>
         </>
