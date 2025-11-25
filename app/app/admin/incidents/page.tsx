@@ -93,7 +93,6 @@ export default function IncidentsPage() {
   };
 
   const handleIncidentCreated = () => {
-    // Refresh incidents list after creating a new incident
     fetchIncidents();
   };
 

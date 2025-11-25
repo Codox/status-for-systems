@@ -15,7 +15,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     router.push('/admin/login');
   };
 
-  // Don't apply AuthGuard to the login page
   if (isLoginPage) {
     return <>{children}</>;
   }

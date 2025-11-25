@@ -72,7 +72,6 @@ export default function AdminComponentsPage() {
         return;
       }
 
-      // Fetch all components
       const componentsResponse = await fetch('/api/admin/components', {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -85,7 +84,6 @@ export default function AdminComponentsPage() {
 
       const fetchedAllComponents = await componentsResponse.json();
 
-      // Fetch groups
       const groupsResponse = await fetch('/api/admin/groups', {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -98,7 +96,6 @@ export default function AdminComponentsPage() {
 
       const fetchedGroups = await groupsResponse.json();
 
-      // Get all component IDs that are in groups
       const groupedComponentIds = new Set<string>();
       for (const group of fetchedGroups) {
         for (const component of group.components) {
@@ -106,7 +103,6 @@ export default function AdminComponentsPage() {
         }
       }
 
-      // Filter out components that are already in groups
       const fetchedUngroupedComponents = fetchedAllComponents.filter(
         (component: Component) => !groupedComponentIds.has(component._id)
       );

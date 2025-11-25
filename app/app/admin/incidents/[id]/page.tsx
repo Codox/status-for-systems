@@ -147,7 +147,6 @@ export default function IncidentDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [actionsOpen, setActionsOpen] = useState(false);
 
-  // Form state
   const [description, setDescription] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedImpact, setSelectedImpact] = useState('');
@@ -208,7 +207,6 @@ export default function IncidentDetailPage() {
       setSelectedStatus(fetchedIncident.status);
       setSelectedImpact(fetchedIncident.impact);
 
-      // Initialize component updates with current statuses
       const initialComponentUpdates: Record<string, string> = {};
       fetchedIncident.affectedComponents.forEach((component: AffectedComponent) => {
         initialComponentUpdates[component._id] = component.status;
@@ -268,7 +266,6 @@ export default function IncidentDetailPage() {
         throw new Error('Failed to update incident');
       }
 
-      // Refresh data
       await loadData();
       setDescription('');
       setIsSaving(false);
@@ -319,7 +316,6 @@ export default function IncidentDetailPage() {
         throw new Error('Failed to resolve incident');
       }
 
-      // Refresh data
       await loadData();
       setSelectedStatus('resolved');
       setSelectedImpact('none');
@@ -353,7 +349,6 @@ export default function IncidentDetailPage() {
     return type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ');
   };
 
-  // Full, explicit date and time for filling top-left gap on update cards
   const formatFullDateTime = (dateString: string) => {
     const date = new Date(dateString);
     try {

@@ -43,7 +43,6 @@ export default function CreateIncidentModal({ isOpen, onClose, onSuccess }: Crea
     if (isOpen) {
       fetchComponents();
     } else {
-      // Reset form when modal closes
       setTitle('');
       setDescription('');
       setStatus('investigating');
