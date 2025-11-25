@@ -18,7 +18,6 @@ interface GroupCardProps {
 
 export default function GroupCard({ name, description, components }: GroupCardProps) {
   const groupStatus = getGroupHighestSeverityStatus(components);
-  console.log('Group Status:', groupStatus);
   const statusColors: Record<string, string> = {
     operational: 'bg-green-500',
     under_maintenance: 'bg-blue-500',

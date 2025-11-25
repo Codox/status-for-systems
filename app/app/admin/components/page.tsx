@@ -117,9 +117,7 @@ export default function AdminComponentsPage() {
       setIsLoading(false);
       setError(null);
     } catch (err) {
-      // Check if it's an authentication error
       if (err instanceof Error && err.message.includes('Authentication')) {
-        console.log('[DEBUG_LOG] Authentication error in admin components, redirecting to login');
         router.push('/admin/login');
         return;
       }

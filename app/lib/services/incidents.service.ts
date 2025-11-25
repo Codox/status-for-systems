@@ -47,8 +47,6 @@ export class IncidentsService {
     // Ensure Component schema is registered
     void ComponentModel;
 
-    console.log(id);
-
     return await IncidentModel
         .where('_id', id)
         .findOne()

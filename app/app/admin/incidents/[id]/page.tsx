@@ -158,17 +158,14 @@ export default function IncidentDetailPage() {
   }, [incidentId]);
 
   const loadData = async () => {
-    console.log('[DEBUG_LOG] Loading incident data for ID:', incidentId);
     try {
       const token = getAuthToken();
       
       if (!token) {
-        console.log('[DEBUG_LOG] Authentication token not found, redirecting to login');
         router.push('/admin/login');
         return;
       }
 
-      console.log('[DEBUG_LOG] Fetching incident details...');
       const incidentResponse = await fetch(`/api/admin/incidents/${incidentId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -180,9 +177,7 @@ export default function IncidentDetailPage() {
       }
 
       const fetchedIncident = await incidentResponse.json();
-      console.log('[DEBUG_LOG] Incident fetched:', fetchedIncident.title);
 
-      console.log('[DEBUG_LOG] Fetching incident updates...');
       const updatesResponse = await fetch(`/api/admin/incidents/${incidentId}/updates`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -194,9 +189,7 @@ export default function IncidentDetailPage() {
       }
 
       const fetchedUpdates = await updatesResponse.json();
-      console.log('[DEBUG_LOG] Updates fetched:', fetchedUpdates.length, 'updates');
 
-      console.log('[DEBUG_LOG] Fetching all components...');
       const componentsResponse = await fetch('/api/admin/components', {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -208,7 +201,6 @@ export default function IncidentDetailPage() {
       }
 
       const fetchedComponents = await componentsResponse.json();
-      console.log('[DEBUG_LOG] Components fetched:', fetchedComponents.length, 'components');
 
       setIncident(fetchedIncident);
       setUpdates(fetchedUpdates);
@@ -224,12 +216,8 @@ export default function IncidentDetailPage() {
       setComponentUpdates(initialComponentUpdates);
 
       setIsLoading(false);
-      console.log('[DEBUG_LOG] Data loading completed successfully');
     } catch (e) {
-      console.log('[DEBUG_LOG] Error loading incident data:', e);
-
       if (e instanceof Error && e.message.includes('Authentication token')) {
-        console.log('[DEBUG_LOG] Authentication error detected, redirecting to login');
         router.push('/admin/login');
         return;
       }
@@ -252,7 +240,6 @@ export default function IncidentDetailPage() {
       const token = getAuthToken();
       
       if (!token) {
-        console.log('[DEBUG_LOG] Authentication token not found, redirecting to login');
         router.push('/admin/login');
         return;
       }
@@ -285,14 +272,8 @@ export default function IncidentDetailPage() {
       await loadData();
       setDescription('');
       setIsSaving(false);
-
-      // Show success message (you can implement a toast notification here)
-      console.log('[DEBUG_LOG] Incident updated successfully');
     } catch (e) {
-      console.log('[DEBUG_LOG] Error updating incident:', e);
-
       if (e instanceof Error && e.message.includes('Authentication token')) {
-        console.log('[DEBUG_LOG] Authentication error during incident update, redirecting to login');
         router.push('/admin/login');
         return;
       }
@@ -310,7 +291,6 @@ export default function IncidentDetailPage() {
       const token = getAuthToken();
       
       if (!token) {
-        console.log('[DEBUG_LOG] Authentication token not found, redirecting to login');
         router.push('/admin/login');
         return;
       }
@@ -344,13 +324,8 @@ export default function IncidentDetailPage() {
       setSelectedStatus('resolved');
       setSelectedImpact('none');
       setIsSaving(false);
-
-      console.log('[DEBUG_LOG] Incident resolved successfully');
     } catch (e) {
-      console.log('[DEBUG_LOG] Error resolving incident:', e);
-
       if (e instanceof Error && e.message.includes('Authentication token')) {
-        console.log('[DEBUG_LOG] Authentication error during incident resolve, redirecting to login');
         router.push('/admin/login');
         return;
       }
