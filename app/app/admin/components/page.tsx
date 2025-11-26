@@ -352,12 +352,12 @@ export default function AdminComponentsPage() {
               aria-label="Create menu"
             >
               <svg
-                className={`w-6 h-6 transition-transform duration-300 ${isFABOpen ? 'rotate-45 group-hover:rotate-45' : 'group-hover:rotate-90'}`}
+                className="w-6 h-6 transition-transform duration-300"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6h.01M12 12h.01M12 18h.01" />
               </svg>
               
               {/* Ripple Effect on Hover */}
