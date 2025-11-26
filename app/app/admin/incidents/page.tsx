@@ -47,7 +47,7 @@ export default function IncidentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'active' | 'resolved'>('all');
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [isFABOpen, setIsFABOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -268,45 +268,74 @@ export default function IncidentsPage() {
         </div>
       )}
 
-      {/* Floating Action Button (FAB) */}
-      <div className="fixed bottom-8 right-8 z-50">
-        <div className="relative">
-          {/* Tooltip */}
-          {showTooltip && (
-            <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium rounded-lg shadow-lg whitespace-nowrap animate-fade-in">
-              Create New Incident
-              <div className="absolute bottom-0 right-6 transform translate-y-1/2 rotate-45 w-2 h-2 bg-zinc-900 dark:bg-zinc-100"></div>
+      {/* FAB Menu */}
+      <>
+        {/* Backdrop overlay when menu is open */}
+        {isFABOpen && (
+          <div
+            className="fixed inset-0 bg-black/30 z-40"
+            onClick={() => setIsFABOpen(false)}
+          />
+        )}
+
+        <div className="fixed bottom-8 right-8 z-50">
+          {/* FAB Menu List */}
+          {isFABOpen && (
+            <div className="absolute bottom-16 right-0 mb-3 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl overflow-hidden">
+              <button
+                onClick={() => {
+                  setIsFABOpen(false);
+                  handleCreateIncident();
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors border-b border-zinc-200 dark:border-zinc-700"
+              >
+                <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div className="text-left flex-1">
+                  <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Create Incident</div>
+                  <div className="text-xs text-zinc-500 dark:text-zinc-500">Report a new incident</div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsFABOpen(false);
+                  fetchIncidents();
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+              >
+                <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <div className="text-left flex-1">
+                  <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Refresh</div>
+                  <div className="text-xs text-zinc-500 dark:text-zinc-500">Reload incidents list</div>
+                </div>
+              </button>
             </div>
           )}
-          
-          {/* FAB Button */}
+
+          {/* Main FAB Button */}
           <button
-            onClick={handleCreateIncident}
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
+            onClick={() => setIsFABOpen(!isFABOpen)}
             className="group relative w-14 h-14 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center"
-            aria-label="Create new incident"
+            aria-label="Actions menu"
           >
-            {/* Plus Icon with Animation */}
             <svg
-              className="w-6 h-6 transition-transform duration-300 group-hover:rotate-90"
+              className="w-6 h-6 transition-transform duration-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.5}
-                d="M12 4v16m8-8H4"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6h.01M12 12h.01M12 18h.01" />
             </svg>
             
             {/* Ripple Effect on Hover */}
             <span className="absolute inset-0 rounded-full bg-white dark:bg-zinc-900 opacity-0 group-hover:opacity-20 group-hover:animate-ping"></span>
           </button>
         </div>
-      </div>
+      </>
 
       {/* Create Incident Modal */}
       <CreateIncidentModal 
