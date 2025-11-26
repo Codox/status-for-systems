@@ -145,7 +145,7 @@ export default function IncidentDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [actionsOpen, setActionsOpen] = useState(false);
+  const [isFABOpen, setIsFABOpen] = useState(false);
 
   const [description, setDescription] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -781,65 +781,86 @@ export default function IncidentDetailPage() {
                 </div>
               </div>
             )}
-      {/* Actions FAB */}
+      {/* FAB Menu */}
       {incident.status !== 'resolved' && (
         <>
-          {/* Overlay when open */}
-          {actionsOpen && (
-            <button
-              aria-label="Close actions menu"
-              className="fixed inset-0 z-40 bg-black/0"
-              onClick={() => setActionsOpen(false)}
+          {/* Backdrop overlay when menu is open */}
+          {isFABOpen && (
+            <div
+              className="fixed inset-0 bg-black/30 z-40"
+              onClick={() => setIsFABOpen(false)}
             />
           )}
 
-          <div className="fixed bottom-6 right-6 z-50">
-            <div className="relative">
-              {/* Speed-dial menu */}
-              {actionsOpen && (
-                <div className="absolute bottom-16 right-0 mb-3 w-56 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl overflow-hidden">
-                  <div className="py-1">
-                    <button
-                      onClick={() => { setActionsOpen(false); resolveIncident(); }}
-                      disabled={isSaving}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isSaving ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                          <span>Resolving…</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span>Resolve Incident</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              )}
+          <div className="fixed bottom-8 right-8 z-50">
+            {/* FAB Menu List */}
+            {isFABOpen && (
+              <div className="absolute bottom-16 right-0 mb-3 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl overflow-hidden">
+                <button
+                  onClick={() => {
+                    setIsFABOpen(false);
+                    resolveIncident();
+                  }}
+                  disabled={isSaving}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors border-b border-zinc-200 dark:border-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSaving ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-green-600 dark:border-green-400 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="text-left flex-1">
+                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Resolving...</div>
+                        <div className="text-xs text-zinc-500 dark:text-zinc-500">Please wait</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <div className="text-left flex-1">
+                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Resolve Incident</div>
+                        <div className="text-xs text-zinc-500 dark:text-zinc-500">Mark as resolved</div>
+                      </div>
+                    </>
+                  )}
+                </button>
 
-              {/* FAB button */}
-              <button
-                onClick={() => setActionsOpen((v) => !v)}
-                aria-label="Actions"
-                className="w-14 h-14 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center"
+                <button
+                  onClick={() => {
+                    setIsFABOpen(false);
+                    alert('Edit Incident dialog - To be implemented');
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+                >
+                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  <div className="text-left flex-1">
+                    <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Edit Incident</div>
+                    <div className="text-xs text-zinc-500 dark:text-zinc-500">Modify incident details</div>
+                  </div>
+                </button>
+              </div>
+            )}
+
+            {/* Main FAB Button */}
+            <button
+              onClick={() => setIsFABOpen(!isFABOpen)}
+              className="group relative w-14 h-14 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center"
+              aria-label="Actions menu"
+            >
+              <svg
+                className={`w-6 h-6 transition-transform duration-300 ${isFABOpen ? 'rotate-45 group-hover:rotate-45' : 'group-hover:rotate-90'}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                {/* Dots icon when closed, X when open */}
-                {actionsOpen ? (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                ) : (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6h.01M12 12h.01M12 18h.01" />
-                  </svg>
-                )}
-              </button>
-            </div>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+              </svg>
+              
+              {/* Ripple Effect on Hover */}
+              <span className="absolute inset-0 rounded-full bg-white dark:bg-zinc-900 opacity-0 group-hover:opacity-20 group-hover:animate-ping"></span>
+            </button>
           </div>
         </>
       )}
