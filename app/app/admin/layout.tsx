@@ -23,8 +23,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <AuthGuard>
       <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
         <div className="flex min-h-screen">
-          <aside className="w-56 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 flex flex-col">
-            <div>
+          <aside className="w-56 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 flex flex-col h-screen sticky top-0">
+            <div className="flex-shrink-0">
               <div className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 mb-3">
                 Admin
               </div>
@@ -44,7 +44,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   href="/admin/incidents"
                   className={[
                     'block px-3 py-2 rounded-md text-sm',
-                    pathname === '/admin/incidents'
+                    pathname?.startsWith('/admin/incidents')
                       ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
                       : 'text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800',
                   ].join(' ')}
@@ -66,7 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
 
             {/* Bottom navigation section */}
-            <div className="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
+            <div className="mt-auto flex-shrink-0 pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
               <Link
                 href="/dashboard"
                 className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"

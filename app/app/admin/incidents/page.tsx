@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { getAuthToken } from '@/lib/utils/auth.utils';
 import CreateIncidentModal from '@/app/components/CreateIncidentModal';
 
@@ -43,6 +44,7 @@ const IMPACT_ICONS = {
 };
 
 export default function IncidentsPage() {
+  const router = useRouter();
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -218,7 +220,7 @@ export default function IncidentsPage() {
           {filteredIncidents.map((incident) => (
             <div
               key={incident._id}
-              onClick={() => window.location.href = `/admin/incidents/${incident._id}`}
+              onClick={() => router.push(`/admin/incidents/${incident._id}`)}
               className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer"
             >
               <div className="flex items-start justify-between mb-3">
