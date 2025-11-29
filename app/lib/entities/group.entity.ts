@@ -12,7 +12,7 @@ export interface Group extends Document {
 const GroupSchema = new Schema<Group>(
   {
     name: { type: String, required: true },
-    description: { type: String, required: true },
+    description: { type: String, required: false },
     components: [{ type: Types.ObjectId, ref: 'Component' }],
   },
   {

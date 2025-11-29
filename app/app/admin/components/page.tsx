@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAuthToken } from '@/lib/utils/auth.utils';
+import CreateGroupModal from '@/app/components/CreateGroupModal';
 
 interface Component {
   _id: string;
@@ -58,6 +59,7 @@ export default function AdminComponentsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFABOpen, setIsFABOpen] = useState(false);
+  const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
 
   useEffect(() => {
     loadComponents();
@@ -127,6 +129,19 @@ export default function AdminComponentsPage() {
     setIsLoading(true);
     setError(null);
     await loadComponents();
+  };
+
+  const handleCreateGroupClick = () => {
+    setIsFABOpen(false);
+    setIsCreateGroupModalOpen(true);
+  };
+
+  const handleCreateGroupModalClose = () => {
+    setIsCreateGroupModalOpen(false);
+  };
+
+  const handleCreateGroupSuccess = () => {
+    refreshComponents();
   };
 
   const formatDate = (dateString: string) => {
@@ -298,10 +313,7 @@ export default function AdminComponentsPage() {
             {isFABOpen && (
               <div className="absolute bottom-16 right-0 mb-3 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl overflow-hidden">
                 <button
-                  onClick={() => {
-                    setIsFABOpen(false);
-                    alert('Create Group dialog - To be implemented');
-                  }}
+                  onClick={handleCreateGroupClick}
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors border-b border-zinc-200 dark:border-zinc-700"
                 >
                   <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -352,6 +364,13 @@ export default function AdminComponentsPage() {
           </div>
         </>
       )}
+
+      {/* Create Group Modal */}
+      <CreateGroupModal
+        isOpen={isCreateGroupModalOpen}
+        onClose={handleCreateGroupModalClose}
+        onSuccess={handleCreateGroupSuccess}
+      />
     </>
   );
 }
