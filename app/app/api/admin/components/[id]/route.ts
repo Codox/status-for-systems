@@ -5,7 +5,7 @@ import { UpdateComponentRequest } from '@/lib/requests/update-component.request'
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const body = await request.json();
@@ -22,8 +22,11 @@ export async function PATCH(
 
     const data = validation.data!;
 
+    // Await params to get the id
+    const { id } = await params;
+
     // Update component
-    const component = await componentsService.update(params.id, {
+    const component = await componentsService.update(id, {
       name: data.name,
       description: data.description,
       groups: data.groups,

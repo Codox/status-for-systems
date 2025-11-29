@@ -5,7 +5,7 @@ import { UpdateGroupRequest } from '@/lib/requests/update-group.request';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const body = await request.json();
@@ -22,8 +22,11 @@ export async function PATCH(
 
     const data = validation.data!;
 
+    // Await params to get the id
+    const { id } = await params;
+
     // Update group
-    const group = await groupsService.update(params.id, {
+    const group = await groupsService.update(id, {
       name: data.name,
       description: data.description,
       components: data.components,
