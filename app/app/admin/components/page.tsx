@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAuthToken } from '@/lib/utils/auth.utils';
 import CreateGroupModal from '@/app/components/CreateGroupModal';
+import CreateComponentModal from '@/app/components/CreateComponentModal';
+import UpdateComponentModal from '@/app/components/UpdateComponentModal';
 
 interface Component {
   _id: string;
@@ -60,6 +62,9 @@ export default function AdminComponentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [isFABOpen, setIsFABOpen] = useState(false);
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
+  const [isCreateComponentModalOpen, setIsCreateComponentModalOpen] = useState(false);
+  const [isUpdateComponentModalOpen, setIsUpdateComponentModalOpen] = useState(false);
+  const [selectedComponent, setSelectedComponent] = useState<Component | null>(null);
 
   useEffect(() => {
     loadComponents();
@@ -141,6 +146,33 @@ export default function AdminComponentsPage() {
   };
 
   const handleCreateGroupSuccess = () => {
+    refreshComponents();
+  };
+
+  const handleCreateComponentClick = () => {
+    setIsFABOpen(false);
+    setIsCreateComponentModalOpen(true);
+  };
+
+  const handleCreateComponentModalClose = () => {
+    setIsCreateComponentModalOpen(false);
+  };
+
+  const handleCreateComponentSuccess = () => {
+    refreshComponents();
+  };
+
+  const handleEditComponentClick = (component: Component) => {
+    setSelectedComponent(component);
+    setIsUpdateComponentModalOpen(true);
+  };
+
+  const handleUpdateComponentModalClose = () => {
+    setIsUpdateComponentModalOpen(false);
+    setSelectedComponent(null);
+  };
+
+  const handleUpdateComponentSuccess = () => {
     refreshComponents();
   };
 
@@ -249,7 +281,7 @@ export default function AdminComponentsPage() {
                             ) : (
                               <div className="divide-y divide-zinc-200 dark:divide-zinc-700">
                                 {group.components.map((component) => (
-                                  <ComponentTile key={component._id} component={component} formatDate={formatDate} />
+                                  <ComponentTile key={component._id} component={component} formatDate={formatDate} onEditClick={handleEditComponentClick} />
                                 ))}
                               </div>
                             )}
@@ -287,7 +319,7 @@ export default function AdminComponentsPage() {
                 ) : (
                   <div className="divide-y divide-zinc-200 dark:divide-zinc-700 border border-zinc-200 dark:border-zinc-700 rounded-lg overflow-hidden">
                     {ungroupedComponents.map((component) => (
-                      <ComponentTile key={component._id} component={component} formatDate={formatDate} />
+                      <ComponentTile key={component._id} component={component} formatDate={formatDate} onEditClick={handleEditComponentClick} />
                     ))}
                   </div>
                 )}
@@ -326,10 +358,7 @@ export default function AdminComponentsPage() {
                 </button>
 
                 <button
-                  onClick={() => {
-                    setIsFABOpen(false);
-                    alert('Create Component dialog - To be implemented');
-                  }}
+                  onClick={handleCreateComponentClick}
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
                 >
                   <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -371,11 +400,26 @@ export default function AdminComponentsPage() {
         onClose={handleCreateGroupModalClose}
         onSuccess={handleCreateGroupSuccess}
       />
+
+      {/* Create Component Modal */}
+      <CreateComponentModal
+        isOpen={isCreateComponentModalOpen}
+        onClose={handleCreateComponentModalClose}
+        onSuccess={handleCreateComponentSuccess}
+      />
+
+      {/* Update Component Modal */}
+      <UpdateComponentModal
+        isOpen={isUpdateComponentModalOpen}
+        component={selectedComponent}
+        onClose={handleUpdateComponentModalClose}
+        onSuccess={handleUpdateComponentSuccess}
+      />
     </>
   );
 }
 
-function ComponentTile({ component, formatDate }: { component: Component; formatDate: (date: string) => string }) {
+function ComponentTile({ component, formatDate, onEditClick }: { component: Component; formatDate: (date: string) => string; onEditClick: (component: Component) => void }) {
   const statusConfig = COMPONENT_STATUS_CONFIG[component.status] || {
     color: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300',
     icon: '?',
@@ -401,7 +445,7 @@ function ComponentTile({ component, formatDate }: { component: Component; format
           {statusConfig.icon} {statusConfig.label}
         </span>
         <button
-          onClick={() => alert('Edit component dialog - To be implemented')}
+          onClick={() => onEditClick(component)}
           className="p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
           title="Edit Component"
         >
