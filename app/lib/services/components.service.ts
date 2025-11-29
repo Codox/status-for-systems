@@ -2,6 +2,7 @@ import dbConnect from '@/lib/mongodb';
 import ComponentModel, { Component } from '@/lib/entities/component.entity';
 import GroupModel from '@/lib/entities/group.entity';
 import { CreateComponentRequest } from '@/lib/requests/create-component.request';
+import { UpdateComponentRequest } from '@/lib/requests/update-component.request';
 
 export class ComponentsService {
   async getComponents(): Promise<Component[]> {
@@ -49,6 +50,51 @@ export class ComponentsService {
     }
 
     return savedComponent;
+  }
+
+  async update(
+    id: string,
+    updateComponentRequest: UpdateComponentRequest,
+  ): Promise<Component> {
+    await dbConnect();
+
+    // Update the component fields
+    const updateData: any = {};
+
+    if (updateComponentRequest.name !== undefined) {
+      updateData.name = updateComponentRequest.name;
+    }
+
+    if (updateComponentRequest.description !== undefined) {
+      updateData.description = updateComponentRequest.description;
+    }
+
+    const updatedComponent = await ComponentModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .exec();
+
+    if (!updatedComponent) {
+      throw new Error(`Component with ID ${id} not found`);
+    }
+
+    // Handle group assignments if provided
+    if (updateComponentRequest.groups !== undefined) {
+      // Remove component from all groups first
+      await GroupModel.updateMany(
+        { components: id },
+        { $pull: { components: id } },
+      );
+
+      // Add component to specified groups
+      if (updateComponentRequest.groups.length > 0) {
+        await GroupModel.updateMany(
+          { _id: { $in: updateComponentRequest.groups } },
+          { $addToSet: { components: id } },
+        );
+      }
+    }
+
+    return updatedComponent;
   }
 }
 
