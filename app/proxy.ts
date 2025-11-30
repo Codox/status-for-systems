@@ -30,7 +30,6 @@ export function proxy(request: NextRequest) {
       );
     }
 
-    // Extract token from "Bearer <token>" format
     const token = authHeader.startsWith('Bearer ')
       ? authHeader.substring(7)
       : authHeader;
@@ -42,7 +41,6 @@ export function proxy(request: NextRequest) {
       );
     }
 
-    // Verify JWT token
     const decoded = jwt.verify(token, JWT_SECRET as string) as JWTPayload;
 
 /*    // Check if user has admin role
@@ -53,7 +51,6 @@ export function proxy(request: NextRequest) {
       );
     }*/
 
-    // Token is valid and user is admin, continue to route handler
     return NextResponse.next();
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {

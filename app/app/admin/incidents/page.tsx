@@ -7,23 +7,7 @@ import CreateIncidentModal from '@/app/components/modals/CreateIncidentModal';
 import FABMenu, { FABMenuItem } from '@/app/components/FABMenu';
 import { formatRelativeDate } from '@/lib/utils/date.utils';
 import { INCIDENT_STATUS_CONFIG, INCIDENT_IMPACT_CONFIG } from '@/lib/constants/status.constants';
-
-interface Component {
-  _id: string;
-  name: string;
-  status: string;
-}
-
-interface Incident {
-  _id: string;
-  title: string;
-  description: string;
-  status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
-  impact: 'none' | 'minor' | 'major' | 'critical';
-  affectedComponents: Component[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { Component, Incident } from '@/lib/types/models';
 
 export default function IncidentsPage() {
   const router = useRouter();

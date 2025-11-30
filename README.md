@@ -11,7 +11,7 @@ Demo: https://demo.statusfor.systems/
 ## Prerequisites
 - Docker
 - Node.js >= v20.0.0
-- MongoDB (local or Docker)
+- MongoDB
 
 ## Quick Start
 
