@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import IncidentUpdateCard from '@/app/components/IncidentUpdateCard';
+import IncidentStatusBadge from '@/app/components/IncidentStatusBadge';
+import ImpactBadge from '@/app/components/ImpactBadge';
+import ComponentStatusBadge from '@/app/components/ComponentStatusBadge';
 
 interface Component {
   _id: string;
@@ -94,97 +97,6 @@ function formatDateTime(dateString: string): string {
   });
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const statusConfig: Record<string, { color: string; label: string }> = {
-    investigating: {
-      color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-      label: 'Investigating'
-    },
-    identified: {
-      color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-      label: 'Identified'
-    },
-    monitoring: {
-      color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-      label: 'Monitoring'
-    },
-    resolved: {
-      color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-      label: 'Resolved'
-    }
-  };
-
-  const config = statusConfig[status] || statusConfig.investigating;
-
-  return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${config.color}`}>
-      {config.label}
-    </span>
-  );
-}
-
-function ImpactBadge({ impact }: { impact: string }) {
-  const impactConfig: Record<string, { color: string; label: string }> = {
-    none: {
-      color: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300',
-      label: 'No Impact'
-    },
-    minor: {
-      color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-      label: 'Minor Impact'
-    },
-    major: {
-      color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-      label: 'Major Impact'
-    },
-    critical: {
-      color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-      label: 'Critical Impact'
-    }
-  };
-
-  const config = impactConfig[impact] || impactConfig.none;
-
-  return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${config.color}`}>
-      {config.label}
-    </span>
-  );
-}
-
-function ComponentStatusBadge({ status }: { status: string }) {
-  const componentStatusConfig: Record<string, { color: string; label: string }> = {
-    operational: {
-      color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-      label: 'Operational'
-    },
-    degraded: {
-      color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-      label: 'Degraded'
-    },
-    partial: {
-      color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-      label: 'Partial Outage'
-    },
-    major: {
-      color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-      label: 'Major Outage'
-    },
-    under_maintenance: {
-      color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-      label: 'Under Maintenance'
-    }
-  };
-
-  const config = componentStatusConfig[status] || componentStatusConfig.operational;
-
-  return (
-    <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${config.color}`}>
-      {config.label}
-    </span>
-  );
-}
-
 
 export default async function IncidentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -238,7 +150,7 @@ export default async function IncidentDetailPage({ params }: { params: Promise<{
             {incident.title}
           </h1>
           <div className="flex items-center gap-2 mb-3">
-            <StatusBadge status={incident.status} />
+            <IncidentStatusBadge status={incident.status} />
             <ImpactBadge impact={incident.impact} />
           </div>
           <div className="text-sm text-zinc-600 dark:text-zinc-400">
@@ -282,7 +194,7 @@ export default async function IncidentDetailPage({ params }: { params: Promise<{
                         <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                           {component.name}
                         </span>
-                        <ComponentStatusBadge status={component.status} />
+                        <ComponentStatusBadge status={component.status as 'operational' | 'under_maintenance' | 'degraded' | 'partial' | 'major'} />
                       </div>
                     ))}
                   </div>
