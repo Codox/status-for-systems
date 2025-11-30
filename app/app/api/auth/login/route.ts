@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
+import {getAdminPassword, getJwtSecret, validateRequiredEnvVars} from "@/lib/env-validation";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+validateRequiredEnvVars();
+
+const JWT_SECRET = getJwtSecret();
+const ADMIN_PASSWORD = getAdminPassword();
 
 export async function POST(request: Request) {
   try {

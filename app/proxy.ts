@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { validateRequiredEnvVars, getJwtSecret } from './lib/env-validation';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+// Validate required environment variables on module load
+validateRequiredEnvVars();
+
+const JWT_SECRET = getJwtSecret();
 
 interface JWTPayload {
   role: string;
