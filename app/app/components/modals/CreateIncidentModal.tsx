@@ -2,6 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { getAuthToken } from '@/lib/utils/auth.utils';
+import { 
+  INCIDENT_STATUS_OPTIONS, 
+  INCIDENT_IMPACT_OPTIONS, 
+  COMPONENT_STATUS_OPTIONS, 
+  COMPONENT_STATUS_COLORS 
+} from '@/lib/constants/status.constants';
 
 interface Component {
   _id: string;
@@ -15,18 +21,6 @@ interface CreateIncidentModalProps {
   onClose: () => void;
   onSuccess: () => void;
 }
-
-const STATUS_OPTIONS = ['investigating', 'identified', 'monitoring', 'resolved'];
-const IMPACT_OPTIONS = ['none', 'minor', 'major', 'critical'];
-const COMPONENT_STATUS_OPTIONS = ['operational', 'under_maintenance', 'degraded', 'partial', 'major'];
-
-const COMPONENT_STATUS_COLORS: Record<string, string> = {
-  operational: 'bg-green-500',
-  under_maintenance: 'bg-blue-500',
-  degraded: 'bg-yellow-500',
-  partial: 'bg-orange-500',
-  major: 'bg-red-500',
-};
 
 export default function CreateIncidentModal({ isOpen, onClose, onSuccess }: CreateIncidentModalProps) {
   const [title, setTitle] = useState('');

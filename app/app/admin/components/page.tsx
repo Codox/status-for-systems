@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAuthToken } from '@/lib/utils/auth.utils';
-import CreateGroupModal from '@/app/components/CreateGroupModal';
-import CreateComponentModal from '@/app/components/CreateComponentModal';
-import UpdateComponentModal from '@/app/components/UpdateComponentModal';
-import UpdateGroupModal from '@/app/components/UpdateGroupModal';
+import CreateGroupModal from '@/app/components/modals/CreateGroupModal';
+import CreateComponentModal from '@/app/components/modals/CreateComponentModal';
+import UpdateComponentModal from '@/app/components/modals/UpdateComponentModal';
+import UpdateGroupModal from '@/app/components/modals/UpdateGroupModal';
+import { COMPONENT_STATUS_CONFIG } from '@/lib/constants/status.constants';
 
 interface Component {
   _id: string;
@@ -25,34 +26,6 @@ interface Group {
   createdAt: string;
   updatedAt: string;
 }
-
-const COMPONENT_STATUS_CONFIG: Record<string, { color: string; icon: string; label: string }> = {
-  operational: {
-    color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-    icon: '✓',
-    label: 'Operational'
-  },
-  degraded: {
-    color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-    icon: '⚠',
-    label: 'Degraded'
-  },
-  partial: {
-    color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-    icon: '◐',
-    label: 'Partial Outage'
-  },
-  major: {
-    color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-    icon: '✕',
-    label: 'Major Outage'
-  },
-  under_maintenance: {
-    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-    icon: '🔧',
-    label: 'Under Maintenance'
-  },
-};
 
 export default function AdminComponentsPage() {
   const router = useRouter();

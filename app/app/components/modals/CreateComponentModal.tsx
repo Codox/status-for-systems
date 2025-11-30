@@ -136,10 +136,7 @@ export default function CreateComponentModal({ isOpen, onClose, onSuccess }: Cre
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div 
-        className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col"
-      >
-        {/* Header */}
+      <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
         <div className="px-6 py-4 bg-blue-50 dark:bg-blue-900/30 rounded-t-lg border-b border-zinc-200 dark:border-zinc-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -169,10 +166,8 @@ export default function CreateComponentModal({ isOpen, onClose, onSuccess }: Cre
           </div>
         </div>
 
-        {/* Content */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-4">
-            {/* Error Message */}
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
                 <div className="flex items-center gap-2">
@@ -184,7 +179,6 @@ export default function CreateComponentModal({ isOpen, onClose, onSuccess }: Cre
               </div>
             )}
 
-            {/* Component Name */}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                 Component Name *
@@ -201,7 +195,6 @@ export default function CreateComponentModal({ isOpen, onClose, onSuccess }: Cre
               />
             </div>
 
-            {/* Component Description */}
             <div>
               <label htmlFor="description" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                 Description *
@@ -218,7 +211,6 @@ export default function CreateComponentModal({ isOpen, onClose, onSuccess }: Cre
               />
             </div>
 
-            {/* Group Selection */}
             <div>
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
                 Assign to Groups *
@@ -279,7 +271,6 @@ export default function CreateComponentModal({ isOpen, onClose, onSuccess }: Cre
             </div>
           </div>
 
-          {/* Footer */}
           <div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-800 rounded-b-lg border-t border-zinc-200 dark:border-zinc-700">
             <div className="flex justify-end gap-3">
               <button

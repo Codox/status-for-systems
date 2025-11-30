@@ -1,16 +1,9 @@
-export type ComponentStatus = 'operational' | 'under_maintenance' | 'degraded' | 'partial' | 'major';
+import { ComponentStatus } from '@/lib/constants/status.constants';
 
 interface ComponentWithStatus {
   status: string;
 }
 
-/**
- * Gets the highest severity status from a list of components.
- * Severity order: operational/under_maintenance (0) < degraded (1) < partial (2) < major (3)
- * 
- * @param components - Array of components with status property
- * @returns The status with the highest severity
- */
 export function getGroupHighestSeverityStatus(components: ComponentWithStatus[]): ComponentStatus {
   if (components.length === 0) return 'operational';
 
@@ -35,3 +28,5 @@ export function getGroupHighestSeverityStatus(components: ComponentWithStatus[])
 
   return highestStatus;
 }
+
+export type { ComponentStatus };

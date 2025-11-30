@@ -65,7 +65,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </nav>
             </div>
 
-            {/* Bottom navigation section */}
             <div className="mt-auto flex-shrink-0 pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
               <Link
                 href="/dashboard"

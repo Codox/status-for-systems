@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAuthToken } from '@/lib/utils/auth.utils';
-import CreateIncidentModal from '@/app/components/CreateIncidentModal';
+import CreateIncidentModal from '@/app/components/modals/CreateIncidentModal';
+import { INCIDENT_STATUS_CONFIG, INCIDENT_IMPACT_CONFIG } from '@/lib/constants/status.constants';
 
 interface Component {
   _id: string;
@@ -21,27 +22,6 @@ interface Incident {
   createdAt: string;
   updatedAt: string;
 }
-
-const STATUS_COLORS = {
-  investigating: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-  identified: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-  monitoring: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  resolved: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-};
-
-const IMPACT_COLORS = {
-  none: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300',
-  minor: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  major: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-  critical: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-};
-
-const IMPACT_ICONS = {
-  none: '○',
-  minor: '◔',
-  major: '◑',
-  critical: '●',
-};
 
 export default function IncidentsPage() {
   const router = useRouter();
@@ -233,10 +213,10 @@ export default function IncidentsPage() {
                   </p>
                 </div>
                 <div className="flex gap-2 ml-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${IMPACT_COLORS[incident.impact]}`}>
-                    {IMPACT_ICONS[incident.impact]} {incident.impact.toUpperCase()}
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${INCIDENT_IMPACT_CONFIG[incident.impact].color}`}>
+                    {INCIDENT_IMPACT_CONFIG[incident.impact].icon} {incident.impact.toUpperCase()}
                   </span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[incident.status]}`}>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${INCIDENT_STATUS_CONFIG[incident.status].color}`}>
                     {incident.status.toUpperCase()}
                   </span>
                 </div>
