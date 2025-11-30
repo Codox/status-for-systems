@@ -3,6 +3,7 @@ import IncidentUpdateCard from '@/app/components/IncidentUpdateCard';
 import IncidentStatusBadge from '@/app/components/IncidentStatusBadge';
 import ImpactBadge from '@/app/components/ImpactBadge';
 import ComponentStatusBadge from '@/app/components/ComponentStatusBadge';
+import { getBaseUrl } from '@/lib/dashboard-config';
 
 interface Component {
   _id: string;
@@ -52,7 +53,7 @@ interface Update {
 
 async function getIncident(id: string): Promise<Incident | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = getBaseUrl();
     const response = await fetch(`${baseUrl}/api/public/incidents/${id}`, {
       cache: 'no-store',
     });
@@ -70,7 +71,7 @@ async function getIncident(id: string): Promise<Incident | null> {
 
 async function getIncidentUpdates(id: string): Promise<Update[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = getBaseUrl();
     const response = await fetch(`${baseUrl}/api/public/incidents/${id}/updates`, {
       cache: 'no-store',
     });

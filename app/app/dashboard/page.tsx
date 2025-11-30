@@ -1,7 +1,7 @@
 import OverallStatus from "../components/OverallStatus";
 import GroupCard from "../components/GroupCard";
 import IncidentCard from "../components/IncidentCard";
-import { getDashboardTitle, getDashboardDescription } from "../../lib/dashboard-config";
+import { getDashboardTitle, getDashboardDescription, getBaseUrl } from "../../lib/dashboard-config";
 
 interface Component {
   _id: string;
@@ -34,7 +34,7 @@ interface Incident {
 
 async function getGroups(): Promise<Group[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = getBaseUrl();
     const response = await fetch(`${baseUrl}/api/public/groups`, {
       cache: 'no-store',
     });
@@ -52,7 +52,7 @@ async function getGroups(): Promise<Group[]> {
 
 async function getActiveIncidents(): Promise<Incident[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = getBaseUrl();
     const response = await fetch(`${baseUrl}/api/public/incidents?onlyActive=true`, {
       cache: 'no-store',
     });
