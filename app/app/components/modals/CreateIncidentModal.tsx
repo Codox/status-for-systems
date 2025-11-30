@@ -250,7 +250,7 @@ export default function CreateIncidentModal({ isOpen, onClose, onSuccess }: Crea
                   disabled={loading}
                   className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 disabled:opacity-50"
                 >
-                  {STATUS_OPTIONS.map(opt => (
+                  {INCIDENT_STATUS_OPTIONS.map(opt => (
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
                 </select>
@@ -266,7 +266,7 @@ export default function CreateIncidentModal({ isOpen, onClose, onSuccess }: Crea
                   disabled={loading}
                   className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100 disabled:opacity-50"
                 >
-                  {IMPACT_OPTIONS.map(opt => (
+                  {INCIDENT_IMPACT_OPTIONS.map(opt => (
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
                 </select>

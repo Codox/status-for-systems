@@ -273,7 +273,7 @@ export default function UpdateGroupModal({ isOpen, group, onClose, onSuccess }: 
                 <div className="border border-zinc-300 dark:border-zinc-700 rounded-md max-h-80 overflow-y-auto">
                   {allComponents.map(component => {
                     const isSelected = selectedComponentIds.has(component._id);
-                    const statusConfig = COMPONENT_STATUS_CONFIG[component.status] || {
+                    const statusConfig = COMPONENT_STATUS_CONFIG[component.status as keyof typeof COMPONENT_STATUS_CONFIG] || {
                       color: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300',
                       icon: '?',
                       label: component.status

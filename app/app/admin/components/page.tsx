@@ -418,7 +418,7 @@ export default function AdminComponentsPage() {
 }
 
 function ComponentTile({ component, formatDate, onEditClick }: { component: Component; formatDate: (date: string) => string; onEditClick: (component: Component) => void }) {
-  const statusConfig = COMPONENT_STATUS_CONFIG[component.status] || {
+  const statusConfig = COMPONENT_STATUS_CONFIG[component.status as keyof typeof COMPONENT_STATUS_CONFIG] || {
     color: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300',
     icon: '?',
     label: component.status

@@ -6,7 +6,7 @@ import { getAuthToken } from '@/lib/utils/auth.utils';
 interface Component {
   _id: string;
   name: string;
-  description: string;
+  description?: string;
   status: string;
 }
 
@@ -36,7 +36,7 @@ export default function UpdateComponentModal({ isOpen, component, onClose, onSuc
   useEffect(() => {
     if (isOpen && component) {
       setName(component.name);
-      setDescription(component.description);
+      setDescription(component.description || '');
       loadGroups();
     } else {
       setName('');
