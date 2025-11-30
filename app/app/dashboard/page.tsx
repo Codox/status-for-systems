@@ -67,9 +67,29 @@ async function getActiveIncidents(): Promise<Incident[]> {
   }
 }
 
+function calculateOverallStatus(incidents: Incident[]): 'operational' | 'issues' | 'major' {
+  // Prioritize incident impact to determine overall status
+  if (incidents.length === 0) {
+    return 'operational';
+  }
+  
+  // Check for critical or major impact incidents
+  const hasCriticalOrMajorIncident = incidents.some(
+    incident => incident.impact === 'critical' || incident.impact === 'major'
+  );
+  
+  if (hasCriticalOrMajorIncident) {
+    return 'major';
+  }
+  
+  // Any other active incidents (minor or none impact)
+  return 'issues';
+}
+
 export default async function DashboardPage() {
   const groups = await getGroups();
   const incidents = await getActiveIncidents();
+  const overallStatus = calculateOverallStatus(incidents);
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
@@ -84,7 +104,7 @@ export default async function DashboardPage() {
         </header>
 
         <div className="space-y-6">
-          <OverallStatus status="operational" />
+          <OverallStatus status={overallStatus} />
 
           {incidents.length > 0 && (
             <section>
