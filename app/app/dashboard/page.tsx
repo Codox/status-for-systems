@@ -91,15 +91,18 @@ export default async function DashboardPage() {
   const incidents = await getActiveIncidents();
   const overallStatus = calculateOverallStatus(incidents);
 
+  const dashboardTitle = process.env.NEXT_PUBLIC_DASHBOARD_TITLE;
+  const dashboardDescription = process.env.NEXT_PUBLIC_DASHBOARD_DESCRIPTION;
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <header className="mb-8">
           <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-            System Status Dashboard
+            {dashboardTitle}
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400">
-            Real-time monitoring of all services and systems
+            {dashboardDescription}
           </p>
         </header>
 
