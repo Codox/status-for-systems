@@ -6,6 +6,7 @@ import { getAuthToken } from '@/lib/utils/auth.utils';
 import CreateGroupModal from '@/app/components/CreateGroupModal';
 import CreateComponentModal from '@/app/components/CreateComponentModal';
 import UpdateComponentModal from '@/app/components/UpdateComponentModal';
+import UpdateGroupModal from '@/app/components/UpdateGroupModal';
 
 interface Component {
   _id: string;
@@ -64,7 +65,9 @@ export default function AdminComponentsPage() {
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
   const [isCreateComponentModalOpen, setIsCreateComponentModalOpen] = useState(false);
   const [isUpdateComponentModalOpen, setIsUpdateComponentModalOpen] = useState(false);
+  const [isUpdateGroupModalOpen, setIsUpdateGroupModalOpen] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState<Component | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
 
   useEffect(() => {
     loadComponents();
@@ -176,6 +179,20 @@ export default function AdminComponentsPage() {
     refreshComponents();
   };
 
+  const handleEditGroupClick = (group: Group) => {
+    setSelectedGroup(group);
+    setIsUpdateGroupModalOpen(true);
+  };
+
+  const handleUpdateGroupModalClose = () => {
+    setIsUpdateGroupModalOpen(false);
+    setSelectedGroup(null);
+  };
+
+  const handleUpdateGroupSuccess = () => {
+    refreshComponents();
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -260,10 +277,10 @@ export default function AdminComponentsPage() {
                             <button
                               onClick={(e) => {
                                 e.preventDefault();
-                                alert('Edit group components dialog - To be implemented');
+                                handleEditGroupClick(group);
                               }}
                               className="p-2 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/20 rounded-lg transition-colors"
-                              title="Edit Components"
+                              title="Edit Group"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -414,6 +431,14 @@ export default function AdminComponentsPage() {
         component={selectedComponent}
         onClose={handleUpdateComponentModalClose}
         onSuccess={handleUpdateComponentSuccess}
+      />
+
+      {/* Update Group Modal */}
+      <UpdateGroupModal
+        isOpen={isUpdateGroupModalOpen}
+        group={selectedGroup}
+        onClose={handleUpdateGroupModalClose}
+        onSuccess={handleUpdateGroupSuccess}
       />
     </>
   );
