@@ -115,6 +115,7 @@ export default async function DashboardPage() {
                 {incidents.map((incident) => (
                   <IncidentCard
                     key={incident._id}
+                    incidentId={incident._id}
                     title={incident.title}
                     description={incident.description}
                     status={incident.status}

@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 interface Component {
   _id: string;
   name: string;
@@ -6,6 +8,7 @@ interface Component {
 }
 
 interface IncidentCardProps {
+  incidentId: string;
   title: string;
   description: string;
   status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
@@ -16,6 +19,7 @@ interface IncidentCardProps {
 }
 
 export default function IncidentCard({
+  incidentId,
   title,
   description,
   status,
@@ -88,42 +92,44 @@ export default function IncidentCard({
   };
 
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-sm border border-zinc-200 dark:border-zinc-800">
-      <div className="flex items-start justify-between gap-4 mb-3">
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
-        <div className="flex gap-2 flex-shrink-0">
-          <span className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs ${statusStyle.bg} ${statusStyle.text} rounded-full font-medium`}>
-            <span className={`w-2 h-2 rounded-full ${statusStyle.icon}`}></span>
-            <span>{statusStyle.label}</span>
-          </span>
-          <span className={`inline-flex items-center px-2 py-1 text-xs ${impactStyle.bg} ${impactStyle.text} rounded-full font-medium`}>
-            {impactStyle.label}
-          </span>
-        </div>
-      </div>
-
-      <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">{description}</p>
-
-      {affectedComponents.length > 0 && (
-        <div className="mb-4">
-          <h4 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Affected Components</h4>
-          <div className="flex flex-wrap gap-2">
-            {affectedComponents.map((component) => (
-              <span
-                key={component._id}
-                className="inline-flex items-center px-2 py-1 text-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded"
-              >
-                {component.name}
-              </span>
-            ))}
+    <Link href={`/dashboard/incidents/${incidentId}`}>
+      <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-sm border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors cursor-pointer">
+        <div className="flex items-start justify-between gap-4 mb-3">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
+          <div className="flex gap-2 flex-shrink-0">
+            <span className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs ${statusStyle.bg} ${statusStyle.text} rounded-full font-medium`}>
+              <span className={`w-2 h-2 rounded-full ${statusStyle.icon}`}></span>
+              <span>{statusStyle.label}</span>
+            </span>
+            <span className={`inline-flex items-center px-2 py-1 text-xs ${impactStyle.bg} ${impactStyle.text} rounded-full font-medium`}>
+              {impactStyle.label}
+            </span>
           </div>
         </div>
-      )}
 
-      <div className="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-500">
-        <span>Created: {formatDate(createdAt)}</span>
-        <span>Updated: {formatDate(updatedAt)}</span>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">{description}</p>
+
+        {affectedComponents.length > 0 && (
+          <div className="mb-4">
+            <h4 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Affected Components</h4>
+            <div className="flex flex-wrap gap-2">
+              {affectedComponents.map((component) => (
+                <span
+                  key={component._id}
+                  className="inline-flex items-center px-2 py-1 text-xs bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded"
+                >
+                  {component.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-500">
+          <span>Created: {formatDate(createdAt)}</span>
+          <span>Updated: {formatDate(updatedAt)}</span>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
