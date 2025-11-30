@@ -1,6 +1,7 @@
 import OverallStatus from "../components/OverallStatus";
 import GroupCard from "../components/GroupCard";
 import IncidentCard from "../components/IncidentCard";
+import { getDashboardTitle, getDashboardDescription } from "../../lib/dashboard-config";
 
 interface Component {
   _id: string;
@@ -91,8 +92,8 @@ export default async function DashboardPage() {
   const incidents = await getActiveIncidents();
   const overallStatus = calculateOverallStatus(incidents);
 
-  const dashboardTitle = process.env.NEXT_PUBLIC_DASHBOARD_TITLE;
-  const dashboardDescription = process.env.NEXT_PUBLIC_DASHBOARD_DESCRIPTION;
+  const dashboardTitle = getDashboardTitle();
+  const dashboardDescription = getDashboardDescription();
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">

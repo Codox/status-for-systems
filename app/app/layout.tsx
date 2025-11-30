@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { getDashboardTitle, getDashboardDescription } from "../lib/dashboard-config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_DASHBOARD_TITLE,
-  description: process.env.NEXT_PUBLIC_DASHBOARD_DESCRIPTION,
+  title: getDashboardTitle(),
+  description: getDashboardDescription(),
 };
 
 export default function RootLayout({
