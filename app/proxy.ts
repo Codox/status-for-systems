@@ -3,11 +3,6 @@ import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { validateRequiredEnvVars, getJwtSecret } from './lib/env-validation';
 
-// Validate required environment variables on module load
-validateRequiredEnvVars();
-
-const JWT_SECRET = getJwtSecret();
-
 interface JWTPayload {
   role: string;
   iat: number;
@@ -21,6 +16,10 @@ export function proxy(request: NextRequest) {
   }
 
   try {
+    // Validate required environment variables at runtime
+    validateRequiredEnvVars();
+    const JWT_SECRET = getJwtSecret();
+    
     const authHeader = request.headers.get('authorization');
 
     if (!authHeader) {
