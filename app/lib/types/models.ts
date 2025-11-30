@@ -1,8 +1,3 @@
-/**
- * Shared type definitions for domain models
- * Centralized interfaces to avoid duplication across the codebase
- */
-
 export interface Component {
   _id: string;
   name: string;

@@ -1,8 +1,3 @@
-/**
- * Shared type definitions for incident updates
- * Centralized interfaces to avoid duplication across the codebase
- */
-
 export interface StatusUpdate {
   from: string | null;
   to: string;
