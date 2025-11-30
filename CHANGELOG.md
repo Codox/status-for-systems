@@ -1,5 +1,13 @@
 # Status For Systems
 
+## v1.0.0-alpha.5 - 2025-11-30
+### Updated
+- (docs) Updated docs
+
+### Fixed
+- (api) Fixed build error with env validation
+
+
 ## v1.0.0-alpha.4 - 2025-11-30
 ### Updated
 - (web) Updated code - Cleanup
