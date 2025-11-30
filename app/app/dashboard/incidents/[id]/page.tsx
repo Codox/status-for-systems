@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import IncidentUpdateCard from '@/app/components/IncidentUpdateCard';
 
 interface Component {
   _id: string;
@@ -184,51 +185,6 @@ function ComponentStatusBadge({ status }: { status: string }) {
   );
 }
 
-function UpdateCard({ update, affectedComponents }: { update: Update; affectedComponents?: Component[] }) {
-  return (
-    <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700">
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex-1">
-          {update.description && (
-            <p className="text-sm text-zinc-900 dark:text-zinc-100 mb-2">
-              {update.description}
-            </p>
-          )}
-          
-          {update.statusUpdate && (
-            <div className="text-xs text-zinc-600 dark:text-zinc-400 mb-1">
-              Status changed: {update.statusUpdate.from || 'N/A'} → {update.statusUpdate.to}
-            </div>
-          )}
-          
-          {update.impactUpdate && (
-            <div className="text-xs text-zinc-600 dark:text-zinc-400 mb-1">
-              Impact changed: {update.impactUpdate.from || 'N/A'} → {update.impactUpdate.to}
-            </div>
-          )}
-          
-          {update.componentStatusUpdates && update.componentStatusUpdates.length > 0 && (
-            <div className="text-xs text-zinc-600 dark:text-zinc-400 mt-2">
-              <div className="font-medium mb-1">Component status changes:</div>
-              {update.componentStatusUpdates.map((compUpdate, idx) => {
-                const component = affectedComponents?.find(c => c._id === compUpdate.id);
-                return (
-                  <div key={idx} className="ml-2">
-                    • {component?.name || compUpdate.id}: {compUpdate.from} → {compUpdate.to}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </div>
-      
-      <div className="text-xs text-zinc-500 dark:text-zinc-500">
-        {formatDateTime(update.createdAt)}
-      </div>
-    </div>
-  );
-}
 
 export default async function IncidentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -344,18 +300,26 @@ export default async function IncidentDetailPage({ params }: { params: Promise<{
             </div>
             <div className="p-6">
               {updates.length === 0 ? (
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                  No updates yet
-                </p>
+                <div className="text-center py-12">
+                  <div className="text-5xl mb-3">📝</div>
+                  <p className="text-zinc-600 dark:text-zinc-400 text-sm font-medium">No updates yet</p>
+                  <p className="text-zinc-500 dark:text-zinc-500 text-xs mt-1">Updates will appear here as the incident progresses</p>
+                </div>
               ) : (
-                <div className="space-y-3">
-                  {updates.map((update) => (
-                    <UpdateCard
-                      key={update._id}
-                      update={update}
-                      affectedComponents={incident.affectedComponents}
-                    />
-                  ))}
+                <div className="relative">
+                  {/* Timeline Line */}
+                  <div className="absolute left-[19px] top-8 bottom-0 w-0.5 bg-gradient-to-b from-blue-200 via-zinc-200 to-transparent dark:from-blue-800 dark:via-zinc-700"></div>
+                  
+                  <div className="space-y-6">
+                    {updates.map((update) => (
+                      <IncidentUpdateCard
+                        key={update._id}
+                        update={update}
+                        affectedComponents={incident.affectedComponents}
+                        formatDateTime={formatDateTime}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
