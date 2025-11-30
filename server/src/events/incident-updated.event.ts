@@ -1,3 +1,0 @@
-export class IncidentUpdatedEvent {
-  constructor() {}
-}
