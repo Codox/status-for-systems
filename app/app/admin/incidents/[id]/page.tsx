@@ -5,12 +5,15 @@ import { useRouter, useParams } from 'next/navigation';
 import { getAuthToken } from '@/lib/utils/auth.utils';
 import IncidentUpdateCard from '@/app/components/IncidentUpdateCard';
 import { INCIDENT_STATUS_CONFIG, INCIDENT_IMPACT_CONFIG, COMPONENT_STATUS_CONFIG } from '@/lib/constants/status.constants';
+import { Update, StatusUpdate, ImpactUpdate, ComponentStatusUpdate } from '@/lib/types/updates';
 
 interface Component {
   _id: string;
   name: string;
   status: string;
-  description?: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface AffectedComponent {
@@ -26,34 +29,6 @@ interface Incident {
   status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
   impact: 'none' | 'minor' | 'major' | 'critical';
   affectedComponents: AffectedComponent[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface StatusUpdate {
-  from: string | null;
-  to: string;
-}
-
-interface ImpactUpdate {
-  from: string | null;
-  to: string;
-}
-
-interface ComponentStatusUpdate {
-  id: string;
-  from: string;
-  to: string;
-}
-
-interface Update {
-  _id: string;
-  incidentId: string;
-  description?: string;
-  type: string;
-  statusUpdate?: StatusUpdate;
-  impactUpdate?: ImpactUpdate;
-  componentStatusUpdates?: ComponentStatusUpdate[];
   createdAt: string;
   updatedAt: string;
 }

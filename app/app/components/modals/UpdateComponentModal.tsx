@@ -2,20 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getAuthToken } from '@/lib/utils/auth.utils';
-
-interface Component {
-  _id: string;
-  name: string;
-  description?: string;
-  status: string;
-}
-
-interface Group {
-  _id: string;
-  name: string;
-  description: string;
-  components: Component[];
-}
+import { Component, Group } from '@/lib/types/models';
 
 interface UpdateComponentModalProps {
   isOpen: boolean;

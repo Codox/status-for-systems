@@ -1,39 +1,6 @@
 import { COMPONENT_STATUS_CONFIG } from '@/lib/constants/status.constants';
-
-interface Component {
-  _id: string;
-  name: string;
-  description?: string;
-  status: string;
-}
-
-interface StatusUpdate {
-  from: string | null;
-  to: string;
-}
-
-interface ImpactUpdate {
-  from: string | null;
-  to: string;
-}
-
-interface ComponentStatusUpdate {
-  id: string;
-  from: string;
-  to: string;
-}
-
-interface Update {
-  _id: string;
-  incidentId: string;
-  description?: string;
-  type: string;
-  statusUpdate?: StatusUpdate;
-  impactUpdate?: ImpactUpdate;
-  componentStatusUpdates?: ComponentStatusUpdate[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { Component } from '@/lib/types/models';
+import { Update, StatusUpdate, ImpactUpdate, ComponentStatusUpdate } from '@/lib/types/updates';
 
 interface IncidentUpdateCardProps {
   update: Update;

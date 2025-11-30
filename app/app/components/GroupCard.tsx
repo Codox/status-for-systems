@@ -1,14 +1,6 @@
 import StatusBadge from './StatusBadge';
 import { getGroupHighestSeverityStatus } from '@/lib/utils/status.utils';
-
-interface Component {
-  _id: string;
-  name: string;
-  description: string;
-  status: 'operational' | 'under_maintenance' | 'degraded' | 'partial' | 'major';
-  createdAt: string;
-  updatedAt: string;
-}
+import { Component } from '@/lib/types/models';
 
 interface GroupCardProps {
   name: string;

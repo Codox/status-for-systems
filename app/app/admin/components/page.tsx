@@ -9,24 +9,7 @@ import UpdateComponentModal from '@/app/components/modals/UpdateComponentModal';
 import UpdateGroupModal from '@/app/components/modals/UpdateGroupModal';
 import FABMenu, { FABMenuItem } from '@/app/components/FABMenu';
 import { COMPONENT_STATUS_CONFIG } from '@/lib/constants/status.constants';
-
-interface Component {
-  _id: string;
-  name: string;
-  status: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Group {
-  _id: string;
-  name: string;
-  description: string;
-  components: Component[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { Component, Group } from '@/lib/types/models';
 
 export default function AdminComponentsPage() {
   const router = useRouter();

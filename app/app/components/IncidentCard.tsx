@@ -2,13 +2,7 @@ import Link from 'next/link';
 import IncidentStatusBadge from './IncidentStatusBadge';
 import ImpactBadge from './ImpactBadge';
 import { formatShortDateTime } from '@/lib/utils/date.utils';
-
-interface Component {
-  _id: string;
-  name: string;
-  description: string;
-  status: string;
-}
+import { Component } from '@/lib/types/models';
 
 interface IncidentCardProps {
   incidentId: string;

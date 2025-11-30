@@ -2,35 +2,7 @@ import OverallStatus from "../components/OverallStatus";
 import GroupCard from "../components/GroupCard";
 import IncidentCard from "../components/IncidentCard";
 import { getDashboardTitle, getDashboardDescription, getBaseUrl } from "../../lib/dashboard-config";
-
-interface Component {
-  _id: string;
-  name: string;
-  description: string;
-  status: 'operational' | 'under_maintenance' | 'degraded' | 'partial' | 'major';
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Group {
-  _id: string;
-  name: string;
-  description: string;
-  components: Component[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Incident {
-  _id: string;
-  title: string;
-  description: string;
-  status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
-  impact: 'none' | 'minor' | 'major' | 'critical';
-  affectedComponents: Component[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { Component, Group, Incident } from "../../lib/types/models";
 
 async function getGroups(): Promise<Group[]> {
   try {

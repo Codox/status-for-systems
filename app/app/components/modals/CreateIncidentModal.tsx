@@ -8,13 +8,7 @@ import {
   COMPONENT_STATUS_OPTIONS, 
   COMPONENT_STATUS_COLORS 
 } from '@/lib/constants/status.constants';
-
-interface Component {
-  _id: string;
-  name: string;
-  status: string;
-  description?: string;
-}
+import { Component } from '@/lib/types/models';
 
 interface CreateIncidentModalProps {
   isOpen: boolean;

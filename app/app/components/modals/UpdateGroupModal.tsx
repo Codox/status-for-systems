@@ -3,20 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getAuthToken } from '@/lib/utils/auth.utils';
 import { COMPONENT_STATUS_CONFIG } from '@/lib/constants/status.constants';
-
-interface Component {
-  _id: string;
-  name: string;
-  status: string;
-  description?: string;
-}
-
-interface Group {
-  _id: string;
-  name: string;
-  description: string;
-  components: Component[];
-}
+import { Component, Group } from '@/lib/types/models';
 
 interface UpdateGroupModalProps {
   isOpen: boolean;

@@ -4,52 +4,8 @@ import IncidentStatusBadge from '@/app/components/IncidentStatusBadge';
 import ImpactBadge from '@/app/components/ImpactBadge';
 import ComponentStatusBadge from '@/app/components/ComponentStatusBadge';
 import { getBaseUrl } from '@/lib/dashboard-config';
-
-interface Component {
-  _id: string;
-  name: string;
-  description: string;
-  status: string;
-}
-
-interface Incident {
-  _id: string;
-  title: string;
-  description: string;
-  status: 'investigating' | 'identified' | 'monitoring' | 'resolved';
-  impact: 'none' | 'minor' | 'major' | 'critical';
-  affectedComponents: Component[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface StatusUpdate {
-  from: string | null;
-  to: string;
-}
-
-interface ImpactUpdate {
-  from: string | null;
-  to: string;
-}
-
-interface ComponentStatusUpdate {
-  id: string;
-  from: string;
-  to: string;
-}
-
-interface Update {
-  _id: string;
-  incidentId: string;
-  description?: string;
-  type: string;
-  statusUpdate?: StatusUpdate;
-  impactUpdate?: ImpactUpdate;
-  componentStatusUpdates?: ComponentStatusUpdate[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { Component, Incident } from '@/lib/types/models';
+import { Update, StatusUpdate, ImpactUpdate, ComponentStatusUpdate } from '@/lib/types/updates';
 
 async function getIncident(id: string): Promise<Incident | null> {
   try {
