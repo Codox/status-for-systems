@@ -10,8 +10,7 @@ Demo: https://demo.statusfor.systems/
 
 ## Prerequisites
 - Docker
-- Flutter SDK
-- Node.js v20.0.0 or higher
+- Node.js >= v20.0.0
 - MongoDB (local or Docker)
 
 ## Quick Start
@@ -31,30 +30,24 @@ See Releases for available versions.
 
 3. Run the Docker container:
    ```bash
-   docker run -d -p 8080:80 \
-   -e MONGODB_URI="mongodb://localhost:27017/status-for-systems" \
-   -e MONGODB_USER=admin \
-   -e MONGODB_PASSWORD=admin \
-   -e BASIC_AUTH_USERNAME=admin \
-   -e BASIC_AUTH_PASSWORD=admin \
-   -e JWT_SECRET=<YOUR_JWT_SECRET> \
-   -e WEB_API_URL="/api" \
-   -e WEB_SITE_TITLE="Status for Systems"
+   docker run -d -p 3000:3000 \
+   -e MONGODB_URI="mongodb://admin:admin@localhost:27017/status_for_systems" \
+   -e JWT_SECRET="<YOUR_JWT_SECRET>" \
+   -e NEXT_PUBLIC_DASHBOARD_TITLE="Rexchopper's Status Page" \
+   -e NEXT_PUBLIC_DASHBOARD_DESCRIPTION="Find out if something is broken here"
    ghcr.io/codox/status-for-systems:<VERSION>
    ```
 
-4. Access the status page at `http://localhost:8080`. The admin panel is available at `http://localhost:8080/admin`. Use the credentials set in the environment variables for authentication.
+4. Access the status page at `http://localhost:3000`. The admin panel is available at `http://localhost:3000/admin`. Use the credentials set in the environment variables for authentication.
 
 ## Project Structure
 
-- **web/**: Flutter web app
-- **server/**: NestJS API
+- **app/**: Next.js full-stack application (frontend and API routes)
 - **docs/**: MKDocs documentation
 
 ## Development
 
-1. See [`web/README.md`](./web/README.md) for frontend setup, dependencies, and usage.
-2. See [`server/README.md`](./server/README.md) for backend setup, dependencies, and usage.
+Navigate to the `app/` directory and follow the instructions on the [README](./app/README.md)
 
 ## Contributing
 Contributions are welcome! Please read the [CONTRIBUTING](./CONTRIBUTING.md) guide for details on how to contribute to this project.
@@ -63,4 +56,4 @@ Contributions are welcome! Please read the [CONTRIBUTING](./CONTRIBUTING.md) gui
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
 ## Credits
-A big thank you to [jcsix694](https://github.com/jcsix694) at [discovery.onl](https://discovery.onl) for supporting as the first Beta client.
+- Thank you to [jcsix694](https://github.com/jcsix694) at [discovery.onl](https://discovery.onl) for becoming the initial Beta client 
