@@ -1,60 +1,34 @@
-# API Builder
-FROM node:20-alpine AS api-builder
-
-WORKDIR /app/api
-
-COPY server/package*.json ./
-RUN npm ci
-COPY server/ ./
-RUN npm run build
-
-# Flutter Builder
-FROM ubuntu:22.04 AS flutter-builder
-
-RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    unzip \
-    xz-utils \
-    zip \
-    libglu1-mesa \
-    && rm -rf /var/lib/apt/lists/*
-
-ENV FLUTTER_HOME="/opt/flutter"
-ENV PATH="$FLUTTER_HOME/bin:$PATH"
-
-RUN git clone https://github.com/flutter/flutter.git $FLUTTER_HOME
-RUN cd $FLUTTER_HOME && git checkout stable
-RUN flutter doctor --android-licenses || true
-RUN flutter config --enable-web
-
-WORKDIR /app/web
-COPY web/ ./
-RUN flutter pub get
-RUN flutter build web --release
-
-# Production Image
-FROM nginx:alpine
-
-RUN apk add --no-cache nodejs npm supervisor
+# Next.js Builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY --from=api-builder /app/api/dist ./api/dist
-COPY --from=api-builder /app/api/package*.json ./api/
+COPY app/package*.json ./
+RUN npm ci
 
-WORKDIR /app/api
-RUN npm ci --only=production
+COPY app/ ./
+RUN npm run build
 
-COPY --from=flutter-builder /app/web/build/web /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Production Image
+FROM node:20-alpine AS runner
 
-RUN mkdir -p /var/log/supervisor
+WORKDIR /app
 
-EXPOSE 80
+ENV NODE_ENV=production
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-ENTRYPOINT ["/entrypoint.sh"]
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]

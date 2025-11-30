@@ -1,0 +1,12 @@
+{
+  "name": "seeder",
+  "version": "1.0.0",
+  "description": "Database seeder using MongoDB native driver",
+  "type": "module",
+  "scripts": {
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "mongodb": "^6.0.0"
+  }
+}
