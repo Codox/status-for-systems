@@ -25,15 +25,12 @@ These instructions can also be found at: https://github.com/Codox/status-for-sys
 3. Run the Docker container:
 
     ```bash
-    docker run -d -p 8080:80 \ 
-    -e MONGODB_URI="mongodb://localhost:27017/status-for-systems" \
-    -e MONGODB_USER=admin \
-    -e MONGODB_PASSWORD=admin \
-    -e BASIC_AUTH_USERNAME=admin \
-    -e BASIC_AUTH_PASSWORD=admin \
-    -e JWT_SECRET=<YOUR_JWT_SECRET> \
+    docker run -d -p 3000:3000 \
+    -e MONGODB_URI="mongodb://admin:admin@localhost:27017/status_for_systems" \
+    -e JWT_SECRET="<YOUR_JWT_SECRET>" \
+    -e NEXT_PUBLIC_DASHBOARD_TITLE="Rexchopper's Status Page" \
+    -e NEXT_PUBLIC_DASHBOARD_DESCRIPTION="Find out if something is broken here"
     ghcr.io/codox/status-for-systems:<VERSION>
     ```
 
-4. Access the status page at
-   `http://localhost:8080`. The admin panel is available at `http://localhost:8080/admin`. Use the credentials set in the environment variables for authentication.
+4. Access the status page at `http://localhost:3000`. The admin panel is available at `http://localhost:3000/admin`. Use the credentials set in the environment variables for authentication.

@@ -10,7 +10,7 @@ import { Update, StatusUpdate, ImpactUpdate, ComponentStatusUpdate } from '@/lib
 interface Component {
   _id: string;
   name: string;
-  status: string;
+  status: 'operational' | 'under_maintenance' | 'degraded' | 'partial' | 'major';
   description: string;
   createdAt: string;
   updatedAt: string;

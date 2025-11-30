@@ -17,17 +17,16 @@ A demo of the project is available at [https://demo.statusfor.systems/](https://
 
 ## Features
 - Incident management
+- RSS feed for status updates
 
 ## Upcoming Features
-- RSS feed for status updates
 - Notifications (Slack, Discord, Email, etc...)
 - Integrations with issue management systems (Jira, GitHub Issues, etc...)
 - Probes for checking the status of services
 - Metrics, uptime, and performance tracking
 
 ## Credits/Acknowledgements
-- [NestJS](https://nestjs.com/)
-- [Flutter](https://flutter.dev/)
+- [Next.js](https://nextjs.org/)
 
 ## Contributing/Support
 If you find this project useful, please consider supporting it by starring the repository on GitHub or contributing to the codebase.
